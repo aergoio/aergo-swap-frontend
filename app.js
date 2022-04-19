@@ -136,6 +136,7 @@ async function startTxSendRequest(txdata, msg, callback) {
   const result = await aergoConnectCall('SEND_TX', 'AERGO_SEND_TX_RESULT', txdata);
   console.log('AERGO_SEND_TX_RESULT', result);
 
+/*
   swal.fire({
     title: 'Transaction sent!',
     text: 'Waiting inclusion on blockchain...',
@@ -145,6 +146,7 @@ async function startTxSendRequest(txdata, msg, callback) {
       swal.showLoading();
     }
   })
+*/
 
   if (!aergo) {
     connect_to_aergo()
@@ -187,7 +189,6 @@ async function startTxSendRequest(txdata, msg, callback) {
     }
   })
 
-  next_step()
 }
 
 function on_chain_selected(){
