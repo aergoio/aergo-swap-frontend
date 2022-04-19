@@ -315,9 +315,7 @@ async function connect_wallet_click() {
 
 function on_account_connected(){
 
-  var button = document.getElementById("main-button")
-  button.innerHTML = "Swap"
-  button.onclick = swap_click
+  update_swap_button('Swap', true)
 
 
   $('#connect-wallet').addClass('hidden')
@@ -936,9 +934,11 @@ function is_empty_pair(){
 }
 
 function update_swap_button(text, enabled){
+/*
   if(!account_address || account_address==''){
     return
   }
+*/
   var button = document.getElementById("main-button")
   button.innerHTML = text
   button.disabled = !enabled
@@ -1267,10 +1267,10 @@ function update_swap_info_aergo(direction){
 
 function swap_click(){
 
-  //alert('swap!')
-
-
-
+  if(!account_address || account_address==''){
+    connect_wallet_click()
+    return
+  }
 
   $('#confirm-swap').removeClass('hidden')
 
@@ -2382,7 +2382,7 @@ $('#remove-liquidity-button').click(function(){
 
 document.body.onload = function() {
 
-  document.getElementById("main-button").onclick = connect_wallet_click;
+  document.getElementById("main-button").onclick = swap_click;
   document.getElementById("connect-wallet").onclick = connect_wallet_click;
 
   //document.getElementById("select-token1").onclick = select_token_click;
