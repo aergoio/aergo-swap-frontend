@@ -20,12 +20,12 @@ var swap_token1_amount
 var swap_token2_amount
 
 const swap_factory_mainnet = ""
-const swap_factory_testnet = ""
+const swap_factory_testnet = "AmhgtYrsrPVoQKBQiR7xitHNdghsuqRHTqMXjJ6BmLAgijGUedkq"
 const swap_factory_alphanet = ""
 var swap_factory = swap_factory_mainnet
 
 const waergo_mainnet = ""
-const waergo_testnet = ""
+const waergo_testnet = "AmhEHnMcHvNXtW4nszzCvh4iLbV7BMgBkd4F1kn1jgzoAGW6oNqq"
 const waergo_alphanet = ""
 var waergo = waergo_mainnet
 
