@@ -1,6 +1,8 @@
 
 TODO:
 
+  - make aergo/waergo be the base token on new_pair
+
   - add to gitlab or github
 
   - deploy swap factory

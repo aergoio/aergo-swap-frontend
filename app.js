@@ -1686,7 +1686,7 @@ function get_pair_info(token1, token2, callback){
 // ADD LIQUIDITY
 //---------------------------------------------------------------------
 
-var pair_address = ''
+var pair_address = null
 var pair_token1 = ''
 var pair_token2 = ''
 var pair_token1_amount = ''
@@ -2026,16 +2026,16 @@ function add_pool_update_buttons(){
   var is_same_token = (pair_token1==pair_token2) || 
         (is_aergo(pair_token1) && is_aergo(pair_token2));
 
-  if(is_same_token || (pair_address && pair_address != '')){
+  if(is_same_token || pair_address==null || pair_address != ''){
     $('#create-pair').addClass('hidden')
   }else{
     $('#create-pair').removeClass('hidden')
   }
 
-  //$('#add-token1-button').prop('disabled', !pair_address || pair_address=='')
-  //$('#add-token2-button').prop('disabled', !pair_address || pair_address=='')
+  //$('#add-token1-button').prop('disabled', pair_address==null || pair_address=='')
+  //$('#add-token2-button').prop('disabled', pair_address==null || pair_address=='')
 
-  if(is_same_token || (!pair_address || pair_address=='')){
+  if(is_same_token || pair_address==null || pair_address==''){
     $('#add-buttons').addClass('hidden')
     return
   }else{
@@ -2099,12 +2099,15 @@ $('#create-pair > button').click(function(){
 
 })
 
-function add_first_token(button){
+function add_first_token(){
 
   var base_token  = pair_info[pair_address].token2
   //var other_token = pair_info[pair_address].token1
 
   var token_amount = (base_token==pair_token1) ? to_add.token1_amount : to_add.token2_amount
+  if (token_amount==0) {
+    return
+  }
   token_amount = token_amount.toString()
 
   var symbol = token_info[base_token].symbol
@@ -2144,8 +2147,6 @@ function add_first_token(button){
 
   startTxSendRequest(txdata, 'The ' + symbol + ' was sent!', function(result){
 
-    //button.innerHTML = 'Undo Add Token1'
-
     sent_base_token = true
     add_pool_update_buttons()
 
@@ -2153,7 +2154,7 @@ function add_first_token(button){
 
 }
 
-function remove_first_token(button){
+function remove_first_token(){
 
   var base_token  = pair_info[pair_address].token2
   //var other_token = pair_info[pair_address].token1
@@ -2193,10 +2194,10 @@ $('#add-token1-button').click(function(){
 
   var button = this
 
-  if(button.innerHTML.substr(3) == 'Add'){
-    add_first_token(button)
+  if(button.innerHTML.substr(0,3) == 'Add'){
+    add_first_token()
   }else{
-    remove_first_token(button)
+    remove_first_token()
   }
 
 })
@@ -2207,6 +2208,9 @@ $('#add-token2-button').click(function(){
   var other_token = pair_info[pair_address].token1
 
   var token_amount = (other_token==pair_token1) ? to_add.token1_amount : to_add.token2_amount
+  if (token_amount==0) {
+    return
+  }
   token_amount = token_amount.toString()
 
   var symbol = token_info[other_token].symbol
