@@ -18,6 +18,7 @@ var max_input = BigInt(0)
 var swap_input = 0
 var swap_token1_amount
 var swap_token2_amount
+var pair = {reserves: {}}
 
 const swap_factory_mainnet = ""
 const swap_factory_testnet = "AmhgtYrsrPVoQKBQiR7xitHNdghsuqRHTqMXjJ6BmLAgijGUedkq"
@@ -915,8 +916,6 @@ function xx(){
 // INPUT AND OUTPUT AMOUNTS
 //---------------------------------------------------------------------
 
-var pair = {reserves: {}}
-
 // when using a path we must to do this for each step/hop in the path
 
 function is_empty_pair(){
@@ -925,9 +924,24 @@ function is_empty_pair(){
     return false
   }
 
-  return (!pair.reserves[token1] || !pair.reserves[token2] ||
-      pair.reserves[token1] == 0 || pair.reserves[token2] == 0)
+  return (
+    !pair ||
+    !pair.reserves ||
+    !pair.reserves[token1] ||
+    !pair.reserves[token2] ||
+     pair.reserves[token1] == 0 ||
+     pair.reserves[token2] == 0
+  )
 
+}
+
+function update_swap_button(text, enabled){
+  if(!account_address || account_address==''){
+    return
+  }
+  var button = document.getElementById("main-button")
+  button.innerHTML = text
+  button.disabled = !enabled
 }
 
 function on_input1(){
@@ -936,16 +950,14 @@ function on_input1(){
   swap_token1_amount = BigInt(0)
   swap_token2_amount = BigInt(0)
 
-  var button = document.getElementById("main-button")
-
   if(is_empty_pair()){
     console.log('empty pair')
-    button.innerHTML = 'Insufficient liquidity'
-    button.disabled = true
+    document.getElementById('amount2').value = ''
+    update_swap_button('Insufficient liquidity', false)
+    hide_swap_info()
     return
   }else{
-    button.innerHTML = 'Swap'
-    button.disabled = false
+    update_swap_button('Swap', true)
   }
 
   var typed_amount = document.getElementById('amount1').value
@@ -993,12 +1005,11 @@ function on_input2(){
   swap_token1_amount = BigInt(0)
   swap_token2_amount = BigInt(0)
 
-  var button = document.getElementById("main-button")
-
   if(is_empty_pair()){
     console.log('empty pair')
-    button.innerHTML = 'Insufficient liquidity'
-    button.disabled = true
+    document.getElementById('amount1').value = ''
+    update_swap_button('Insufficient liquidity', false)
+    hide_swap_info()
     return
   }
 
@@ -1028,15 +1039,13 @@ function on_input2(){
 
     if (swap_token1_amount < 0) {
       document.getElementById('amount1').value = ''
-      button.innerHTML = 'Insufficient liquidity'
-      button.disabled = true
+      update_swap_button('Insufficient liquidity', false)
       hide_swap_info()
     } else {
       var token1_amount = to_decimal_str(swap_token1_amount.toString(), decimals1)
       //console.log("input:", token1_amount)
       document.getElementById('amount1').value = token1_amount
-      button.innerHTML = 'Swap'
-      button.disabled = false
+      update_swap_button('Swap', true)
       //swap_input = 2
       show_swap_info()
     }
@@ -1044,8 +1053,7 @@ function on_input2(){
   } catch (e) {
     console.log(e)
     document.getElementById('amount1').value = ''
-    button.innerHTML = 'Insufficient liquidity'
-    button.disabled = true
+    update_swap_button('Insufficient liquidity', false)
     hide_swap_info()
   }
 
@@ -1602,8 +1610,18 @@ function find_pair(token1, token2){
 
 function get_pair_info(token1, token2, callback){
 
+  console.log('get_pair_info', token1, token2)
+
+  if(is_aergo(token1) && is_aergo(token2)){
+    return
+  }
+
+  if (token1=='aergo') token1 = waergo
+  if (token2=='aergo') token2 = waergo
+
   var pair_address = find_pair(token1, token2)
   if (pair_address && pair_address != '') {
+    console.log('get_pair_info - found pair')
     if (callback) callback(pair_address)
     return
   }
@@ -1613,6 +1631,8 @@ function get_pair_info(token1, token2, callback){
     aergo.queryContract(
       swap_factory, "get_pair_info", token1, token2
     ).then(function(result){
+
+      console.log('get_pair_info - contract returned:', result)
 
       if (result==null) {
         if (callback) callback('')
