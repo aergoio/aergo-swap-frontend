@@ -1548,7 +1548,9 @@ function get_user_pools(first){
       var is_last = result[0]
       var list = result[1]
 
-      current_pool_list.push(...list)
+      if(Array.isArray(list)){
+        current_pool_list.push(...list)
+      }
 
       if(!is_last){
         get_user_pools(first + 200)
