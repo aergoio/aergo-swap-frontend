@@ -302,7 +302,9 @@ function calculate_input(output_amount, input_reserve, output_reserve) {
 
 async function connect_wallet_click() {
 
-  account_address = await getActiveAccount();
+  account_address = await getActiveAccount()
+  if (account_address == '') account_address = null
+  if (!account_address) return false
 
   on_chain_selected()
 
@@ -317,6 +319,7 @@ function on_account_connected(){
 
   update_swap_button('Swap', true)
   update_add_button('Add New Position')
+  load_user_pools(false)
 
   $('#connect-wallet').addClass('hidden')
 
@@ -330,7 +333,6 @@ function on_account_connected(){
   var addr = account_address.substr(0,4) + "..." + account_address.substr(-4)
   $('#status-connected > div > div').html(addr)
 
-  //
   get_token_list()
 
 }
@@ -934,7 +936,7 @@ function is_empty_pair(){
 }
 
 function update_swap_button(text, enabled){
-  if(!account_address || account_address==''){
+  if(!account_address){
     return
   }
   var button = document.getElementById("main-button")
@@ -1265,7 +1267,7 @@ function update_swap_info_aergo(direction){
 
 function swap_click(){
 
-  if(!account_address || account_address==''){
+  if(!account_address){
     connect_wallet_click()
     return
   }
@@ -1424,7 +1426,7 @@ $('#show-swap-page').click(function(){
 })
 
 $('#show-pool-page').click(function(){
-  load_user_pools()
+  load_user_pools(false)
   show_page('pool-page')
 })
 
@@ -1511,7 +1513,7 @@ function update_pool_list(){
 
 }
 
-var last_account_address = ''
+var last_account_address = 'none'
 
 function load_user_pools(force){
 
@@ -1533,10 +1535,12 @@ function load_user_pools(force){
 
 function get_user_pools(first){
 
-  if(!account_address || account_address==''){
+  if(!account_address){
     update_pool_list()
     return
   }
+
+  console.log("get_user_pools", account_address, first)
 
   try {
 
@@ -1709,7 +1713,7 @@ function add_on_chain_changed(){
 }
 
 function update_add_button(text){
-  if(!account_address || account_address==''){
+  if(!account_address){
     return
   }
   var button = document.getElementById("show-add-liquidity-page")
@@ -1735,7 +1739,7 @@ function on_add_liquidity_click(){
 
 $('#show-add-liquidity-page').click(function(){
 
-  if(!account_address || account_address==''){
+  if(!account_address){
     connect_wallet_click()
     return
   }
@@ -1880,7 +1884,7 @@ function on_add_token_input_changed(n){
   var rates = add_pool_update_info()
 
   var pair = pair_info[pair_address]
-  if(pair){
+  if(pair && rates[0]!=0 && rates[1]!=0){
     var other_input, id
 
     var decimals1 = token_info[pair_token1].decimals
@@ -1949,12 +1953,13 @@ function add_pool_update_info(){
 
   var pair = pair_info[pair_address]
 
-  if(pair){
-    pair_token1_amount = BigInt(pair[pair_token1])
-    pair_token2_amount = BigInt(pair[pair_token2])
-  }else{
-    //pair_token1_amount = BigInt(0)
-    //pair_token2_amount = BigInt(0)
+  pair_token1_amount = BigInt(0)
+  pair_token2_amount = BigInt(0)
+  if( pair ){
+    pair_token1_amount = pair.reserves[pair_token1]
+    pair_token2_amount = pair.reserves[pair_token2]
+  }
+  if( pair_token1_amount==0 && pair_token2_amount==0 ){
     pair_token1_amount = BigInt(to_add.token1_amount)
     pair_token2_amount = BigInt(to_add.token2_amount)
   }
@@ -1971,8 +1976,8 @@ function add_pool_update_info(){
 
     $('#add-rate1').html('')
     $('#add-rate2').html('')
-    rate1 = 1
-    rate2 = 1
+    rate1 = BigInt(0)
+    rate2 = BigInt(0)
     rate1_str = '0'
     rate2_str = '0'
 
@@ -1999,7 +2004,7 @@ function add_pool_update_info(){
   var share = 100
 
   if(pair && pair_token1_amount > 0){
-    share = to_add.token1_amount / pair_token1_amount
+    share = parseInt(to_add.token1_amount * BigInt(100) / pair_token1_amount)
   }
 
   $('#add-pool-share').html(share.toFixed(2) + '%')
