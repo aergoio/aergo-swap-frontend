@@ -1745,8 +1745,6 @@ $('#show-add-liquidity-page').click(function(){
     return
   }
 
-  pair_address = ''
-
   if(pair_token1=='' || pair_token2==''){
     add_on_chain_changed()
   }else{
@@ -1840,8 +1838,8 @@ $('#add-liquidity-select-token2').click(function(){ add_liquidity_select_token(2
 function use_max_amount(input, n){
   var token = (n==1) ? pair_token1 : pair_token2
   var token_amount = `token${n}_amount`
-  to_add[token_amount] = balances[token].toString()
-  var amount_str = to_decimal_str(to_add[token_amount], token_info[token].decimals, 6)
+  to_add[token_amount] = BigInt(balances[token])
+  var amount_str = to_decimal_str(balances[token], token_info[token].decimals, 6)
   $(input).val(amount_str)
   on_add_token_input_changed(n)
 }
@@ -1954,19 +1952,25 @@ function add_pool_update_info(){
 
   var pair = pair_info[pair_address]
 
+  var token1 = (pair_token1=='aergo') ? waergo : pair_token1
+  var token2 = (pair_token2=='aergo') ? waergo : pair_token2
+
+  var is_empty = false
+
   pair_token1_amount = BigInt(0)
   pair_token2_amount = BigInt(0)
   if( pair ){
-    pair_token1_amount = pair.reserves[pair_token1]
-    pair_token2_amount = pair.reserves[pair_token2]
+    pair_token1_amount = pair.reserves[token1]
+    pair_token2_amount = pair.reserves[token2]
   }
   if( pair_token1_amount==0 && pair_token2_amount==0 ){
-    pair_token1_amount = BigInt(to_add.token1_amount)
-    pair_token2_amount = BigInt(to_add.token2_amount)
+    pair_token1_amount = to_add.token1_amount
+    pair_token2_amount = to_add.token2_amount
+    is_empty = true
   }
 
-  //pair_token1_amount += BigInt(to_add.token1_amount)
-  //pair_token2_amount += BigInt(to_add.token2_amount)
+  //var total_token1_amount = pair_token1_amount + to_add.token1_amount
+  //var total_token2_amount = pair_token2_amount + to_add.token2_amount
 
   var rate1, rate2, rate1_str, rate2_str
 
@@ -1975,8 +1979,6 @@ function add_pool_update_info(){
 
   if( pair_token1_amount==0 || pair_token2_amount==0 ){
 
-    $('#add-rate1').html('')
-    $('#add-rate2').html('')
     rate1 = BigInt(0)
     rate2 = BigInt(0)
     rate1_str = '0'
@@ -2010,6 +2012,11 @@ function add_pool_update_info(){
 
   $('#add-pool-share').html(share.toFixed(2) + '%')
 
+
+  if(is_empty){
+    rate1 = BigInt(0)
+    rate2 = BigInt(0)
+  }
   return [rate1, rate2]
 }
 
