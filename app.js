@@ -2045,6 +2045,13 @@ function add_pool_update_buttons(){
   var base_token  = pair_info[pair_address].token2
   var other_token = pair_info[pair_address].token1
 
+  if (base_token==waergo && (pair_token1=='aergo' || pair_token2=='aergo')) {
+    base_token = 'aergo'
+  }
+  if (other_token==waergo && (pair_token1=='aergo' || pair_token2=='aergo')) {
+    other_token = 'aergo'
+  }
+
   var prefix = sent_base_token ? 'Undo ' : ''
   $('#add-token1-button').html(prefix + 'Add ' + token_info[base_token].symbol)
   $('#add-token2-button').html('Add ' + token_info[other_token].symbol)
@@ -2101,8 +2108,10 @@ $('#create-pair > button').click(function(){
 
 function add_first_token(){
 
-  var base_token  = pair_info[pair_address].token2
-  //var other_token = pair_info[pair_address].token1
+  var base_token = pair_info[pair_address].token2
+  if (base_token==waergo && (pair_token1=='aergo' || pair_token2=='aergo')) {
+    base_token = 'aergo'
+  }
 
   var token_amount = (base_token==pair_token1) ? to_add.token1_amount : to_add.token2_amount
   if (token_amount==0) {
@@ -2156,8 +2165,10 @@ function add_first_token(){
 
 function remove_first_token(){
 
-  var base_token  = pair_info[pair_address].token2
-  //var other_token = pair_info[pair_address].token1
+  var base_token = pair_info[pair_address].token2
+  if (base_token==waergo && (pair_token1=='aergo' || pair_token2=='aergo')) {
+    base_token = 'aergo'
+  }
 
   var symbol = token_info[base_token].symbol
 
@@ -2204,8 +2215,10 @@ $('#add-token1-button').click(function(){
 
 $('#add-token2-button').click(function(){
 
-  //var base_token  = pair_info[pair_address].token2
   var other_token = pair_info[pair_address].token1
+  if (other_token==waergo && (pair_token1=='aergo' || pair_token2=='aergo')) {
+    other_token = 'aergo'
+  }
 
   var token_amount = (other_token==pair_token1) ? to_add.token1_amount : to_add.token2_amount
   if (token_amount==0) {

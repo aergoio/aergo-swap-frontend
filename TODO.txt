@@ -3,6 +3,8 @@ TODO:
 
   - make aergo/waergo be the base token on new_pair
 
+  - after adding token, update balances
+
   - add to gitlab or github
 
   - deploy swap factory
