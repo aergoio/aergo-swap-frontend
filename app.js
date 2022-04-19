@@ -316,7 +316,7 @@ async function connect_wallet_click() {
 function on_account_connected(){
 
   update_swap_button('Swap', true)
-
+  update_add_button('Add New Position')
 
   $('#connect-wallet').addClass('hidden')
 
@@ -934,11 +934,9 @@ function is_empty_pair(){
 }
 
 function update_swap_button(text, enabled){
-/*
   if(!account_address || account_address==''){
     return
   }
-*/
   var button = document.getElementById("main-button")
   button.innerHTML = text
   button.disabled = !enabled
@@ -1535,6 +1533,11 @@ function load_user_pools(force){
 
 function get_user_pools(first){
 
+  if(!account_address || account_address==''){
+    update_pool_list()
+    return
+  }
+
   try {
 
     aergo.queryContract(
@@ -1703,6 +1706,14 @@ function add_on_chain_changed(){
 
 }
 
+function update_add_button(text){
+  if(!account_address || account_address==''){
+    return
+  }
+  var button = document.getElementById("show-add-liquidity-page")
+  button.innerHTML = text
+}
+
 function on_add_liquidity_click(){
 
   var i = $(this).parent().attr('pair')
@@ -1721,6 +1732,11 @@ function on_add_liquidity_click(){
 }
 
 $('#show-add-liquidity-page').click(function(){
+
+  if(!account_address || account_address==''){
+    connect_wallet_click()
+    return
+  }
 
   pair_address = ''
 
