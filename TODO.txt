@@ -1,0 +1,63 @@
+
+TODO:
+
+  - add to gitlab or github
+
+  - deploy swap factory
+  - test with the factory
+    - create pair
+    - add liquidity
+    - undo add first token
+    - increase liquidity
+    - remove liquidity
+    - swap
+
+  /- ability to select AERGO token
+
+  - capture slippage when typed on the config page
+
+  - let the 2nd token unchosen - use text 'select token'
+
+  - the tokens cannot be the same
+
+  - update price/rate periodically
+  - routing / paths
+
+    get_route(token1, token2, amount, callback)
+
+  - test with tokens with different decimals
+
+
+  /- load_user_pools()
+  /- create and send txns
+
+  /- pair.reserves
+
+  /- calculate min_output using slippage -> already calculated, use the value on the txn
+  - check/enhance calculations for swap, 
+  /- use values on txn  (token_amount, min_output, exact_output)
+
+
+  - confirmation dialogs
+  - txn sent dialog, success dialog, failure dialog
+
+  - multi-language
+      the placement of token symbol in the sentence can vary, so use {1} or %1 to represent
+      the place to put variables
+
+
+  - show only 1 WAERGO token contract? use curated list of tokens?
+
+  - store images/token logos on another place
+
+
+
+//  √  if the pair is AERGO-WAERGO then just wrap/unwrap (on the swap)
+//  √  and do not allow to create a pair
+
+// if one of the tokens is AERGO, then it must use the waergo contract when:
+// - making a swap
+// - adding liquidity
+
+// when creating a pair, if one is AERGO, use WAERGO as the token
+

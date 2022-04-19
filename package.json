@@ -1,0 +1,32 @@
+{
+    "name": "aergo-swap",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.html",
+    "scripts": {
+        "build": "browserify app.js -o bundle.js",
+        "watch": "watchify app.js -o bundle.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/aergoio/aergo-defi-tools.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/aergoio/aergo-defi-tools/issues"
+    },
+    "homepage": "https://github.com/aergoio/aergo-defi-tools#readme",
+    "devDependencies": {
+        "browserify": "^16.5.2",
+        "watchify": "^3.11.1"
+    },
+    "dependencies": {
+        "@herajs/client": "^1.1.0",
+        "cors": "^2.8.5",
+        "express": "^4.17.3",
+        "jquery": "^3.5.1",
+        "morgan": "^1.10.0",
+        "sweetalert2": "^10.3.3"
+    }
+}
