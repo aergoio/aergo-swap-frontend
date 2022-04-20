@@ -21,7 +21,7 @@ var swap_token2_amount
 var pair = {reserves: {}}
 
 const swap_factory_mainnet = ""
-const swap_factory_testnet = "AmhgtYrsrPVoQKBQiR7xitHNdghsuqRHTqMXjJ6BmLAgijGUedkq"
+const swap_factory_testnet = "AmhPw7kvca4b6Bibhe9WMNLvgutf9h1Gc5PvMPvwTtkvFSAkh8E4"
 const swap_factory_alphanet = ""
 var swap_factory = swap_factory_mainnet
 
@@ -925,13 +925,16 @@ function is_empty_pair(){
     return false
   }
 
+  var tokenA = (token1=='aergo') ? waergo : token1
+  var tokenB = (token2=='aergo') ? waergo : token2
+
   return (
     !pair ||
     !pair.reserves ||
-    !pair.reserves[token1] ||
-    !pair.reserves[token2] ||
-     pair.reserves[token1] == 0 ||
-     pair.reserves[token2] == 0
+    !pair.reserves[tokenA] ||
+    !pair.reserves[tokenB] ||
+     pair.reserves[tokenA] == 0 ||
+     pair.reserves[tokenB] == 0
   )
 
 }
@@ -969,6 +972,9 @@ function on_input1(){
     return
   }
 
+  var token11 = (token1=='aergo') ? waergo : token1
+  var token22 = (token2=='aergo') ? waergo : token2
+
   var decimals1 = token_info[token1].decimals
   var decimals2 = token_info[token2].decimals
 
@@ -982,7 +988,7 @@ function on_input1(){
     if(is_aergo(token1) && is_aergo(token2)){
       swap_token2_amount = swap_token1_amount
     }else{
-      swap_token2_amount = calculate_output(swap_token1_amount, pair.reserves[token1], pair.reserves[token2])
+      swap_token2_amount = calculate_output(swap_token1_amount, pair.reserves[token11], pair.reserves[token22])
     }
 
     var token2_amount = to_decimal_str(swap_token2_amount.toString(), decimals2)
@@ -1022,6 +1028,9 @@ function on_input2(){
     return
   }
 
+  var token11 = (token1=='aergo') ? waergo : token1
+  var token22 = (token2=='aergo') ? waergo : token2
+
   var decimals1 = token_info[token1].decimals
   var decimals2 = token_info[token2].decimals
 
@@ -1035,7 +1044,7 @@ function on_input2(){
     if(is_aergo(token1) && is_aergo(token2)){
       swap_token1_amount = swap_token2_amount
     }else{
-      swap_token1_amount = calculate_input(swap_token2_amount, pair.reserves[token1], pair.reserves[token2])
+      swap_token1_amount = calculate_input(swap_token2_amount, pair.reserves[token11], pair.reserves[token22])
     }
 
     if (swap_token1_amount < 0) {
@@ -1141,9 +1150,12 @@ function update_swap_info(direction){
   var decimals1 = token_info[token1].decimals
   var decimals2 = token_info[token2].decimals
 
+  var token11 = (token1=='aergo') ? waergo : token1
+  var token22 = (token2=='aergo') ? waergo : token2
+
   if(direction==0){
     var multiplier = BigInt(10) ** BigInt(decimals1)
-    var amount = pair.reserves[token2] * multiplier / pair.reserves[token1]
+    var amount = pair.reserves[token22] * multiplier / pair.reserves[token11]
     amount = to_decimal_str(amount.toString(), decimals2)
 
     info = info.replace('%1', token_info[token1].symbol)
@@ -1152,7 +1164,7 @@ function update_swap_info(direction){
     info = info.replace('%4', '')
   }else{
     var multiplier = BigInt(10) ** BigInt(decimals2)
-    var amount = pair.reserves[token1] * multiplier / pair.reserves[token2]
+    var amount = pair.reserves[token11] * multiplier / pair.reserves[token22]
     amount = to_decimal_str(amount.toString(), decimals1)
 
     info = info.replace('%1', token_info[token2].symbol)
@@ -1175,13 +1187,13 @@ function update_swap_info(direction){
   var token2_amount = swap_token2_amount
 
   // calculate price impact
-  var normal_output = token1_amount * pair.reserves[token2] / pair.reserves[token1]
+  var normal_output = token1_amount * pair.reserves[token22] / pair.reserves[token11]
   var impact = Number((normal_output - token2_amount) * BigInt(10000) / normal_output) / 100.0
 
 /*
 //  var multiplier = BigInt(10) ** BigInt(decimals1)
-//  var token2_amount = pair.reserves[token2] * multiplier * BigInt(token1_amount) / pair.reserves[token1]
-  var token2_amount = pair.reserves[token2] * BigInt(token1_amount) / pair.reserves[token1]
+//  var token2_amount = pair.reserves[token22] * multiplier * BigInt(token1_amount) / pair.reserves[token11]
+  var token2_amount = pair.reserves[token22] * BigInt(token1_amount) / pair.reserves[token11]
   var min_output = token2_amount * BigInt((100 - slippage) * 100) / BigInt(10000)
   min_output = to_decimal_str(min_output.toString(), decimals2, 6)
 */
