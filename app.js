@@ -1309,7 +1309,7 @@ $('#confirm-swap-button').click(function(){
       type: 5,  // CALL
       from: account_address,
       to: waergo,
-      amount: token_amount,
+      amount: token_amount + ' aer',
       payload_json: {
         Name: "wrap",
         Args: []
@@ -1339,7 +1339,7 @@ $('#confirm-swap-button').click(function(){
       type: 5,  // CALL
       from: account_address,
       to: waergo,
-      amount: token_amount,
+      amount: token_amount + ' aer',
       payload_json: {
         Name: "wrap_to",
         Args: [pair_address, "swap", args]
@@ -2124,6 +2124,7 @@ function add_first_token(){
   // disable the input boxes, so the user cannot change the values while adding liquidity
   $('#add-token1-amount').prop('disabled', true)
   $('#add-token2-amount').prop('disabled', true)
+// max button too!
 
 
   // prepare and send the transaction
@@ -2135,7 +2136,7 @@ function add_first_token(){
       type: 5,  // CALL
       from: account_address,
       to: waergo,
-      amount: token_amount,
+      amount: token_amount + ' aer',
       payload_json: {
         Name: "wrap_to",
         Args: [pair_address, "store_token"]
@@ -2238,7 +2239,7 @@ $('#add-token2-button').click(function(){
       type: 5,  // CALL
       from: account_address,
       to: waergo,
-      amount: token_amount,
+      amount: token_amount + ' aer',
       payload_json: {
         Name: "wrap_to",
         Args: [pair_address, "add_liquidity"]
