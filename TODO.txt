@@ -1,6 +1,15 @@
 
 TODO:
 
+  after swap:
+    - clear inputs?
+    - update pair_info
+    - update balances
+
+  - filter ASLPT tokens
+
+  - use the new waergo address here and on the factory (set_config or on new factory)
+
   - make aergo/waergo be the base token on new_pair
 
   - after adding token or removing liquidity or swapping: update balances

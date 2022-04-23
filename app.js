@@ -1572,6 +1572,35 @@ function get_user_pools(first){
       if(!is_last){
         get_user_pools(first + 200)
       }else{
+
+        for(var i=0; i<current_pool_list.length; i++){
+          var item = current_pool_list[i]
+
+          var share_num = BigInt(item[7])  // lptoken_amount
+          var share_den = BigInt(item[6]) - BigInt(1000)  // lptoken_supply
+
+          current_pool_list[i] = {
+
+            pair: item[0],
+            token1: item[1],
+            token2: item[2],
+            lptoken: item[3],
+
+            lptoken_supply: share_den.toString(),  // item[6],
+            lptoken_amount: item[7],
+            share_num: share_num,
+            share_den: share_den,
+            share: parseFloat(share_num * BigInt(10000) / share_den) / 10000,
+
+            token1_total_amount: item[4],
+            token2_total_amount: item[5],
+
+            token1_amount: (BigInt(item[4]) * share_num / share_den).toString(),
+            token2_amount: (BigInt(item[5]) * share_num / share_den).toString()
+
+          }
+        }
+
         update_pool_list()
       }
 
@@ -1609,6 +1638,44 @@ function get_user_pools(first){
   update_pool_list()
 
 */
+
+}
+
+async function get_updated_user_pools(){
+
+  var calls = []
+
+  for(var i=0; i<current_pool_list.length; i++){
+    var pool = current_pool_list[i]
+    calls.push([pool.pair, "get_pool_info", account_address])
+  }
+
+  try {
+    var results = await aergo.queryContract(multicall, "force_aggregate", calls)
+
+    console.log('get_updated_user_pools:', results)
+
+    for(var i=0; i<current_pool_list.length; i++){
+      var pool = current_pool_list[i]
+      var result = results[i]
+      if (result[0]==false) continue
+
+      pool.token1_total_amount = result[1][3]
+      pool.token2_total_amount = result[1][4]
+
+      pool.token1_amount = (BigInt(pool.token1_total_amount) * pool.share_num / pool.share_den).toString()
+      pool.token2_amount = (BigInt(pool.token2_total_amount) * pool.share_num / pool.share_den).toString()
+    }
+
+  } catch (e) {
+    console.log(e)
+    if (error_msg) {
+      swal.fire({
+        icon: 'error',
+        text: e.toString()
+      })
+    }
+  }
 
 }
 
