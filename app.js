@@ -2061,7 +2061,20 @@ function update_input_price(){
 }
 
 var update_routes_timer = null
-// -> called by a timer - setInterval
+
+function enable_router_timer(){
+  if(update_routes_timer==null){
+    update_routes_timer = setInterval(update_routes, 30 * 1000) // 30 seconds
+  }
+}
+
+function disable_router_timer(){
+  if(update_routes_timer!=null){
+    clearInterval(update_routes_timer)
+    update_routes_timer = null
+  }
+}
+
 function update_routes(){
 
   // request updated pair_info from all pairs
@@ -2086,27 +2099,14 @@ function update_routes(){
     var n = 0
     for (route of routes) {
       for (pair of route) {
-        var result = results[n]; n += 1;
-        update_pair_info(pair.address, result)
+        update_pair_info(pair.address, results[n])
+        n += 1
       }
     }
 
     update_swap_price()
   })
 
-}
-
-function enable_router_timer(){
-  if(update_routes_timer==null){
-    update_routes_timer = setInterval(update_routes, 30 * 1000) // 30 seconds
-  }
-}
-
-function disable_router_timer(){
-  if(update_routes_timer!=null){
-    clearInterval(update_routes_timer)
-    update_routes_timer = null
-  }
 }
 
 function invert_routes(){
