@@ -852,14 +852,16 @@ $('#token-list-parent')[0].onscroll = function(){
 }
 */
 
-function on_token_search_input(){
+function on_token_search_input(event){
 
-  if (this.value.length == 0) {
+  var elem = event.target
+
+  if (elem.value.length == 0) {
     populate_token_list(tokens)
     return
   }
 
-  var typed = this.value.toUpperCase()
+  var typed = elem.value.toUpperCase()
 
   var result = tokens.filter(function(address){
     var token = token_info[address]
@@ -870,7 +872,7 @@ function on_token_search_input(){
   if (result.length==0) {
     // search by token address
     //result = tokens.filter(address => address.toUpperCase()==typed)
-    typed = this.value
+    typed = elem.value
     result = tokens.filter(address => address==typed)
   }
 
@@ -883,7 +885,7 @@ input.addEventListener('input', on_token_search_input)
 input.addEventListener('keydown', function(event) {
   const key = event.key
   if (key === "Backspace" || key === "Delete") {
-    on_token_search_input()
+    on_token_search_input(event)
   }
 })
 
@@ -2349,7 +2351,7 @@ $('#max-token2').click(function(){
 
 function on_add_token_input(event){
 
-  var elem = event.srcElement
+  var elem = event.target
 
   var n = (elem.id=='add-token1-amount') ? 1 : 2
   var token = (n==1) ? pair_token1 : pair_token2
