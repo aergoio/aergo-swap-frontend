@@ -21,3 +21,11 @@ Install the extension and then create an account on the wallet, on the `testnet`
 
 Then copy your account address, and put tokens on your account in the [faucet.aergoscan.io](https://faucet.aergoscan.io)
 
+
+### Tips for working
+
+* Run `node server.js` on a dedicated terminal
+* Run `npm run build` every time the `app.js` file is updated
+* Do NOT use VSCode as editor of `app.js` because it reformats the entire file (unless you know how to disable it)
+* Push your changes to a separate branch
+
