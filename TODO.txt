@@ -6,24 +6,36 @@ TODO:
     - update pair_info
     - update balances
 
-  - filter ASLPT tokens
+  - implement basic routing
 
-  - use the new waergo address here and on the factory (set_config or on new factory)
+  - subscribe to events from the current selected token pair contract(s)
+  - when a token is selected, unsubscribe, subscribe to a new pair (if some), and request pair info
+    if using a multi-hop route, subscribe to each contract on the route/path
+    if using many / split routes, subscribe to each contract on all the paths
+
+  - use separate js files - with require or import
+    "cat a.js b.js > concat.js && browserify concat.js -o bundle.js && rm concat.js"
+
+  - filter out ASLPT tokens
+
+  - deploy new waergo, use the new waergo address here and on the factory (set_config or on new factory)
+  - update on ARC1: add field for additional info? is it required? useful?
 
   - make aergo/waergo be the base token on new_pair
 
-  - after adding token or removing liquidity or swapping: update balances
+  - after adding each token to liquidity or undo or removing liquidity or swapping: update balances
 
-  - add to gitlab or github
+  - display the price impact value next to the output value
+    use different colors for the label, depending on the value
 
-  - deploy swap factory
-  - test with the factory
+  - test with the swap factory:
     - create pair
     - add liquidity
     - undo add first token
     - increase liquidity
     - remove liquidity
     - swap
+    - routes
 
   /- ability to select AERGO token
 
