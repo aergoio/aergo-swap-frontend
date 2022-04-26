@@ -21,12 +21,12 @@ var swap_token2_amount
 var pair = {reserves: {}}
 
 const swap_factory_mainnet = ""
-const swap_factory_testnet = "AmhPw7kvca4b6Bibhe9WMNLvgutf9h1Gc5PvMPvwTtkvFSAkh8E4"
+const swap_factory_testnet = "AmhUPonrL5GgGBadrz6se86EWcejGHrojuJRL8QxgUwHBHdPT1FL"
 const swap_factory_alphanet = ""
 var swap_factory = swap_factory_mainnet
 
 const waergo_mainnet = ""
-const waergo_testnet = "AmhEHnMcHvNXtW4nszzCvh4iLbV7BMgBkd4F1kn1jgzoAGW6oNqq"
+const waergo_testnet = "Amhop8LbAPynYpbcMUacSVPcCsxXPHaauRhGfaCP2eV8LoBLWcyz"
 const waergo_alphanet = ""
 var waergo = waergo_mainnet
 
