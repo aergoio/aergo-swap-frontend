@@ -1284,11 +1284,30 @@ function swap_click(){
     connect_wallet_click()
     return
   }
+  //==========Edited Code
+  $('#confirm-swap-amount1').html(to_decimal_str(swap_token1_amount.toString(), token_info[token1].decimals))
+  $('#confirm-swap-amount2').html(to_decimal_str(swap_token2_amount.toString(), token_info[token2].decimals))
+  $('#confirm-swap-name1').html(token_info[token1].symbol)
+  $('#confirm-swap-name2').html(token_info[token2].symbol)
+  add_liquidity_set_icon('#confirm-swap-symbol1', 1)
+  add_liquidity_set_icon('#confirm-swap-symbol2', 2)
+
+  //====================================
 
   $('#confirm-swap').removeClass('hidden')
 
 }
 
+//======Added Function
+function add_liquidity_set_icon(parent, n){
+
+  var imgsrc = 'https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/ethereum/assets/0x91Af0fBB28ABA7E31403Cb457106Ce79397FD4E6/logo.png'
+
+  var img = $(parent + ' > span > img')[0]
+  img.src = imgsrc
+  img.srcset = imgsrc + ' 1x, ' + imgsrc + ' 2x'
+}
+//=====================
 $('#confirm-swap-button').click(function(){
 
   var token_amount = swap_token1_amount.toString()
