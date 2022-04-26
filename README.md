@@ -27,5 +27,5 @@ Then copy your account address, and put tokens on your account in the [faucet.ae
 * Run `node server.js` on a dedicated terminal
 * Run `npm run build` every time the `app.js` file is updated
 * Do NOT use VSCode as editor of `app.js` because it reformats the entire file (unless you know how to disable it)
+* Do NOT include `bundle.js` and the `node_modules` in the repo, nor any unnecessary file
 * Push your changes to a separate branch
-
