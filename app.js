@@ -1882,12 +1882,17 @@ function find_routes(){
       var tokens_with_A = Object.keys(pairs_with_A)
       var tokens_with_B = Object.keys(pairs_with_B)
 
+      // check for direct route
       if (tokens_with_B.includes(tokenA)) {
         pre_routes.push([
           [tokenA, tokenB, pairs_with_A[tokenB]]
         ])
+        // remove already used path
+        tokens_with_A.splice(tokens_with_A.indexOf(tokenB), 1)
+        tokens_with_B.splice(tokens_with_B.indexOf(tokenA), 1)
       }
 
+      // check for routes with common tokens
       var common_tokens = tokens_with_A.filter(value => tokens_with_B.includes(value))
 
       for (token of common_tokens) {
@@ -1921,6 +1926,7 @@ function find_routes(){
             if (tokenC==tokenA || tokenC==tokenB) continue;
             var pairs_with_C = results[n]
             var tokens_with_C = Object.keys(pairs_with_C)
+
             var common_tokens = tokens_with_C.filter(value => tokens_with_B.includes(value))
             for (tokenD of common_tokens) {
               pre_routes.push([
@@ -1957,7 +1963,7 @@ function find_routes(){
 // store them in pair_info, and create a link to them in the routes array
 function get_routes_info(){
 
-  console.log('get_routes_info - pre_routes:', pre_routes.length)
+  console.log('get_routes_info - pre_routes:', pre_routes)
 
   if (pre_routes.length == 0) return
 

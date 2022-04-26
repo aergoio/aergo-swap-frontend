@@ -12,7 +12,7 @@ COMPUTATIONS + BLOCKCHAIN:
 
     get_route(token1, token2, amount, callback)
 
-  - pair_address on txdata + args.path
+  - auto-router on a smart contract (?) - for speed - test
 
   - when adding liquidity and going to swap, it does not recognize the current pair
 
