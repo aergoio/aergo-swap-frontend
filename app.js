@@ -1935,23 +1935,33 @@ function get_routes_info(){
 
   //! can all the calls the done in a single multicall?
 
+  // get unique pairs
+  var pairs = new Set()
   for (pre_route of pre_routes) {
     var pair_address = pre_route[2]
-    calls.push([pair_address, "get_pool_info"])
+    pairs.add(pair_address)
+  }
+  var calls = []
+  for (pair of pairs) {
+    calls.push([pair, "get_pool_info"])
   }
 
   aergo.queryContract(multicall, "aggregate", calls).then(function(results){
 
+    var n = 0
+    for (call of calls) {
+      var pair_address = call[0]
+      update_pair_info(pair_address, results[n])
+      n += 1
+    }
+
     if (current_route_req != last_route_req) return
 
-    var n = 0
     for (pre_route of pre_routes) {
       var new_route = []
       for (step of pre_route) {
-        var pair_address = step[2]
-        var result = results[n]; n += 1;
-        var info = update_pair_info(pair_address, result)
-        new_route.push(info)
+        var address = find_pair(step[0], step[1])
+        new_route.push(pair_info[address])
       }
       routes.push(new_route)
     }
@@ -2082,14 +2092,20 @@ function update_routes(){
   if (routes.length == 0) return
 
   let current_route_req = last_route_req  // use let here
-  var calls = []
 
   //! can all the calls the done in a single multicall?
 
+  // get unique pairs
+  var pairs = new Set()
   for (route of routes) {
     for (pair of route) {
-      calls.push([pair.address, "get_pool_info"])
+      pairs.add(pair.address)
     }
+  }
+
+  var calls = []
+  for (pair of pairs) {
+    calls.push([pair, "get_pool_info"])
   }
 
   aergo.queryContract(multicall, "aggregate", calls).then(function(results){
@@ -2097,11 +2113,10 @@ function update_routes(){
     if (current_route_req != last_route_req) return
 
     var n = 0
-    for (route of routes) {
-      for (pair of route) {
-        update_pair_info(pair.address, results[n])
-        n += 1
-      }
+    for (call of calls) {
+      var pair_address = call[0]
+      update_pair_info(pair_address, results[n])
+      n += 1
     }
 
     update_swap_price()
