@@ -18,7 +18,6 @@ var max_input = BigInt(0)
 var swap_input = 0
 var swap_token1_amount
 var swap_token2_amount
-var pair = {reserves: {}}
 
 const swap_factory_mainnet = ""
 const swap_factory_testnet = "AmhUPonrL5GgGBadrz6se86EWcejGHrojuJRL8QxgUwHBHdPT1FL"
@@ -610,17 +609,15 @@ function on_token_selected_swap(address){
   $('#amount1')[0].value = ''
   $('#amount2')[0].value = ''
 
-  pair = {reserves: {}}
+  swap_input = 1
+  swap_token1_amount = BigInt(0)
+  swap_token2_amount = BigInt(0)
 
-  get_pair_info(token1, token2, function(address){
-    pair_address = address
-    pair = pair_info[address]
-    if(swap_input==1){
-      on_input1()
-    }else if(swap_input==2){
-      on_input2()
-    }
-  })
+  routes = []
+  pre_routes = []
+  best_route = null
+  last_route_req = 0
+  update_swap_price()
 
 }
 
@@ -923,24 +920,12 @@ function xx(){
 
 // when using a path we must to do this for each step/hop in the path
 
-function is_empty_pair(){
-
+function no_routes(){
   if(is_aergo(token1) && is_aergo(token2)){
     return false
   }
-
-  var tokenA = (token1=='aergo') ? waergo : token1
-  var tokenB = (token2=='aergo') ? waergo : token2
-
-  return (
-    !pair ||
-    !pair.reserves ||
-    !pair.reserves[tokenA] ||
-    !pair.reserves[tokenB] ||
-     pair.reserves[tokenA] == 0 ||
-     pair.reserves[tokenB] == 0
-  )
-
+  //return (best_route==null && last_route_req>0)
+  return (routes.length==0 && last_route_req>0)
 }
 
 function update_swap_button(text, enabled){
@@ -958,14 +943,12 @@ function on_input1(){
   swap_token1_amount = BigInt(0)
   swap_token2_amount = BigInt(0)
 
-  if(is_empty_pair()){
-    console.log('empty pair')
+  if(no_routes()){
+    console.log('no routes')
     document.getElementById('amount2').value = ''
     update_swap_button('Insufficient liquidity', false)
     hide_swap_info()
     return
-  }else{
-    update_swap_button('Swap', true)
   }
 
   var typed_amount = document.getElementById('amount1').value
@@ -1002,8 +985,8 @@ function on_input2(){
   swap_token1_amount = BigInt(0)
   swap_token2_amount = BigInt(0)
 
-  if(is_empty_pair()){
-    console.log('empty pair')
+  if(no_routes()){
+    console.log('no routes')
     document.getElementById('amount1').value = ''
     update_swap_button('Insufficient liquidity', false)
     hide_swap_info()
@@ -1046,10 +1029,15 @@ function show_swap_price(){
 
   if (swap_input==1) {
 
+    if (swap_token2_amount <= 0) {
+      document.getElementById('amount2').value = ''
+      update_swap_button('Insufficient liquidity', false)
+      hide_swap_info()
+      return
+    }
+
     document.getElementById('amount2').value =
       to_decimal_str(swap_token2_amount.toString(), decimals2)
-
-    show_swap_info()
 
   }else{
 
@@ -1063,10 +1051,10 @@ function show_swap_price(){
     document.getElementById('amount1').value =
       to_decimal_str(swap_token1_amount.toString(), decimals1);
 
-    update_swap_button('Swap', true)
-    show_swap_info()
-
   }
+
+  update_swap_button('Swap', true)
+  show_swap_info()
 
 }
 
@@ -1801,6 +1789,8 @@ var routes = []
 var pre_routes = []
 var best_route = null
 
+var last_route_req = 0   // reset when token is selected
+
 /*
 
 with multicall:
@@ -1819,8 +1809,6 @@ get the one with best output (or compute input if giving output)
 */
 
 // maybe request the pair_info in the same (2nd) multicall, or at the same time on a separate request
-
-var last_route_req = 0
 
 function find_routes(){
 
@@ -1868,6 +1856,8 @@ function find_routes(){
         ])
       }
 
+      console.log('find_routes - pre_routes:', pre_routes)
+
       // check for paths with 3 hops
 
       calls = []
@@ -1878,10 +1868,12 @@ function find_routes(){
         }
       }
       if (calls.length > 0) {
+        console.log('find_routes - calls2:', calls)
         aergo.queryContract(multicall, "aggregate", calls).then(function(results){
 
-          if (current_route_req != last_route_req) return
           console.log('find_routes result2:', results)
+
+          if (current_route_req != last_route_req) return
 
           var n = 0
           for (tokenC of tokens_with_A) {
@@ -1924,6 +1916,8 @@ function find_routes(){
 // store them in pair_info, and create a link to them in the routes array
 function get_routes_info(){
 
+  console.log('get_routes_info - pre_routes:', pre_routes.length)
+
   if (pre_routes.length == 0) return
 
   let current_route_req = last_route_req  // use let here
@@ -1938,15 +1932,23 @@ function get_routes_info(){
   // get unique pairs
   var pairs = new Set()
   for (pre_route of pre_routes) {
-    var pair_address = pre_route[2]
-    pairs.add(pair_address)
+    for (step of pre_route) {
+      console.log('get_routes_info - step:', step)
+      var pair_address = step[2]
+      pairs.add(pair_address)
+    }
   }
   var calls = []
   for (pair of pairs) {
+    console.log('get_routes_info - pair:', pair)
     calls.push([pair, "get_pool_info"])
   }
 
+  console.log('get_routes_info - for', calls.length, 'pairs - calls:', calls)
+
   aergo.queryContract(multicall, "aggregate", calls).then(function(results){
+
+    console.log('get_routes_info results:', results)
 
     var n = 0
     for (call of calls) {
@@ -1975,6 +1977,13 @@ function get_routes_info(){
 }
 
 function update_swap_price(){
+
+  console.log('update_swap_price - routes:', routes.length)
+
+  if(routes.length==0 && last_route_req==0){
+    find_routes()
+    return
+  }
 
   if (swap_input==1) {
     update_output_price()

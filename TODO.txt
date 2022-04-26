@@ -12,6 +12,13 @@ COMPUTATIONS + BLOCKCHAIN:
 
     get_route(token1, token2, amount, callback)
 
+  - pair_address on txdata + args.path
+
+  - when adding liquidity and going to swap, it does not recognize the current pair
+
+  - when selecting an account: does not need to reload tokens if it is from the same network/chainId
+  - allow to select another account?
+
   - subscribe to events from the current selected token pair contract(s)
   - when a token is selected, unsubscribe, subscribe to a new pair (if some), and request pair info
     if using a multi-hop route, subscribe to each contract on the route/path
