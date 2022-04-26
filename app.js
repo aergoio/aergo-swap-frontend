@@ -2545,21 +2545,18 @@ $('#create-pair > button').click(function(){
 
     pair_address = result.replace(/^"|"$/g, '')
 
-    //get_pair_info ...
+    get_pair_info(pair_tokenA, pair_tokenB, function(address){
+      add_pool_update_info()
+    })
 
-    var info = {
-      token1: pair_tokenA,
-      token2: pair_tokenB,
-      lptoken: '',   //!  not returned
-      token1_amount: '0',
-      token2_amount: '0',
-      lptoken_amount: '0',
-      reserves: {}
-    }
-    info.reserves[pair_tokenA] = BigInt(0)
-    info.reserves[pair_tokenB] = BigInt(0)
-
-    pair_info[pair_address] = info
+    update_pair_info(pair_address, [
+      pair_tokenA, // token1
+      pair_tokenB, // token2
+      '',   // lptoken - not returned
+      '0',  // token1_amount
+      '0',  // token2_amount
+      '0'   // lptoken_amount
+    ])
 
     //add_pool_update_info()
     add_pool_update_buttons()
