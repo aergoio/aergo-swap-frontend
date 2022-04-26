@@ -1305,6 +1305,16 @@ function swap_click(){
 
 $('#confirm-swap-button').click(function(){
 
+  if(is_aergo(token1) && is_aergo(token2)){
+    process_aergo()
+    return
+  }
+
+  if( best_route==null || best_route.length==0 ){
+    console.log('swap: no current route')
+    return
+  }
+
   var token_amount = swap_token1_amount.toString()
 
   // options
@@ -1319,43 +1329,22 @@ $('#confirm-swap-button').click(function(){
     return  //!
   }
 
-/*
-  if( x ){
-    args.path = x
+  var pair_address = best_route[0].address
+
+  if( best_route.length > 1 ){
+    var path = []
+    for (step in best_route) {
+      path.push(step.address)
+    }
+    path.push(account_address)
+    args.path = path
   }
-*/
 
   // prepare and send the transaction
 
   var txdata
 
-  if (token1=='aergo' && token2==waergo) {  // wrap
-
-    txdata = {
-      type: 5,  // CALL
-      from: account_address,
-      to: waergo,
-      amount: token_amount + ' aer',
-      payload_json: {
-        Name: "wrap",
-        Args: []
-      }
-    }
-
-  }else if (token1==waergo && token2=='aergo') {  // unwrap
-
-    txdata = {
-      type: 5,  // CALL
-      from: account_address,
-      to: waergo,
-      amount: 0,
-      payload_json: {
-        Name: "unwrap",
-        Args: [token_amount]
-      }
-    }
-
-  }else if (token1=='aergo') {
+  if (token1=='aergo') {
 
     if( swap_input==2 ){
       token_amount = max_input
@@ -1398,9 +1387,53 @@ $('#confirm-swap-button').click(function(){
 
     // ...
 
-  });
+  })
 
 })
+
+function process_aergo(){
+
+  var token_amount = swap_token1_amount.toString()
+
+  var txdata
+
+  if (token1=='aergo' && token2==waergo) {  // wrap
+
+    txdata = {
+      type: 5,  // CALL
+      from: account_address,
+      to: waergo,
+      amount: token_amount + ' aer',
+      payload_json: {
+        Name: "wrap",
+        Args: []
+      }
+    }
+
+  }else if (token1==waergo && token2=='aergo') {  // unwrap
+
+    txdata = {
+      type: 5,  // CALL
+      from: account_address,
+      to: waergo,
+      amount: 0,
+      payload_json: {
+        Name: "unwrap",
+        Args: [token_amount]
+      }
+    }
+
+  }else{
+    return
+  }
+
+  startTxSendRequest(txdata, 'The txn was sent', function(result){
+
+    // ...
+
+  })
+
+}
 
 
 //---------------------------------------------------------------------
