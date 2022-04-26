@@ -1173,14 +1173,20 @@ function update_swap_info(direction){
 
   // calculate price impact
   //var normal_output = token1_amount * pair.reserves[token22] / pair.reserves[token11]
-  var token_amount = token1_amount
-  var tokenA = token11
-  for (pair of best_route) {
-    var tokenB = pair.other_token[tokenA]
-    token_amount = token_amount * pair.reserves[tokenB] / pair.reserves[tokenA]
-    tokenA = tokenB
+  var normal_output
+  if (best_route!=null) {
+    var token_amount = token1_amount
+    var tokenA = token11
+    for (pair of best_route) {
+      var tokenB = pair.other_token[tokenA]
+      token_amount = token_amount * pair.reserves[tokenB] / pair.reserves[tokenA]
+      tokenA = tokenB
+    }
+    normal_output = token_amount
+  }else{
+    normal_output = token2_amount
   }
-  var normal_output = token_amount
+  if (normal_output==0) normal_output = 1  // to avoid division by zero
   var impact = Number((normal_output - token2_amount) * BigInt(10000) / normal_output) / 100.0
 
 /*
