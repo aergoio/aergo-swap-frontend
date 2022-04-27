@@ -311,9 +311,9 @@
                     <div
                       class="shadow-inner flex flex-col gap-2 py-2 rounded px-2 border border-dark-700 transition hover:border-dark-700">
                       <div class="flex justify-between gap-2 items-center pl-2">
-                        <div id="change-swap-info">
+                        <div id="swap-invert-rate">
                           <div class="flex w-full gap-1 cursor-pointer hover:text-white select-none">
-                            <div class="text-xs leading-4 font-bold flex gap-1 tracking-[0.06em] text-white">1 SUSHI
+                            <div id="si-rate" class="text-xs leading-4 font-bold flex gap-1 tracking-[0.06em] text-white">1 SUSHI
                               <span class="text-primary">=</span> 0.001148 ETH <span
                                 class="text-xs leading-4 font-medium text-secondary">($3.57139)</span>
                             </div>
@@ -1320,7 +1320,7 @@
                   <div
                     class="shadow-inner flex flex-col gap-2 py-2 rounded px-2 border border-dark-700 transition hover:border-dark-700 !border-dark-800">
                     <div class="flex items-center justify-between gap-2 pl-2">
-                      <div>
+                      <div id="confirm-swap-invert-rate">
                         <div class="flex w-full gap-1 cursor-pointer hover:text-white select-none">
                           <div id="confirm-swap-rate" class="text-xs leading-4 font-bold flex gap-1 tracking-[0.06em] text-white">1 SUSHI <span
                               class="text-primary">=</span> 0.001148 ETH <span
@@ -1340,19 +1340,19 @@
                       <div class="px-1 pt-2">
                         <div class="flex flex-col divide-y divide-dark-850">
                           <div class="flex flex-col gap-1 pb-2">
-                            <div class="flex justify-between gap-4">
+                            <div id="confirm-swap-expected" class="flex justify-between gap-4">
                               <div class="text-xs leading-4 font-medium currentColor">Expected Output</div>
-                              <div id="confirm-swap-expected-output" class="text-xs leading-4 font-bold text-right">26.1297 SUSHI</div>
+                              <div class="text-xs leading-4 font-bold text-right">26.1297 SUSHI</div>
                             </div>
                             <div class="flex justify-between gap-4">
                               <div class="text-xs leading-4 font-medium currentColor">Price Impact</div>
-                              <div id="confirm-swap-price-impact" class="text-xs leading-4 font-medium text-right">0.30%</div>
+                              <div id="confirm-swap-impact" class="text-xs leading-4 font-medium text-right">0.30%</div>
                             </div>
                           </div>
                           <div class="flex flex-col gap-1 pt-2">
-                            <div class="flex justify-between gap-4">
-                              <div class="text-xs leading-4 font-medium text-secondary">Minimum received after slippage (<span id="confirm-swap-slippage">0.50</span>%)</div>
-                              <div id="confirm-swap-slippage-price" class="text-xs leading-4 font-medium text-right text-secondary">25.9997 SUSHI</div>
+                            <div id="confirm-swap-minimum" class="flex justify-between gap-4">
+                              <div class="text-xs leading-4 font-medium text-secondary">Minimum received after slippage (0.50%)</div>
+                              <div class="text-xs leading-4 font-medium text-right text-secondary">25.9997 SUSHI</div>
                             </div>
                             <div class="flex justify-between gap-4">
                               <div class="text-xs leading-4 font-medium text-secondary">Liquidity provider fee</div>

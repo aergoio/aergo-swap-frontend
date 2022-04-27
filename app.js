@@ -1111,32 +1111,23 @@ $('#view-swap-details').click(function(){
 
 })
 
-$('#change-swap-info').click(function(){
+var swap_info = { direction: 0 }
 
-  var direction = this.getAttribute('direction')
-  if (!direction || direction=='') direction = 0
-  direction = (parseInt(direction) + 1) % 2
-  this.setAttribute('direction', direction)
+function invert_rate(){
+  swap_info.direction = (swap_info.direction + 1) % 2
+  update_swap_info()
+}
+$('#swap-invert-rate').click(invert_rate)
+$('#confirm-swap-invert-rate').click(invert_rate)
 
-  update_swap_info(direction)
-
-})
-
-function update_swap_info(direction){
-
-  if (!direction) {
-    direction = $('#change-swap-info')[0].getAttribute('direction')
-    if (!direction || direction=='') direction = 0
-  }
+function update_swap_info(){
 
   if(is_aergo(token1) && is_aergo(token2)){
-    update_swap_info_aergo(direction)
+    update_swap_info_aergo()
     return
   }
 
-  // '1 SUSHI <span class="text-primary">=</span> 0.001148 ETH <span class="text-xs leading-4 font-medium text-secondary">($3.57139)</span>'
-
-  var info = '1 %1 <span class="text-primary">=</span> %2 %3 <span class="text-xs leading-4 font-medium text-secondary">%4</span>'
+  // compute the values
 
   var decimals1 = token_info[token1].decimals
   var decimals2 = token_info[token2].decimals
@@ -1147,31 +1138,17 @@ function update_swap_info(direction){
   var token1_amount = swap_token1_amount
   var token2_amount = swap_token2_amount
 
-  if(direction==0){
+  if(swap_info.direction==0){
     var multiplier = BigInt(10) ** BigInt(decimals1)
     //var amount = pair.reserves[token22] * multiplier / pair.reserves[token11]
     var amount = token2_amount * multiplier / token1_amount
-    amount = to_decimal_str(amount.toString(), decimals2)
-
-    info = info.replace('%1', token_info[token1].symbol)
-    info = info.replace('%3', token_info[token2].symbol)
-    info = info.replace('%2', amount)
-    info = info.replace('%4', '')
+    swap_info.rate_amount = to_decimal_str(amount.toString(), decimals2)
   }else{
     var multiplier = BigInt(10) ** BigInt(decimals2)
     //var amount = pair.reserves[token11] * multiplier / pair.reserves[token22]
     var amount = token1_amount * multiplier / token2_amount
-    amount = to_decimal_str(amount.toString(), decimals1)
-
-    info = info.replace('%1', token_info[token2].symbol)
-    info = info.replace('%3', token_info[token1].symbol)
-    info = info.replace('%2', amount)
-    info = info.replace('%4', '')
+    swap_info.rate_amount = to_decimal_str(amount.toString(), decimals1)
   }
-
-  $('#change-swap-info > div > div').html(info)
-
-  // DETAILS --------------------
 
   // calculate price impact
   //var normal_output = token1_amount * pair.reserves[token22] / pair.reserves[token11]
@@ -1189,7 +1166,7 @@ function update_swap_info(direction){
     normal_output = token2_amount
   }
   if (normal_output==0) normal_output = 1  // to avoid division by zero
-  var impact = Number((normal_output - token2_amount) * BigInt(10000) / normal_output) / 100.0
+  swap_info.price_impact = Number((normal_output - token2_amount) * BigInt(10000) / normal_output) / 100.0
 
 /*
 //  var multiplier = BigInt(10) ** BigInt(decimals1)
@@ -1199,38 +1176,61 @@ function update_swap_info(direction){
   min_output = to_decimal_str(min_output.toString(), decimals2, 6)
 */
 
-  var min_output_str, max_input_str
   if( swap_input==1 ){
     min_output = token2_amount * BigInt((100 - slippage) * 100) / BigInt(10000)
-    min_output_str = to_decimal_str(min_output.toString(), decimals2, 6)
+    swap_info.min_output_str = to_decimal_str(min_output.toString(), decimals2, 6)
   }else if( swap_input==2 ){
     max_input = token1_amount * BigInt((100 + slippage) * 100) / BigInt(10000)
-    max_input_str = to_decimal_str(max_input.toString(), decimals1, 6)
+    swap_info.max_input_str = to_decimal_str(max_input.toString(), decimals1, 6)
   }
 
-
-  var fee = 0.0
-  var route_str = token_info[token1].symbol
+  swap_info.fee = 0.0
+  swap_info.route = token_info[token1].symbol
   if (best_route!=null) {
     var token = token11
     for (pair of best_route) {
       token = pair.other_token[token]
       //var symbol = token_info[token] ? token_info[token].symbol : '?'
-      route_str += ' &gt; ' + token_info[token].symbol
-      fee += 0.3
+      swap_info.route += ' &gt; ' + token_info[token].symbol
+      swap_info.fee += 0.3
     }
   }else{
-    route_str = '...'
+    swap_info.route = '...'
   }
 
 
-  $('#si-route').html(route_str)
+  // update both dialogs
+  update_swap_info_dialog('#si')
+  update_swap_info_dialog('#confirm-swap')
 
-  $('#si-fee').html(fee.toFixed(2) + '%')
+}
 
-  $('#si-impact').html(impact.toFixed(2) + '%')
+function update_swap_info(prefix){
 
-  var div = $('#si-expected > div')
+  // '1 SUSHI <span class="text-primary">=</span> 0.001148 ETH <span class="text-xs leading-4 font-medium text-secondary">($3.57139)</span>'
+  var rate = '1 %1 <span class="text-primary">=</span> %2 %3 <span class="text-xs leading-4 font-medium text-secondary">%4</span>'
+
+  if(swap_info.direction==0){
+    rate = rate.replace('%1', token_info[token1].symbol)
+    rate = rate.replace('%3', token_info[token2].symbol)
+    rate = rate.replace('%2', swap_info.rate_amount)
+    rate = rate.replace('%4', '')
+  }else{
+    rate = rate.replace('%1', token_info[token2].symbol)
+    rate = rate.replace('%3', token_info[token1].symbol)
+    rate = rate.replace('%2', swap_info.rate_amount)
+    rate = rate.replace('%4', '')
+  }
+
+  $(prefix + '-rate').html(rate)
+
+  $(prefix + '-route').html(swap_info.route)
+
+  $(prefix + '-fee').html(swap_info.fee.toFixed(2) + '%')
+
+  $(prefix + '-impact').html(swap_info.price_impact.toFixed(2) + '%')
+
+  var div = $(prefix + '-expected > div')
   if( swap_input==1 ){
     div[0].innerHTML = 'Expected Output'
     div[1].innerHTML = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
@@ -1239,39 +1239,36 @@ function update_swap_info(direction){
     div[1].innerHTML = document.getElementById('amount1').value + ' ' + token_info[token1].symbol
   }
 
-  var div = $('#si-minimum > div')
+  var div = $(prefix + '-minimum > div')
   if( swap_input==1 ){
     div[0].innerHTML = 'Minimum received after slippage (' + slippage.toFixed(2) + '%)'
-    div[1].innerHTML = min_output_str + ' ' + token_info[token2].symbol
+    div[1].innerHTML = swap_info.min_output_str + ' ' + token_info[token2].symbol
   }else if( swap_input==2 ){
     div[0].innerHTML = 'Maximum spent after slippage (' + slippage.toFixed(2) + '%)'
-    div[1].innerHTML = max_input_str + ' ' + token_info[token1].symbol
+    div[1].innerHTML = swap_info.max_input_str + ' ' + token_info[token1].symbol
   }
 
 }
 
-function update_swap_info_aergo(direction){
-
-  // '1 SUSHI <span class="text-primary">=</span> 0.001148 ETH <span class="text-xs leading-4 font-medium text-secondary">($3.57139)</span>'
-
-  var info = '1 %1 <span class="text-primary">=</span> %2 %3 <span class="text-xs leading-4 font-medium text-secondary">%4</span>'
+function update_swap_info_aergo(){
 
   var decimals1 = token_info[token1].decimals
   var decimals2 = token_info[token2].decimals
 
-  if(direction==0){
-    info = info.replace('%1', token_info[token1].symbol)
-    info = info.replace('%3', token_info[token2].symbol)
+  // '1 SUSHI <span class="text-primary">=</span> 0.001148 ETH <span class="text-xs leading-4 font-medium text-secondary">($3.57139)</span>'
+  var rate = '1 %1 <span class="text-primary">=</span> %2 %3 <span class="text-xs leading-4 font-medium text-secondary">%4</span>'
+
+  if(swap_info.direction==0){
+    rate = rate.replace('%1', token_info[token1].symbol)
+    rate = rate.replace('%3', token_info[token2].symbol)
   }else{
-    info = info.replace('%1', token_info[token2].symbol)
-    info = info.replace('%3', token_info[token1].symbol)
+    rate = rate.replace('%1', token_info[token2].symbol)
+    rate = rate.replace('%3', token_info[token1].symbol)
   }
-  info = info.replace('%2', '1')
-  info = info.replace('%4', '')  //! amount in USD/EUR/KRW/...
+  rate = rate.replace('%2', '1')
+  rate = rate.replace('%4', '')  //! amount in USD/EUR/KRW/...
 
-  $('#change-swap-info > div > div').html(info)
-
-  // DETAILS --------------------
+  $('#si-rate').html(rate)
 
   $('#si-route').html(token_info[token1].symbol + ' &gt; ' + token_info[token2].symbol)
 
@@ -1305,8 +1302,10 @@ function swap_click(){
 
   $('#confirm-swap-amount1').html(to_decimal_str(swap_token1_amount.toString(), token_info[token1].decimals, 6))
   $('#confirm-swap-amount2').html(to_decimal_str(swap_token2_amount.toString(), token_info[token2].decimals, 6))
+
   $('#confirm-swap-symbol1').html(token_info[token1].symbol)
   $('#confirm-swap-symbol2').html(token_info[token2].symbol)
+
   confirm_swap_set_icon('#confirm-swap-logo1', 1)
   confirm_swap_set_icon('#confirm-swap-logo2', 2)
 
