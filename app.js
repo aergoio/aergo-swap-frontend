@@ -1091,14 +1091,7 @@ function show_swap_info(){
 }
 
 $('#view-swap-details').click(function(){
-/*
-  var elem = $('#swap-details')
-  if (elem.hasClass('hidden')) {
-    elem.removeClass('hidden')
-  }else{
-    elem.addClass('hidden')
-  }
-*/
+
   if ($('#swap-details').hasClass('hidden')) {
     $('#swap-info > div').addClass('bg-dark-900')
     $('#swap-details').removeClass('hidden')
@@ -1107,6 +1100,18 @@ $('#view-swap-details').click(function(){
     $('#swap-info > div').removeClass('bg-dark-900')
     $('#swap-details').addClass('hidden')
     $('#view-swap-details > svg').removeClass('rotate-180')
+  }
+
+})
+
+$('#confirm-swap-view-details').click(function(){
+
+  if ($('#confirm-swap-details').hasClass('hidden')) {
+    $('#confirm-swap-view-details > svg').addClass('rotate-180')
+    $('#confirm-swap-details').removeClass('hidden')
+  }else{
+    $('#confirm-swap-view-details > svg').removeClass('rotate-180')
+    $('#confirm-swap-details').addClass('hidden')
   }
 
 })
@@ -1244,6 +1249,18 @@ function update_swap_info(){
   update_swap_info_dialog('#si')
   update_swap_info_dialog('#confirm-swap')
 
+
+  var html, amount
+  if( swap_input==1 ){
+    amount = swap_info.min_output_str + ' ' + token_info[token2].symbol
+    html = 'Output is estimated. You will receive at least'
+  }else if( swap_input==2 ){
+    amount = swap_info.max_input_str + ' ' + token_info[token1].symbol
+    html = 'Input is estimated. You will sell at most'
+  }
+  html += ' <span class="text-xs leading-4 font-bold text-high-emphesis">' + amount + '</span> or the transaction will revert.'
+  $('#confirm-swap-message').html(html)
+
 }
 
 function update_swap_info_dialog(prefix){
@@ -1332,6 +1349,10 @@ function confirm_swap_set_icon(parent, n){
   img.src = imgsrc
   img.srcset = imgsrc + ' 1x, ' + imgsrc + ' 2x'
 }
+
+$('#close-confirm-swap').click(function(){
+  $("#confirm-swap").addClass('hidden')
+})
 
 $('#confirm-swap-button').click(function(){
 
