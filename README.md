@@ -27,5 +27,45 @@ Then copy your account address, and put tokens on your account in the [faucet.ae
 * Run `node server.js` on a dedicated terminal
 * Run `npm run build` every time the `app.js` file is updated
 * Do NOT use VSCode as editor of `app.js` because it reformats the entire file (unless you know how to disable it)
-* Do NOT include `bundle.js` and the `node_modules` in the repo, nor any unnecessary file
+* Do NOT include any file to the repository, only edit the existing ones
 * Push your changes to a separate branch
+
+
+### Using git
+
+To create a new branch:
+
+```
+git checkout -b branch_name
+```
+
+To change to the working branch:
+
+```
+git checkout branch_name
+```
+
+To view the changes:
+
+```
+git diff
+```
+
+To commit the changes to the current branch:
+
+```
+git commit -am "Your commit message"
+```
+
+To commit the changes of only some files:
+
+```
+git add app.js
+git commit -m "Your commit message"
+```
+
+To push it to the repo:
+
+```
+git push
+```
