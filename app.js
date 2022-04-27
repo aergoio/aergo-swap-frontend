@@ -1199,13 +1199,8 @@ function update_swap_info(){
   }
 
 
-  // update both dialogs
-  update_swap_info_dialog('#si')
-  update_swap_info_dialog('#confirm-swap')
 
-}
-
-function update_swap_info(prefix){
+  // transform them into string
 
   // '1 SUSHI <span class="text-primary">=</span> 0.001148 ETH <span class="text-xs leading-4 font-medium text-secondary">($3.57139)</span>'
   var rate = '1 %1 <span class="text-primary">=</span> %2 %3 <span class="text-xs leading-4 font-medium text-secondary">%4</span>'
@@ -1222,38 +1217,53 @@ function update_swap_info(prefix){
     rate = rate.replace('%4', '')
   }
 
-  $(prefix + '-rate').html(rate)
+  swap_info.rate = rate
 
-  $(prefix + '-route').html(swap_info.route)
+  swap_info.fee = swap_info.fee.toFixed(2) + '%'
 
-  $(prefix + '-fee').html(swap_info.fee.toFixed(2) + '%')
+  swap_info.price_impact = swap_info.price_impact.toFixed(2) + '%'
 
-  $(prefix + '-impact').html(swap_info.price_impact.toFixed(2) + '%')
+  if( swap_input==1 ){
+    swap_info.expected_title = 'Expected Output'
+    swap_info.expected_amount = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
+  }else if( swap_input==2 ){
+    swap_info.expected_title = 'Expected Input'
+    swap_info.expected_amount = document.getElementById('amount1').value + ' ' + token_info[token1].symbol
+  }
+
+  if( swap_input==1 ){
+    swap_info.minimum_title = 'Minimum received after slippage (' + slippage.toFixed(2) + '%)'
+    swap_info.minimum_amount = swap_info.min_output_str + ' ' + token_info[token2].symbol
+  }else if( swap_input==2 ){
+    swap_info.minimum_title = 'Maximum spent after slippage (' + slippage.toFixed(2) + '%)'
+    swap_info.minimum_amount = swap_info.max_input_str + ' ' + token_info[token1].symbol
+  }
+
+
+  // update both dialogs
+  update_swap_info_dialog('#si')
+  update_swap_info_dialog('#confirm-swap')
+
+}
+
+function update_swap_info_dialog(prefix){
+
+  $(prefix + '-rate'  ).html(swap_info.rate)
+  $(prefix + '-route' ).html(swap_info.route)
+  $(prefix + '-fee'   ).html(swap_info.fee)
+  $(prefix + '-impact').html(swap_info.price_impact)
 
   var div = $(prefix + '-expected > div')
-  if( swap_input==1 ){
-    div[0].innerHTML = 'Expected Output'
-    div[1].innerHTML = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
-  }else if( swap_input==2 ){
-    div[0].innerHTML = 'Expected Input'
-    div[1].innerHTML = document.getElementById('amount1').value + ' ' + token_info[token1].symbol
-  }
+  div[0].innerHTML = swap_info.expected_title
+  div[1].innerHTML = swap_info.expected_amount
 
   var div = $(prefix + '-minimum > div')
-  if( swap_input==1 ){
-    div[0].innerHTML = 'Minimum received after slippage (' + slippage.toFixed(2) + '%)'
-    div[1].innerHTML = swap_info.min_output_str + ' ' + token_info[token2].symbol
-  }else if( swap_input==2 ){
-    div[0].innerHTML = 'Maximum spent after slippage (' + slippage.toFixed(2) + '%)'
-    div[1].innerHTML = swap_info.max_input_str + ' ' + token_info[token1].symbol
-  }
+  div[0].innerHTML = swap_info.minimum_title
+  div[1].innerHTML = swap_info.minimum_amount
 
 }
 
 function update_swap_info_aergo(){
-
-  var decimals1 = token_info[token1].decimals
-  var decimals2 = token_info[token2].decimals
 
   // '1 SUSHI <span class="text-primary">=</span> 0.001148 ETH <span class="text-xs leading-4 font-medium text-secondary">($3.57139)</span>'
   var rate = '1 %1 <span class="text-primary">=</span> %2 %3 <span class="text-xs leading-4 font-medium text-secondary">%4</span>'
@@ -1268,21 +1278,22 @@ function update_swap_info_aergo(){
   rate = rate.replace('%2', '1')
   rate = rate.replace('%4', '')  //! amount in USD/EUR/KRW/...
 
-  $('#si-rate').html(rate)
+  swap_info.rate = rate
 
-  $('#si-route').html(token_info[token1].symbol + ' &gt; ' + token_info[token2].symbol)
+  swap_info.route = token_info[token1].symbol + ' &gt; ' + token_info[token2].symbol
 
-  $('#si-fee').html('0%')
+  swap_info.fee = '0%'
+  swap_info.price_impact = '0%'
 
-  $('#si-impact').html('0%')
+  swap_info.expected_title = 'Exact Output'
+  swap_info.expected_amount = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
 
-  var div = $('#si-expected > div')
-  div[0].innerHTML = 'Exact Output'
-  div[1].innerHTML = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
+  swap_info.minimum_title  = 'Minimum received'
+  swap_info.minimum_amount = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
 
-  var div = $('#si-minimum > div')
-  div[0].innerHTML = 'Minimum received'
-  div[1].innerHTML = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
+  // update both dialogs
+  update_swap_info_dialog('#si')
+  update_swap_info_dialog('#confirm-swap')
 
 }
 
