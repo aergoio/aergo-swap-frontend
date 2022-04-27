@@ -1,42 +1,48 @@
 
-TODO:
+COMPUTATIONS + BLOCKCHAIN:
 
   after swap:
     - clear inputs?
-    - update pair_info
-    - update balances
+    - update pair_info(s) of the pairs in the current route
+    - update user balances
 
-  - filter ASLPT tokens
+  - when it retrieves the routes, it does not update the screen, even if there
+      is something on the textbox. only after typing some more
 
-  - use the new waergo address here and on the factory (set_config or on new factory)
+  - it is choosing a route with bad price impact, after adding liquidity
 
-  - make aergo/waergo be the base token on new_pair
+  /- implement basic routing
+  - update price/rate periodically
 
-  - after adding token or removing liquidity or swapping: update balances
+    get_route(token1, token2, amount, callback)
 
-  - add to gitlab or github
+  - auto-router on a smart contract (?) - for speed - test
 
-  - deploy swap factory
-  - test with the factory
-    - create pair
-    - add liquidity
-    - undo add first token
-    - increase liquidity
-    - remove liquidity
-    - swap
+  - when adding liquidity and going to swap, it does not recognize the current pair
+
+  - when selecting an account: does not need to reload tokens if it is from the same network/chainId
+  - allow to select another account?
+
+  - subscribe to events from the current selected token pair contract(s)
+  - when a token is selected, unsubscribe, subscribe to a new pair (if some), and request pair info
+    if using a multi-hop route, subscribe to each contract on the route/path
+    if using many / split routes, subscribe to each contract on all the paths
+
+  - use separate js files - with require or import
+    "cat a.js b.js > concat.js && browserify concat.js -o bundle.js && rm concat.js"
+
+  - filter out ASLPT tokens
+
+  - deploy new waergo, use the new waergo address here and on the factory (set_config or on new factory)
+  - update on ARC1: add field for additional info? is it required? useful?
+
+  - make aergo/waergo be the base token on new_pair (?) (on contract)
+
+  - after adding each token to liquidity or undo or removing liquidity or swapping: update balances
 
   /- ability to select AERGO token
 
-  - capture slippage when typed on the config page
-
-  - let the 2nd token unchosen - use text 'select token'
-
   - the tokens cannot be the same
-
-  - update price/rate periodically
-  - routing / paths
-
-    get_route(token1, token2, amount, callback)
 
   - test with tokens with different decimals
 
@@ -51,17 +57,37 @@ TODO:
   /- use values on txn  (token_amount, min_output, exact_output)
 
 
-  - confirmation dialogs
-  - txn sent dialog, success dialog, failure dialog
+
+
+FRONTEND + UI:
+
+  confirmation dialogs:
+  - swap confirmation dialog     id="confirm-swap"
+  - transaction sent dialog      id="confirm-transaction"
+  - add liquidity confirmation   id="confirm-add-liquidity"
+  - success & failure dialog     id="popup-message"
+  - general message dialog (replace swal?)
+
+  - let the 2nd token unchosen - use text 'select token' and different color for button
+
+  - display the price impact value (in percent) next to the output value
+    use different colors for the label, depending on the impact value
+
+  - capture slippage when typed on the config page
+
+  - on token selection, enable the "common base" buttons above
+
 
   - multi-language
       the placement of token symbol in the sentence can vary, so use {1} or %1 to represent
       the place to put variables
 
 
+
   - show only 1 WAERGO token contract? use curated list of tokens?
 
   - store images/token logos on another place
+
 
 
 
@@ -73,4 +99,17 @@ TODO:
 // - adding liquidity
 
 // when creating a pair, if one is AERGO, use WAERGO as the token
+
+
+
+TESTS:
+
+  - test with the swap factory:
+    - create pair
+    - add liquidity
+    - undo add first token
+    - increase liquidity
+    - remove liquidity
+    - swap
+    - routes
 

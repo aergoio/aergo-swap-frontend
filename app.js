@@ -14,19 +14,18 @@ var showbox = false;
 var token1 = 'aergo';
 var token2 = '12345';  // GEM
 var min_output = BigInt(0)
-var max_input = BigInt(0)
+var max_input  = BigInt(0)
 var swap_input = 0
-var swap_token1_amount
-var swap_token2_amount
-var pair = {reserves: {}}
+var swap_token1_amount = BigInt(0)
+var swap_token2_amount = BigInt(0)
 
 const swap_factory_mainnet = ""
-const swap_factory_testnet = "AmhPw7kvca4b6Bibhe9WMNLvgutf9h1Gc5PvMPvwTtkvFSAkh8E4"
+const swap_factory_testnet = "AmhUPonrL5GgGBadrz6se86EWcejGHrojuJRL8QxgUwHBHdPT1FL"
 const swap_factory_alphanet = ""
 var swap_factory = swap_factory_mainnet
 
 const waergo_mainnet = ""
-const waergo_testnet = "AmhEHnMcHvNXtW4nszzCvh4iLbV7BMgBkd4F1kn1jgzoAGW6oNqq"
+const waergo_testnet = "Amhop8LbAPynYpbcMUacSVPcCsxXPHaauRhGfaCP2eV8LoBLWcyz"
 const waergo_alphanet = ""
 var waergo = waergo_mainnet
 
@@ -50,6 +49,7 @@ function connect_to_aergo() {
   aergo = new herajs.AergoClient({}, new herajs.GrpcWebProvider({ url: url }))
 }
 
+/*
 async function check_token_info(address, error_msg) {
 
   if (!token_info[address]) {
@@ -76,6 +76,7 @@ async function check_token_info(address, error_msg) {
   }
 
 }
+*/
 
 //---------------------------------------------------------------------
 // BROWSER WALLET
@@ -509,6 +510,7 @@ function get_token_list(){
 
 }
 
+/*
 async function get_token_info(elem) {
   if (elem.value.length == 52) {
     var token_address = elem.value
@@ -531,7 +533,6 @@ async function get_token_info(elem) {
   }
 }
 
-/*
 document.getElementById('token1').addEventListener('input', function() {
   get_token_info(this)
 })
@@ -608,17 +609,15 @@ function on_token_selected_swap(address){
   $('#amount1')[0].value = ''
   $('#amount2')[0].value = ''
 
-  pair = {reserves: {}}
+  swap_input = 1
+  swap_token1_amount = BigInt(0)
+  swap_token2_amount = BigInt(0)
 
-  get_pair_info(token1, token2, function(address){
-    pair_address = address
-    pair = pair_info[address]
-    if(swap_input==1){
-      on_input1()
-    }else if(swap_input==2){
-      on_input2()
-    }
-  })
+  routes = []
+  pre_routes = []
+  best_route = null
+  last_route_req = 0
+  update_swap_price()
 
 }
 
@@ -665,6 +664,8 @@ $('#swap-order').click(function(){
   temp = token1
   token1 = token2
   token2 = temp
+
+  invert_routes()
 
   update_swap_info()
 
@@ -851,14 +852,16 @@ $('#token-list-parent')[0].onscroll = function(){
 }
 */
 
-function on_token_search_input(){
+function on_token_search_input(event){
 
-  if (this.value.length == 0) {
+  var elem = event.target
+
+  if (elem.value.length == 0) {
     populate_token_list(tokens)
     return
   }
 
-  var typed = this.value.toUpperCase()
+  var typed = elem.value.toUpperCase()
 
   var result = tokens.filter(function(address){
     var token = token_info[address]
@@ -869,7 +872,7 @@ function on_token_search_input(){
   if (result.length==0) {
     // search by token address
     //result = tokens.filter(address => address.toUpperCase()==typed)
-    typed = this.value
+    typed = elem.value
     result = tokens.filter(address => address==typed)
   }
 
@@ -882,7 +885,7 @@ input.addEventListener('input', on_token_search_input)
 input.addEventListener('keydown', function(event) {
   const key = event.key
   if (key === "Backspace" || key === "Delete") {
-    on_token_search_input()
+    on_token_search_input(event)
   }
 })
 
@@ -919,24 +922,12 @@ function xx(){
 
 // when using a path we must to do this for each step/hop in the path
 
-function is_empty_pair(){
-
+function no_routes(){
   if(is_aergo(token1) && is_aergo(token2)){
     return false
   }
-
-  var tokenA = (token1=='aergo') ? waergo : token1
-  var tokenB = (token2=='aergo') ? waergo : token2
-
-  return (
-    !pair ||
-    !pair.reserves ||
-    !pair.reserves[tokenA] ||
-    !pair.reserves[tokenB] ||
-     pair.reserves[tokenA] == 0 ||
-     pair.reserves[tokenB] == 0
-  )
-
+  //return (best_route==null && last_route_req>0)
+  return (routes.length==0 && last_route_req>0)
 }
 
 function update_swap_button(text, enabled){
@@ -954,14 +945,12 @@ function on_input1(){
   swap_token1_amount = BigInt(0)
   swap_token2_amount = BigInt(0)
 
-  if(is_empty_pair()){
-    console.log('empty pair')
+  if(no_routes()){
+    console.log('no routes')
     document.getElementById('amount2').value = ''
     update_swap_button('Insufficient liquidity', false)
     hide_swap_info()
     return
-  }else{
-    update_swap_button('Swap', true)
   }
 
   var typed_amount = document.getElementById('amount1').value
@@ -972,31 +961,17 @@ function on_input1(){
     return
   }
 
-  var token11 = (token1=='aergo') ? waergo : token1
-  var token22 = (token2=='aergo') ? waergo : token2
-
   var decimals1 = token_info[token1].decimals
   var decimals2 = token_info[token2].decimals
 
   try {
 
     var token1_amount = convert_typed_amount(typed_amount, decimals1)
-    //console.log("token1_amount:", token1_amount)
     if (!token1_amount) return;
 
     swap_token1_amount = BigInt(token1_amount)
-    if(is_aergo(token1) && is_aergo(token2)){
-      swap_token2_amount = swap_token1_amount
-    }else{
-      swap_token2_amount = calculate_output(swap_token1_amount, pair.reserves[token11], pair.reserves[token22])
-    }
 
-    var token2_amount = to_decimal_str(swap_token2_amount.toString(), decimals2)
-    //console.log("token2_amount:", token2_amount)
-    document.getElementById('amount2').value = token2_amount
-
-    //swap_input = 1
-    show_swap_info()
+    update_swap_price()
 
   } catch (e) {
     console.log(e)
@@ -1012,15 +987,15 @@ function on_input2(){
   swap_token1_amount = BigInt(0)
   swap_token2_amount = BigInt(0)
 
-  if(is_empty_pair()){
-    console.log('empty pair')
+  if(no_routes()){
+    console.log('no routes')
     document.getElementById('amount1').value = ''
     update_swap_button('Insufficient liquidity', false)
     hide_swap_info()
     return
   }
 
-  var typed_amount = document.getElementById('amount1').value
+  var typed_amount = document.getElementById('amount2').value
 
   if (typed_amount.length == 0) {
     document.getElementById('amount1').value = ''
@@ -1028,37 +1003,17 @@ function on_input2(){
     return
   }
 
-  var token11 = (token1=='aergo') ? waergo : token1
-  var token22 = (token2=='aergo') ? waergo : token2
-
   var decimals1 = token_info[token1].decimals
   var decimals2 = token_info[token2].decimals
 
   try {
 
     var token2_amount = convert_typed_amount(typed_amount, decimals2)
-    //console.log("token2_amount:", token2_amount)
     if (!token2_amount) return;
 
     swap_token2_amount = BigInt(token2_amount)
-    if(is_aergo(token1) && is_aergo(token2)){
-      swap_token1_amount = swap_token2_amount
-    }else{
-      swap_token1_amount = calculate_input(swap_token2_amount, pair.reserves[token11], pair.reserves[token22])
-    }
 
-    if (swap_token1_amount < 0) {
-      document.getElementById('amount1').value = ''
-      update_swap_button('Insufficient liquidity', false)
-      hide_swap_info()
-    } else {
-      var token1_amount = to_decimal_str(swap_token1_amount.toString(), decimals1)
-      //console.log("input:", token1_amount)
-      document.getElementById('amount1').value = token1_amount
-      update_swap_button('Swap', true)
-      //swap_input = 2
-      show_swap_info()
-    }
+    update_swap_price()
 
   } catch (e) {
     console.log(e)
@@ -1066,6 +1021,42 @@ function on_input2(){
     update_swap_button('Insufficient liquidity', false)
     hide_swap_info()
   }
+
+}
+
+function show_swap_price(){
+
+  var decimals1 = token_info[token1].decimals
+  var decimals2 = token_info[token2].decimals
+
+  if (swap_input==1) {
+
+    if (swap_token2_amount <= 0) {
+      document.getElementById('amount2').value = ''
+      update_swap_button('Insufficient liquidity', false)
+      hide_swap_info()
+      return
+    }
+
+    document.getElementById('amount2').value =
+      to_decimal_str(swap_token2_amount.toString(), decimals2)
+
+  }else{
+
+    if (swap_token1_amount <= 0) {
+      document.getElementById('amount1').value = ''
+      update_swap_button('Insufficient liquidity', false)
+      hide_swap_info()
+      return
+    }
+
+    document.getElementById('amount1').value =
+      to_decimal_str(swap_token1_amount.toString(), decimals1);
+
+  }
+
+  update_swap_button('Swap', true)
+  show_swap_info()
 
 }
 
@@ -1153,9 +1144,13 @@ function update_swap_info(direction){
   var token11 = (token1=='aergo') ? waergo : token1
   var token22 = (token2=='aergo') ? waergo : token2
 
+  var token1_amount = swap_token1_amount
+  var token2_amount = swap_token2_amount
+
   if(direction==0){
     var multiplier = BigInt(10) ** BigInt(decimals1)
-    var amount = pair.reserves[token22] * multiplier / pair.reserves[token11]
+    //var amount = pair.reserves[token22] * multiplier / pair.reserves[token11]
+    var amount = token2_amount * multiplier / token1_amount
     amount = to_decimal_str(amount.toString(), decimals2)
 
     info = info.replace('%1', token_info[token1].symbol)
@@ -1164,7 +1159,8 @@ function update_swap_info(direction){
     info = info.replace('%4', '')
   }else{
     var multiplier = BigInt(10) ** BigInt(decimals2)
-    var amount = pair.reserves[token11] * multiplier / pair.reserves[token22]
+    //var amount = pair.reserves[token11] * multiplier / pair.reserves[token22]
+    var amount = token1_amount * multiplier / token2_amount
     amount = to_decimal_str(amount.toString(), decimals1)
 
     info = info.replace('%1', token_info[token2].symbol)
@@ -1177,17 +1173,22 @@ function update_swap_info(direction){
 
   // DETAILS --------------------
 
-/*
-  var token1_amount = convert_typed_amount(document.getElementById('amount1').value, decimals1)
-  var token2_amount = convert_typed_amount(document.getElementById('amount2').value, decimals2)
-  token1_amount = BigInt(token1_amount)
-  token2_amount = BigInt(token2_amount)
-*/
-  var token1_amount = swap_token1_amount
-  var token2_amount = swap_token2_amount
-
   // calculate price impact
-  var normal_output = token1_amount * pair.reserves[token22] / pair.reserves[token11]
+  //var normal_output = token1_amount * pair.reserves[token22] / pair.reserves[token11]
+  var normal_output
+  if (best_route!=null) {
+    var token_amount = token1_amount
+    var tokenA = token11
+    for (pair of best_route) {
+      var tokenB = pair.other_token[tokenA]
+      token_amount = token_amount * pair.reserves[tokenB] / pair.reserves[tokenA]
+      tokenA = tokenB
+    }
+    normal_output = token_amount
+  }else{
+    normal_output = token2_amount
+  }
+  if (normal_output==0) normal_output = 1  // to avoid division by zero
   var impact = Number((normal_output - token2_amount) * BigInt(10000) / normal_output) / 100.0
 
 /*
@@ -1208,9 +1209,24 @@ function update_swap_info(direction){
   }
 
 
-  $('#si-route').html(token_info[token1].symbol + ' &gt; ' + token_info[token2].symbol)
+  var fee = 0.0
+  var route_str = token_info[token1].symbol
+  if (best_route!=null) {
+    var token = token11
+    for (pair of best_route) {
+      token = pair.other_token[token]
+      //var symbol = token_info[token] ? token_info[token].symbol : '?'
+      route_str += ' &gt; ' + token_info[token].symbol
+      fee += 0.3
+    }
+  }else{
+    route_str = '...'
+  }
 
-  $('#si-fee').html('0.30%')
+
+  $('#si-route').html(route_str)
+
+  $('#si-fee').html(fee.toFixed(2) + '%')
 
   $('#si-impact').html(impact.toFixed(2) + '%')
 
@@ -1309,6 +1325,16 @@ function confirm_swap_set_icon(parent, n){
 
 $('#confirm-swap-button').click(function(){
 
+  if(is_aergo(token1) && is_aergo(token2)){
+    process_aergo()
+    return
+  }
+
+  if( best_route==null || best_route.length==0 ){
+    console.log('swap: no current route')
+    return
+  }
+
   var token_amount = swap_token1_amount.toString()
 
   // options
@@ -1323,43 +1349,22 @@ $('#confirm-swap-button').click(function(){
     return  //!
   }
 
-/*
-  if( x ){
-    args.path = x
+  var pair_address = best_route[0].address
+
+  if( best_route.length > 1 ){
+    var path = []
+    for (step in best_route) {
+      path.push(step.address)
+    }
+    path.push(account_address)
+    args.path = path
   }
-*/
 
   // prepare and send the transaction
 
   var txdata
 
-  if (token1=='aergo' && token2==waergo) {  // wrap
-
-    txdata = {
-      type: 5,  // CALL
-      from: account_address,
-      to: waergo,
-      amount: token_amount + ' aer',
-      payload_json: {
-        Name: "wrap",
-        Args: []
-      }
-    }
-
-  }else if (token1==waergo && token2=='aergo') {  // unwrap
-
-    txdata = {
-      type: 5,  // CALL
-      from: account_address,
-      to: waergo,
-      amount: 0,
-      payload_json: {
-        Name: "unwrap",
-        Args: [token_amount]
-      }
-    }
-
-  }else if (token1=='aergo') {
+  if (token1=='aergo') {
 
     if( swap_input==2 ){
       token_amount = max_input
@@ -1402,9 +1407,53 @@ $('#confirm-swap-button').click(function(){
 
     // ...
 
-  });
+  })
 
 })
+
+function process_aergo(){
+
+  var token_amount = swap_token1_amount.toString()
+
+  var txdata
+
+  if (token1=='aergo' && token2==waergo) {  // wrap
+
+    txdata = {
+      type: 5,  // CALL
+      from: account_address,
+      to: waergo,
+      amount: token_amount + ' aer',
+      payload_json: {
+        Name: "wrap",
+        Args: []
+      }
+    }
+
+  }else if (token1==waergo && token2=='aergo') {  // unwrap
+
+    txdata = {
+      type: 5,  // CALL
+      from: account_address,
+      to: waergo,
+      amount: 0,
+      payload_json: {
+        Name: "unwrap",
+        Args: [token_amount]
+      }
+    }
+
+  }else{
+    return
+  }
+
+  startTxSendRequest(txdata, 'The txn was sent', function(result){
+
+    // ...
+
+  })
+
+}
 
 
 //---------------------------------------------------------------------
@@ -1747,25 +1796,10 @@ function get_pair_info(token1, token2, callback){
       }
 
       var pair_address = result[0]
-
-      var info = {
-        token1: result[1],
-        token2: result[2],
-        lptoken: result[3],
-        token1_amount: result[4],
-        token2_amount: result[5],
-        lptoken_amount: result[6],
-        reserves: {}
-      }
-
-      info.reserves[result[1]] = BigInt(result[4])
-      info.reserves[result[2]] = BigInt(result[5])
-      //info[result[3]] = BigInt(result[6])
-
-      pair_info[pair_address] = info
+      result.shift()
+      update_pair_info(pair_address, result)
 
       if (callback) callback(pair_address)
-
     })
 
   } catch (e) {
@@ -1776,6 +1810,408 @@ function get_pair_info(token1, token2, callback){
     })
   }
 
+}
+
+// update the pair_info object without replacing it. so other
+// variables that point to the object are updated
+function update_pair_info(pair_address, result){
+
+  var info = pair_info[pair_address] || {}
+
+  info.address = pair_address
+  info.token1 = result[0]
+  info.token2 = result[1]
+  info.lptoken = result[2]
+  info.token1_amount = result[3]
+  info.token2_amount = result[4]
+  info.lptoken_amount = result[5]
+  info.reserves = {}
+  info.reserves[info.token1] = BigInt(info.token1_amount)
+  info.reserves[info.token2] = BigInt(info.token2_amount)
+  info.other_token = {}
+  info.other_token[info.token1] = info.token2
+  info.other_token[info.token2] = info.token1
+
+  if (!pair_info[pair_address]) {
+    pair_info[pair_address] = info
+  }
+
+  return info
+}
+
+
+//---------------------------------------------------------------------
+// ROUTING
+//---------------------------------------------------------------------
+
+var routes = []
+var pre_routes = []
+var best_route = null
+
+var last_route_req = 0   // reset when token is selected
+
+/*
+
+with multicall:
+list all pairs from token1
+list all pairs from token2
+check if a direct pair exists
+  if exists, add it to the list of routes
+check tokens in common (in a loop)
+  add them to the list of routes
+
+repeat, peaking one token at a time from the left
+
+compute the output amount for each route / path
+get the one with best output (or compute input if giving output)
+
+*/
+
+// maybe request the pair_info in the same (2nd) multicall, or at the same time on a separate request
+
+function find_routes(){
+
+  last_route_req += 1
+  let current_route_req = last_route_req  // use let here
+
+  console.log('find_routes', token1, token2)
+
+  routes = []
+  pre_routes = []
+
+  var tokenA = (token1=='aergo') ? waergo : token1
+  var tokenB = (token2=='aergo') ? waergo : token2
+
+  var calls = [
+    [swap_factory, "get_pairs_with_token", tokenA],
+    [swap_factory, "get_pairs_with_token", tokenB]
+  ]
+
+  try {
+    aergo.queryContract(multicall, "aggregate", calls).then(function(results){
+
+      console.log('find_routes result:', results)
+
+      if (current_route_req != last_route_req) return
+
+      var pairs_with_A = results[0]
+      var pairs_with_B = results[1]
+
+      var tokens_with_A = Object.keys(pairs_with_A)
+      var tokens_with_B = Object.keys(pairs_with_B)
+
+      // check for direct route
+      if (tokens_with_B.includes(tokenA)) {
+        pre_routes.push([
+          [tokenA, tokenB, pairs_with_A[tokenB]]
+        ])
+        // remove already used path
+        tokens_with_A.splice(tokens_with_A.indexOf(tokenB), 1)
+        tokens_with_B.splice(tokens_with_B.indexOf(tokenA), 1)
+      }
+
+      // check for routes with common tokens
+      var common_tokens = tokens_with_A.filter(value => tokens_with_B.includes(value))
+
+      for (token of common_tokens) {
+        pre_routes.push([
+          [tokenA, token, pairs_with_A[token]],
+          [token, tokenB, pairs_with_B[token]]
+        ])
+      }
+
+      console.log('find_routes - pre_routes:', pre_routes)
+
+      // check for paths with 3 hops
+
+      calls = []
+      for (token of tokens_with_A) {
+        //if (token!=tokenA && token!=tokenB && !tokens_with_B.includes(token)) {
+        if (token!=tokenA && token!=tokenB) {
+          calls.push([swap_factory, "get_pairs_with_token", token])
+        }
+      }
+      if (calls.length > 0) {
+        console.log('find_routes - calls2:', calls)
+        aergo.queryContract(multicall, "aggregate", calls).then(function(results){
+
+          console.log('find_routes result2:', results)
+
+          if (current_route_req != last_route_req) return
+
+          var n = 0
+          for (tokenC of tokens_with_A) {
+            if (tokenC==tokenA || tokenC==tokenB) continue;
+            var pairs_with_C = results[n]
+            var tokens_with_C = Object.keys(pairs_with_C)
+
+            var common_tokens = tokens_with_C.filter(value => tokens_with_B.includes(value))
+            for (tokenD of common_tokens) {
+              pre_routes.push([
+                [tokenA, tokenC, pairs_with_A[tokenC]],
+                [tokenC, tokenD, pairs_with_C[tokenD]],
+                [tokenD, tokenB, pairs_with_B[tokenD]]
+              ])
+            }
+            n += 1
+          }
+
+          get_routes_info()
+        })
+
+      }else{
+        get_routes_info()
+      }
+
+    })
+
+  } catch (e) {
+    console.log(e)
+    if (error_msg) {
+      swal.fire({
+        icon: 'error',
+        text: e.toString()
+      })
+    }
+  }
+
+}
+
+// retrieve pair_info for each swap pair in all routes
+// store them in pair_info, and create a link to them in the routes array
+function get_routes_info(){
+
+  console.log('get_routes_info - pre_routes:', pre_routes)
+
+  if (pre_routes.length == 0) return
+
+  let current_route_req = last_route_req  // use let here
+
+  // subscribe to events on all pairs from all possible routes (?)
+  //subscribe_to_pairs()
+
+  var calls = []
+
+  //! can all the calls the done in a single multicall?
+
+  // get unique pairs
+  var pairs = new Set()
+  for (pre_route of pre_routes) {
+    for (step of pre_route) {
+      console.log('get_routes_info - step:', step)
+      var pair_address = step[2]
+      pairs.add(pair_address)
+    }
+  }
+  var calls = []
+  for (pair of pairs) {
+    console.log('get_routes_info - pair:', pair)
+    calls.push([pair, "get_pool_info"])
+  }
+
+  console.log('get_routes_info - for', calls.length, 'pairs - calls:', calls)
+
+  aergo.queryContract(multicall, "aggregate", calls).then(function(results){
+
+    console.log('get_routes_info results:', results)
+
+    var n = 0
+    for (call of calls) {
+      var pair_address = call[0]
+      update_pair_info(pair_address, results[n])
+      n += 1
+    }
+
+    if (current_route_req != last_route_req) return
+
+    for (pre_route of pre_routes) {
+      var new_route = []
+      for (step of pre_route) {
+        var address = find_pair(step[0], step[1])
+        new_route.push(pair_info[address])
+      }
+      routes.push(new_route)
+    }
+
+// select best route based in input or exact output
+// subscribe to events on all pairs from the selected route - or all possible routes - or just use a timer
+// also called with input amount is changed, and when pair is updated (event or timer)
+    update_swap_price()
+  })
+
+}
+
+function update_swap_price(){
+
+  console.log('update_swap_price - routes:', routes.length)
+
+  if(routes.length==0 && last_route_req==0){
+    find_routes()
+    return
+  }
+
+  if (swap_input==1) {
+    update_output_price()
+  } else {
+    update_input_price()
+  }
+
+  show_swap_price()
+}
+
+function update_output_price(){
+
+  if(is_aergo(token1) && is_aergo(token2)){
+    swap_token2_amount = swap_token1_amount
+    return
+  }
+
+  // select the best route
+
+  var first_token = (token1=='aergo') ? waergo : token1
+  var last_token  = (token2=='aergo') ? waergo : token2
+
+  for (route of routes) {
+    var tokenA = first_token
+    var amount = swap_token1_amount
+    var path = token_info[tokenA].symbol
+    for (pair of route) {
+      var tokenB = pair.other_token[tokenA]
+      amount = calculate_output(amount, pair.reserves[tokenA], pair.reserves[tokenB])
+      path += ' > ' + token_info[tokenB].symbol
+      tokenA = tokenB
+    }
+    console.log(path, '=>', amount)
+    if (tokenA!=last_token) amount = BigInt(0)
+    route.path = path
+    route.output_amount = amount
+  }
+
+  var biggest_amount = BigInt(0)
+  best_route = null
+
+  for (route of routes) {
+    if (route.output_amount > biggest_amount) {
+      biggest_amount = route.output_amount
+      best_route = route
+    }
+  }
+
+  if (best_route) {
+    console.log('selected route:', best_route.path, ' - amount:', biggest_amount)
+  }
+
+  swap_token2_amount = biggest_amount
+
+}
+
+function update_input_price(){
+
+  if(is_aergo(token1) && is_aergo(token2)){
+    swap_token1_amount = swap_token2_amount
+    return
+  }
+
+  // select the best route
+
+  var first_token = (token1=='aergo') ? waergo : token1
+  var last_token  = (token2=='aergo') ? waergo : token2
+
+  for (route of routes) {
+    var tokenB = last_token
+    var amount = swap_token2_amount
+    var path = token_info[tokenB].symbol
+    for (var i = route.length - 1; i >= 0; i--) {
+      var pair = route[i]
+      var tokenA = pair.other_token[tokenB]
+      amount = calculate_input(amount, pair.reserves[tokenA], pair.reserves[tokenB])
+      path = token_info[tokenA].symbol + ' > ' + path
+      tokenB = tokenA
+    }
+    if (tokenB!=first_token) amount = null
+    route.path = path
+    route.input_amount = amount
+  }
+
+  var lowest_amount = null
+  best_route = null
+
+  for (route of routes) {
+    if (route.input_amount != null) {
+      if (lowest_amount==null || route.input_amount < lowest_amount) {
+        lowest_amount = route.input_amount
+        best_route = route
+      }
+    }
+  }
+
+  if (best_route) {
+    console.log('selected route:', best_route.path, ' - amount:', lowest_amount)
+  }
+
+  if (lowest_amount==null) lowest_amount = BigInt(0)
+  swap_token1_amount = lowest_amount
+
+}
+
+var update_routes_timer = null
+
+function enable_router_timer(){
+  if(update_routes_timer==null){
+    update_routes_timer = setInterval(update_routes, 30 * 1000) // 30 seconds
+  }
+}
+
+function disable_router_timer(){
+  if(update_routes_timer!=null){
+    clearInterval(update_routes_timer)
+    update_routes_timer = null
+  }
+}
+
+function update_routes(){
+
+  // request updated pair_info from all pairs
+
+  if (routes.length == 0) return
+
+  let current_route_req = last_route_req  // use let here
+
+  //! can all the calls the done in a single multicall?
+
+  // get unique pairs
+  var pairs = new Set()
+  for (route of routes) {
+    for (pair of route) {
+      pairs.add(pair.address)
+    }
+  }
+
+  var calls = []
+  for (pair of pairs) {
+    calls.push([pair, "get_pool_info"])
+  }
+
+  aergo.queryContract(multicall, "aggregate", calls).then(function(results){
+
+    if (current_route_req != last_route_req) return
+
+    var n = 0
+    for (call of calls) {
+      var pair_address = call[0]
+      update_pair_info(pair_address, results[n])
+      n += 1
+    }
+
+    update_swap_price()
+  })
+
+}
+
+function invert_routes(){
+  for (route of routes) {
+    route.reverse()
+  }
 }
 
 
@@ -1949,7 +2385,7 @@ $('#max-token2').click(function(){
 
 function on_add_token_input(event){
 
-  var elem = event.srcElement
+  var elem = event.target
 
   var n = (elem.id=='add-token1-amount') ? 1 : 2
   var token = (n==1) ? pair_token1 : pair_token2
@@ -2178,21 +2614,18 @@ $('#create-pair > button').click(function(){
 
     pair_address = result.replace(/^"|"$/g, '')
 
-    //get_pair_info ...
+    get_pair_info(pair_tokenA, pair_tokenB, function(address){
+      add_pool_update_info()
+    })
 
-    var info = {
-      token1: pair_tokenA,
-      token2: pair_tokenB,
-      lptoken: '',   //!  not returned
-      token1_amount: '0',
-      token2_amount: '0',
-      lptoken_amount: '0',
-      reserves: {}
-    }
-    info.reserves[pair_tokenA] = BigInt(0)
-    info.reserves[pair_tokenB] = BigInt(0)
-
-    pair_info[pair_address] = info
+    update_pair_info(pair_address, [
+      pair_tokenA, // token1
+      pair_tokenB, // token2
+      '',   // lptoken - not returned
+      '0',  // token1_amount
+      '0',  // token2_amount
+      '0'   // lptoken_amount
+    ])
 
     //add_pool_update_info()
     add_pool_update_buttons()
