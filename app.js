@@ -14,10 +14,10 @@ var showbox = false;
 var token1 = 'aergo';
 var token2 = '12345';  // GEM
 var min_output = BigInt(0)
-var max_input = BigInt(0)
+var max_input  = BigInt(0)
 var swap_input = 0
-var swap_token1_amount
-var swap_token2_amount
+var swap_token1_amount = BigInt(0)
+var swap_token2_amount = BigInt(0)
 
 const swap_factory_mainnet = ""
 const swap_factory_testnet = "AmhUPonrL5GgGBadrz6se86EWcejGHrojuJRL8QxgUwHBHdPT1FL"
@@ -2056,16 +2056,19 @@ function update_output_price(){
   for (route of routes) {
     var tokenA = first_token
     var amount = swap_token1_amount
+    var path = token_info[tokenA].symbol
     for (pair of route) {
       var tokenB = pair.other_token[tokenA]
       amount = calculate_output(amount, pair.reserves[tokenA], pair.reserves[tokenB])
+      path += ' > ' + token_info[tokenB].symbol
       tokenA = tokenB
     }
+    console.log(path, '=>', amount)
     if (tokenA!=last_token) amount = BigInt(0)
+    route.path = path
     route.output_amount = amount
   }
 
-  //var input_amount = swap_token1_amount
   var biggest_amount = BigInt(0)
   best_route = null
 
@@ -2076,7 +2079,9 @@ function update_output_price(){
     }
   }
 
-  //if (best_route == null) xxx
+  if (best_route) {
+    console.log('selected route:', best_route.path, ' - amount:', biggest_amount)
+  }
 
   swap_token2_amount = biggest_amount
 
@@ -2097,13 +2102,16 @@ function update_input_price(){
   for (route of routes) {
     var tokenB = last_token
     var amount = swap_token2_amount
+    var path = token_info[tokenB].symbol
     for (var i = route.length - 1; i >= 0; i--) {
       var pair = route[i]
       var tokenA = pair.other_token[tokenB]
       amount = calculate_input(amount, pair.reserves[tokenA], pair.reserves[tokenB])
+      path = token_info[tokenA].symbol + ' > ' + path
       tokenB = tokenA
     }
     if (tokenB!=first_token) amount = null
+    route.path = path
     route.input_amount = amount
   }
 
@@ -2119,7 +2127,9 @@ function update_input_price(){
     }
   }
 
-  //if (best_route == null) xxx
+  if (best_route) {
+    console.log('selected route:', best_route.path, ' - amount:', lowest_amount)
+  }
 
   if (lowest_amount==null) lowest_amount = BigInt(0)
   swap_token1_amount = lowest_amount
