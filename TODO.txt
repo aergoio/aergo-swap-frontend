@@ -6,9 +6,6 @@ COMPUTATIONS + BLOCKCHAIN:
     - update pair_info(s) of the pairs in the current route
     - update user balances
 
-  - when it retrieves the routes, it does not update the screen, even if there
-      is something on the textbox. only after typing some more
-
   - it is choosing a route with bad price impact, after adding liquidity
 
   /- implement basic routing

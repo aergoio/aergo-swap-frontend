@@ -928,7 +928,6 @@ function no_routes(){
   if(is_aergo(token1) && is_aergo(token2)){
     return false
   }
-  //return (best_route==null && last_route_req>0)
   return (routes.length==0 && last_route_req>0)
 }
 
@@ -947,14 +946,6 @@ function on_input1(){
   swap_token1_amount = BigInt(0)
   swap_token2_amount = BigInt(0)
 
-  if(no_routes()){
-    console.log('no routes')
-    document.getElementById('amount2').value = ''
-    update_swap_button('Insufficient liquidity', false)
-    hide_swap_info()
-    return
-  }
-
   var typed_amount = document.getElementById('amount1').value
 
   if (typed_amount.length == 0) {
@@ -964,22 +955,12 @@ function on_input1(){
   }
 
   var decimals1 = token_info[token1].decimals
-  var decimals2 = token_info[token2].decimals
 
-  try {
+  var token1_amount = convert_typed_amount(typed_amount, decimals1)
+  if (!token1_amount) return;
+  swap_token1_amount = BigInt(token1_amount)
 
-    var token1_amount = convert_typed_amount(typed_amount, decimals1)
-    if (!token1_amount) return;
-
-    swap_token1_amount = BigInt(token1_amount)
-
-    update_swap_price()
-
-  } catch (e) {
-    console.log(e)
-    document.getElementById('amount2').value = ''
-    hide_swap_info()
-  }
+  update_swap_price()
 
 }
 
@@ -989,14 +970,6 @@ function on_input2(){
   swap_token1_amount = BigInt(0)
   swap_token2_amount = BigInt(0)
 
-  if(no_routes()){
-    console.log('no routes')
-    document.getElementById('amount1').value = ''
-    update_swap_button('Insufficient liquidity', false)
-    hide_swap_info()
-    return
-  }
-
   var typed_amount = document.getElementById('amount2').value
 
   if (typed_amount.length == 0) {
@@ -1005,24 +978,13 @@ function on_input2(){
     return
   }
 
-  var decimals1 = token_info[token1].decimals
   var decimals2 = token_info[token2].decimals
 
-  try {
+  var token2_amount = convert_typed_amount(typed_amount, decimals2)
+  if (!token2_amount) return;
+  swap_token2_amount = BigInt(token2_amount)
 
-    var token2_amount = convert_typed_amount(typed_amount, decimals2)
-    if (!token2_amount) return;
-
-    swap_token2_amount = BigInt(token2_amount)
-
-    update_swap_price()
-
-  } catch (e) {
-    console.log(e)
-    document.getElementById('amount1').value = ''
-    update_swap_button('Insufficient liquidity', false)
-    hide_swap_info()
-  }
+  update_swap_price()
 
 }
 
