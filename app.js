@@ -548,6 +548,11 @@ $('#close-token-selector').click(function(){
   $("#token-selector").addClass('hidden')
 })
 
+$('#select-token-aergo').click(on_token_selected)
+$('#select-token-gem').click(on_token_selected)
+
+$('#select-token-gem').attr('address', 'Amh4yhGcz2A3XMVnp5fFN6gfKT7ch6cAbHwiFLVKXeqpqvpsvkqF')
+
 function on_token_selected(){
 
   console.log('token click', this, this.address, this.getAttribute('address'))

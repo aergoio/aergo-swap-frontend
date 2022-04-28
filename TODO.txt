@@ -6,9 +6,10 @@ COMPUTATIONS + BLOCKCHAIN:
     - update pair_info(s) of the pairs in the current route
     - update user balances
 
-  - it is choosing a route with bad price impact, after adding liquidity
+  /- it is choosing a route with bad price impact, after adding liquidity
+      the route has pairs with bad price
 
-  - auto-router on a smart contract (?) - for speed - test
+  - NOT NOW: auto-router on a smart contract (?) - for speed - test
 
   - when adding liquidity and going to swap, it does not recognize the current pair
 
@@ -31,7 +32,11 @@ COMPUTATIONS + BLOCKCHAIN:
 
   - make aergo/waergo be the base token on new_pair (?) (on contract)
 
-  - after adding each token to liquidity or undo or removing liquidity or swapping: update balances
+  - update balances, after:
+    * adding each token to liquidity
+    * undo add token
+    * removing liquidity
+    * swapping
 
   - the tokens cannot be the same
 
@@ -55,8 +60,6 @@ FRONTEND + UI:
     use different colors for the label, depending on the impact value
 
   - capture slippage when typed on the config page
-
-  - on token selection, enable the "common base" buttons above
 
   - token selector: when opened in a tablet (and maybe changing browser height) it
     does not fill all the height
