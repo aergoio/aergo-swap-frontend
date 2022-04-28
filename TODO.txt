@@ -51,8 +51,6 @@ FRONTEND + UI:
   - success & failure dialog     id="popup-message"
   - general message dialog (replace swal?)
 
-  - let the 2nd token unchosen - use text 'select token' and different color for button
-
   - display the price impact value (in percent) next to the output value
     use different colors for the label, depending on the impact value
 

@@ -12,7 +12,7 @@ var slippage = 0.5
 var showbox = false;
 
 var token1 = 'aergo';
-var token2 = '12345';  // GEM
+var token2 = '';
 var min_output = BigInt(0)
 var max_input  = BigInt(0)
 var swap_input = 0
@@ -590,11 +590,18 @@ $('#select-token2').click(select_token_click)
 
 function on_token_selected_swap(address){
 
+  var id = '#token' + selecting_token + '-symbol'
+
+  if(selecting_token==2 && $(id).html()=='Select a token'){
+    $(id).removeClass('ml-2')
+    $('#select-token2 > div > div').removeClass('hidden')
+  }
+
   //var name = token_info[address].name
   var symbol = token_info[address].symbol
   //var decimals = token_info[address].decimals
 
-  $('#token' + selecting_token + '-symbol').html(symbol)
+  $(id).html(symbol)
 
   var img = $('#token' + selecting_token + '-img')[0]
   img.alt = symbol
@@ -2264,13 +2271,13 @@ function add_on_chain_changed(){
 
   if (chainId == "aergo.io") {
     pair_token1  = 'aergo'
-    pair_token2  = '12345'
+    pair_token2  = ''
   } else if (chainId == "testnet.aergo.io") {
     pair_token1  = 'aergo'
-    pair_token2  = 'Amhpi4LgVS74YJoZAWXsVgkJfEztYe5KkV3tY7sYtCgXchcKQeCQ'
+    pair_token2  = ''
   } else if (chainId == "alpha.aergo.io") {
     pair_token1  = 'aergo'
-    pair_token2  = 'GEM'
+    pair_token2  = ''
   }
 
   update_add_liquidity()
@@ -3022,15 +3029,5 @@ document.body.onload = function() {
 
   on_chain_selected()
   get_token_list()
-
-
-//! temporary !
-  token1 = 'aergo'
-  token2 = '12345'
-  token_info[token2] = {
-    name: 'Aergo GEM',
-    symbol: 'GEM',
-    decimals: 18
-  }
 
 }
