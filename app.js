@@ -613,6 +613,8 @@ function on_token_selected_swap(address){
   swap_token1_amount = BigInt(0)
   swap_token2_amount = BigInt(0)
 
+  disable_router_timer()
+
   routes = []
   pre_routes = []
   best_route = null
@@ -1533,10 +1535,14 @@ function show_page(name){
 }
 
 $('#show-swap-page').click(function(){
+  if(routes.length > 0){
+    enable_router_timer()
+  }
   show_page('swap-page')
 })
 
 $('#show-pool-page').click(function(){
+  disable_router_timer()
   load_user_pools(false)
   show_page('pool-page')
 })
@@ -2068,6 +2074,8 @@ function get_routes_info(){
 // subscribe to events on all pairs from the selected route - or all possible routes - or just use a timer
 // also called with input amount is changed, and when pair is updated (event or timer)
     update_swap_price()
+
+    enable_router_timer()
   })
 
 }
@@ -2094,6 +2102,10 @@ function update_output_price(){
 
   if(is_aergo(token1) && is_aergo(token2)){
     swap_token2_amount = swap_token1_amount
+    return
+  }
+  if (swap_token1_amount==0) {
+    swap_token2_amount = 0
     return
   }
 
@@ -2142,6 +2154,10 @@ function update_input_price(){
     swap_token1_amount = swap_token2_amount
     return
   }
+  if (swap_token2_amount==0) {
+    swap_token1_amount = 0
+    return
+  }
 
   // select the best route
 
@@ -2187,11 +2203,17 @@ function update_input_price(){
 
 var update_routes_timer = null
 
+// after the routes are retrieved
+// only when the swap window is currently shown
+
 function enable_router_timer(){
   if(update_routes_timer==null){
     update_routes_timer = setInterval(update_routes, 30 * 1000) // 30 seconds
   }
 }
+
+// when another token is selected
+// when the swap window is not shown
 
 function disable_router_timer(){
   if(update_routes_timer!=null){
@@ -2204,7 +2226,15 @@ function update_routes(){
 
   // request updated pair_info from all pairs
 
-  if (routes.length == 0) return
+  if (routes.length == 0) {
+    disable_router_timer()
+    return
+  }
+
+  if( (swap_input==1 && swap_token1_amount==0) ||
+      (swap_input==2 && swap_token2_amount==0) ){
+    return
+  }
 
   let current_route_req = last_route_req  // use let here
 
