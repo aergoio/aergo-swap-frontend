@@ -261,6 +261,9 @@ function convert_typed_amount(typed, num_decimals) {
 }
 
 function to_decimal_str(amount, num_decimals, ntrunc) {
+  if (typeof amount === "bigint") {
+    amount = amount.toString()
+  }
   if(ntrunc && ntrunc>0 && amount.length>ntrunc){
     amount = amount.substr(0, ntrunc) + "0".repeat(amount.length - ntrunc)
   }
@@ -1003,7 +1006,7 @@ function show_swap_price(){
     }
 
     document.getElementById('amount2').value =
-      to_decimal_str(swap_token2_amount.toString(), decimals2)
+      to_decimal_str(swap_token2_amount, decimals2)
 
   }else{
 
@@ -1015,7 +1018,7 @@ function show_swap_price(){
     }
 
     document.getElementById('amount1').value =
-      to_decimal_str(swap_token1_amount.toString(), decimals1);
+      to_decimal_str(swap_token1_amount, decimals1);
 
   }
 
@@ -1111,12 +1114,12 @@ function update_swap_info(){
     var multiplier = BigInt(10) ** BigInt(decimals1)
     //var amount = pair.reserves[token22] * multiplier / pair.reserves[token11]
     var amount = token2_amount * multiplier / token1_amount
-    swap_info.rate_amount = to_decimal_str(amount.toString(), decimals2)
+    swap_info.rate_amount = to_decimal_str(amount, decimals2)
   }else{
     var multiplier = BigInt(10) ** BigInt(decimals2)
     //var amount = pair.reserves[token11] * multiplier / pair.reserves[token22]
     var amount = token1_amount * multiplier / token2_amount
-    swap_info.rate_amount = to_decimal_str(amount.toString(), decimals1)
+    swap_info.rate_amount = to_decimal_str(amount, decimals1)
   }
 
   // calculate price impact
@@ -1142,15 +1145,15 @@ function update_swap_info(){
 //  var token2_amount = pair.reserves[token22] * multiplier * BigInt(token1_amount) / pair.reserves[token11]
   var token2_amount = pair.reserves[token22] * BigInt(token1_amount) / pair.reserves[token11]
   var min_output = token2_amount * BigInt((100 - slippage) * 100) / BigInt(10000)
-  min_output = to_decimal_str(min_output.toString(), decimals2, 6)
+  min_output = to_decimal_str(min_output, decimals2, 6)
 */
 
   if( swap_input==1 ){
     min_output = token2_amount * BigInt((100 - slippage) * 100) / BigInt(10000)
-    swap_info.min_output_str = to_decimal_str(min_output.toString(), decimals2, 6)
+    swap_info.min_output_str = to_decimal_str(min_output, decimals2, 6)
   }else if( swap_input==2 ){
     max_input = token1_amount * BigInt((100 + slippage) * 100) / BigInt(10000)
-    swap_info.max_input_str = to_decimal_str(max_input.toString(), decimals1, 6)
+    swap_info.max_input_str = to_decimal_str(max_input, decimals1, 6)
   }
 
   swap_info.fee = 0.0
@@ -1292,8 +1295,8 @@ function swap_click(){
 
   // display the confirm swap dialog
 
-  $('#confirm-swap-amount1').html(to_decimal_str(swap_token1_amount.toString(), token_info[token1].decimals, 6))
-  $('#confirm-swap-amount2').html(to_decimal_str(swap_token2_amount.toString(), token_info[token2].decimals, 6))
+  $('#confirm-swap-amount1').html(to_decimal_str(swap_token1_amount, token_info[token1].decimals, 6))
+  $('#confirm-swap-amount2').html(to_decimal_str(swap_token2_amount, token_info[token2].decimals, 6))
 
   $('#confirm-swap-symbol1').html(token_info[token1].symbol)
   $('#confirm-swap-symbol2').html(token_info[token2].symbol)
@@ -1989,8 +1992,6 @@ function get_routes_info(){
   // subscribe to events on all pairs from all possible routes (?)
   //subscribe_to_pairs()
 
-  var calls = []
-
   //! can all the calls the done in a single multicall?
 
   // get unique pairs
@@ -2082,11 +2083,18 @@ function update_output_price(){
     var path = token_info[tokenA].symbol
     for (pair of route) {
       var tokenB = pair.other_token[tokenA]
-      amount = calculate_output(amount, pair.reserves[tokenA], pair.reserves[tokenB])
+      var amountB = calculate_output(amount, pair.reserves[tokenA], pair.reserves[tokenB])
+      console.log('reserves:',
+        to_decimal_str(pair.reserves[tokenA], token_info[tokenA].decimals, 6), token_info[tokenA].symbol,
+        to_decimal_str(pair.reserves[tokenB], token_info[tokenB].decimals, 6), token_info[tokenB].symbol)
+      console.log(
+        to_decimal_str(amount,  token_info[tokenA].decimals, 6), token_info[tokenA].symbol, '->',
+        to_decimal_str(amountB, token_info[tokenB].decimals, 6), token_info[tokenB].symbol)
+      amount = amountB
       path += ' > ' + token_info[tokenB].symbol
       tokenA = tokenB
     }
-    console.log(path, '=>', amount)
+    console.log(amount, '-', path)
     if (tokenA!=last_token) amount = BigInt(0)
     route.path = path
     route.output_amount = amount
@@ -2451,11 +2459,11 @@ function on_add_token_input_changed(n){
 
     if(n==1){
       to_add.token2_amount = to_add.token1_amount * rates[1] * base2 / (base3 * base1)
-      other_input = to_decimal_str(to_add.token2_amount.toString(), decimals2, 6)
+      other_input = to_decimal_str(to_add.token2_amount, decimals2, 6)
       id = 'add-token2-amount'
     }else{
       to_add.token1_amount = to_add.token2_amount * rates[0] * base1 / (base3 * base2)
-      other_input = to_decimal_str(to_add.token1_amount.toString(), decimals1, 6)
+      other_input = to_decimal_str(to_add.token1_amount, decimals1, 6)
       id = 'add-token1-amount'
     }
 
@@ -2549,8 +2557,8 @@ function add_pool_update_info(){
     rate1 = (pair_token1_amount * base2 * base3) / (pair_token2_amount * base1)
     rate2 = (pair_token2_amount * base1 * base3) / (pair_token1_amount * base2)
 
-    rate1_str = to_decimal_str(rate1.toString(), 18, 6)
-    rate2_str = to_decimal_str(rate2.toString(), 18, 6)
+    rate1_str = to_decimal_str(rate1, 18, 6)
+    rate2_str = to_decimal_str(rate2, 18, 6)
 
   }
 
@@ -2941,10 +2949,10 @@ function update_remove_liquidity(){
   var decimals2 = token_info[pool.token2].decimals
 
   $('#remove-liquidity-output > div:nth-child(1) > div:nth-child(2) > div:nth-child(1)')
-    .html(to_decimal_str(token1_amount.toString(), decimals1, 6))
+    .html(to_decimal_str(token1_amount, decimals1, 6))
 
   $('#remove-liquidity-output > div:nth-child(2) > div:nth-child(2) > div:nth-child(1)')
-    .html(to_decimal_str(token2_amount.toString(), decimals2, 6))
+    .html(to_decimal_str(token2_amount, decimals2, 6))
 
 }
 
