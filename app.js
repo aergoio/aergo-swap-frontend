@@ -1680,6 +1680,10 @@ function get_user_pools(first){
             token2_amount: (BigInt(item[5]) * share_num / share_den).toString()
 
           }
+
+          var pair_address = item[0]
+          item.shift()
+          update_pair_info(pair_address, item)
         }
 
         update_pool_list()
