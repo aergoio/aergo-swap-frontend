@@ -1497,6 +1497,22 @@ $('#popover-portal').click(function(event){
   event.stopPropagation()
 })
 
+function on_slippage_change(event){
+  slippage = parseFloat(event.target.value)
+  if (!slippage || slippage < 0) slippage = 0.0
+  if (slippage > 100) slippage = 100.0
+  update_swap_info()
+}
+
+var input = document.getElementById('config-slippage')
+input.addEventListener('input', on_slippage_change)
+input.addEventListener('keydown', function(event) {
+  const key = event.key
+  if (key === "Backspace" || key === "Delete") {
+    on_slippage_change(event)
+  }
+})
+
 
 //---------------------------------------------------------------------
 // MENU

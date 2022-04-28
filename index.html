@@ -375,7 +375,7 @@
                   style="position: fixed; inset: 0px 0px auto auto; transform: translate3d(-449.5px, 232px, 0px);"
                   data-popper-reference-hidden="false" data-popper-escaped="false" data-popper-placement="bottom-end">
                   <div class="flex flex-col gap-3 p-3 border rounded shadow-xl bg-dark-900 w-80 border-dark-700">
-                    <div class="flex flex-col gap-4 p-3 border rounded border-dark-800/60">
+                    <div class="flex flex-col gap-4 p-3">
                       <div class="text-[0.625rem] leading-[1.2] font-bold text-secondary">Transaction Settings</div>
                       <div class="flex flex-col gap-4">
                         <div class="grid gap-2">
@@ -394,11 +394,11 @@
                             <div
                               class="border-dark-800 border-2 h-[36px] flex items-center px-2 rounded bg-dark-1000/40"
                               tabindex="-1">
-                              <div class="flex items-center justify-between gap-1"><input id="text-slippage"
+                              <div class="flex items-center justify-between gap-1"><input id="config-slippage"
                                   class="bg-transparent placeholder-low-emphesis min-w-0 w-full font-bold" color=""
                                   autocomplete="off" value="0.50">%</div>
                             </div>
-                            <div><button
+                            <div><button id="config-auto-slippage"
                                 class="border-2 disabled:pointer-events-none disabled:opacity-40 border-none bg-blue/20 hover:bg-blue/40 active:bg-blue/60 text-blue focus:bg-blue/40 text-sm rounded-full px-3 h-[36px] font-bold flex items-center justify-center gap-1">Auto</button>
                             </div>
                           </div>

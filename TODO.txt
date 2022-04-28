@@ -1,6 +1,14 @@
 
 COMPUTATIONS + BLOCKCHAIN:
 
+  - filter out ASLPT tokens
+
+  - update balances, after:
+    * adding each token to liquidity
+    * undo add token
+    * removing liquidity
+    * swapping
+
   after swap:
     - clear inputs?
     - update pair_info(s) of the pairs in the current route
@@ -24,19 +32,11 @@ COMPUTATIONS + BLOCKCHAIN:
   - use separate js files - with require or import
     "cat a.js b.js > concat.js && browserify concat.js -o bundle.js && rm concat.js"
 
-  - filter out ASLPT tokens
-
   - update on ARC1: add field for additional info?
     it can contain the swap pair address on ASLPT contracts
     use the 'contract owner'?
 
   - make aergo/waergo be the base token on new_pair (?) (on contract)
-
-  - update balances, after:
-    * adding each token to liquidity
-    * undo add token
-    * removing liquidity
-    * swapping
 
   - the tokens cannot be the same
 
@@ -59,7 +59,8 @@ FRONTEND + UI:
   - display the price impact value (in percent) next to the output value
     use different colors for the label, depending on the impact value
 
-  - capture slippage when typed on the config page
+  - account icon - remove the 'cooker', add an 'user'
+  - account info + history of txns + link to aergoscan (to check balances)
 
   - token selector: when opened in a tablet (and maybe changing browser height) it
     does not fill all the height
