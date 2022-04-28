@@ -1659,7 +1659,7 @@ function get_user_pools(first){
             lptoken_amount: item[7],
             share_num: share_num,
             share_den: share_den,
-            share: parseFloat(share_num * BigInt(10000) / share_den) / 10000,
+            share: parseFloat(share_num * BigInt(10000) / share_den) / 100,
 
             token1_total_amount: item[4],
             token2_total_amount: item[5],

@@ -8,11 +8,6 @@ COMPUTATIONS + BLOCKCHAIN:
 
   - it is choosing a route with bad price impact, after adding liquidity
 
-  /- implement basic routing
-  - update price/rate periodically
-
-    get_route(token1, token2, amount, callback)
-
   - auto-router on a smart contract (?) - for speed - test
 
   - when adding liquidity and going to swap, it does not recognize the current pair
@@ -30,28 +25,19 @@ COMPUTATIONS + BLOCKCHAIN:
 
   - filter out ASLPT tokens
 
-  - deploy new waergo, use the new waergo address here and on the factory (set_config or on new factory)
-  - update on ARC1: add field for additional info? is it required? useful?
+  - update on ARC1: add field for additional info?
+    it can contain the swap pair address on ASLPT contracts
+    use the 'contract owner'?
 
   - make aergo/waergo be the base token on new_pair (?) (on contract)
 
   - after adding each token to liquidity or undo or removing liquidity or swapping: update balances
 
-  /- ability to select AERGO token
-
   - the tokens cannot be the same
 
   - test with tokens with different decimals
 
-
-  /- load_user_pools()
-  /- create and send txns
-
-  /- pair.reserves
-
-  /- calculate min_output using slippage -> already calculated, use the value on the txn
-  - check/enhance calculations for swap, 
-  /- use values on txn  (token_amount, min_output, exact_output)
+  - check/enhance calculations for swap
 
 
 
@@ -73,6 +59,9 @@ FRONTEND + UI:
   - capture slippage when typed on the config page
 
   - on token selection, enable the "common base" buttons above
+
+  - token selector: when opened in a tablet (and maybe changing browser height) it
+    does not fill all the height
 
 
   - multi-language
