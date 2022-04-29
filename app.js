@@ -342,9 +342,16 @@ function on_account_connected(){
 
 }
 
-async function get_account_balances(){
+async function get_account_balances(ttokens){
 
-  balances = {}
+  if(ttokens){
+    for(var i=0; i<ttokens.length; i++){
+      if (ttokens[i]=='aergo') ttokens[i] = waergo
+    }
+    ttokens.unshift(null)
+  }else{
+    ttokens = tokens
+  }
 
   var calls
 /*
@@ -359,10 +366,10 @@ async function get_account_balances(){
     [multicall, "getAergoBalance", account_address]
   ]
 
-  for(var i=1; i<tokens.length; ){
+  for(var i=1; i<ttokens.length; ){
 
-    for(var n=0; n<50 && i+n<tokens.length; n++){
-      calls.push([tokens[i+n], "balanceOf", account_address])
+    for(var n=0; n<50 && i+n<ttokens.length; n++){
+      calls.push([ttokens[i+n], "balanceOf", account_address])
     }
 
     try {
@@ -374,13 +381,13 @@ async function get_account_balances(){
         console.log('balance aergo:', result[0][1])
         n=1
       }
-      for(; n<50 && i<tokens.length; n++, i++){
+      for(; n<50 && i<ttokens.length; n++, i++){
         if(result[n][0]){ // success
-          balances[tokens[i]] = result[n][1]._bignum
+          balances[ttokens[i]] = result[n][1]._bignum
         }else{ // fail
-          balances[tokens[i]] = '0'
+          balances[ttokens[i]] = '0'
         }
-        console.log('balance', tokens[i], balances[tokens[i]])
+        console.log('balance', ttokens[i], balances[ttokens[i]])
       }
     } catch (e) {
       console.log(e)
@@ -401,10 +408,6 @@ async function get_account_balances(){
 
   update_balances()
   add_pool_update_balances()
-
-  //setTimeout(function(){
-  //  document.getElementById("balance").innerHTML = "0.123 AERGO"
-  //}, 3000)
 
 }
 
@@ -502,12 +505,12 @@ function get_token_list(){
       }
     }
 
+    populate_token_list(tokens)
+
     if(account_address){
       // retrieve the account balance on different tokens
       get_account_balances()
     }
-
-    populate_token_list(tokens)
 
   })
 
@@ -1415,7 +1418,15 @@ $('#confirm-swap-button').click(function(){
 
   startTxSendRequest(txdata, 'The txn was sent', function(result){
 
-    // ...
+    $('#amount1')[0].value = ''
+    $('#amount2')[0].value = ''
+
+    swap_input = 1
+    swap_token1_amount = BigInt(0)
+    swap_token2_amount = BigInt(0)
+
+    update_routes()
+    get_account_balances([token1, token2])
 
   })
 
@@ -1459,7 +1470,7 @@ function process_aergo(){
 
   startTxSendRequest(txdata, 'The txn was sent', function(result){
 
-    // ...
+    get_account_balances([waergo])
 
   })
 
@@ -2753,6 +2764,8 @@ function add_first_token(){
     sent_base_token = true
     add_pool_update_buttons()
 
+    get_account_balances([base_token])
+
   });
 
 }
@@ -2790,6 +2803,8 @@ function remove_first_token(){
 
     $('#add-token1-amount').prop('disabled', false)
     $('#add-token2-amount').prop('disabled', false)
+
+    get_account_balances([base_token])
 
   });
 
@@ -2861,6 +2876,8 @@ $('#add-token2-button').click(function(){
 
     load_user_pools(true)
     show_page('pool-page')
+
+    get_account_balances([other_token])
 
   });
 
@@ -3027,9 +3044,13 @@ $('#remove-liquidity-button').click(function(){
   }
 
   startTxSendRequest(txdata, 'The liquidity was removed!', function(){
+
     // on success:
     load_user_pools(true)
     show_page('pool-page')
+
+    get_account_balances([pool.token1, pool.token2, pool.lptoken])
+
   });
 
 })
