@@ -3,6 +3,9 @@ COMPUTATIONS + BLOCKCHAIN:
 
   - filter out ASLPT tokens
 
+  - confirm-swap: 'price udpated' section
+  - add 'disabled' to btn when price is updated - confirm-swap
+
   - test swap with multi-hops
   - test swap with exact output
 
@@ -60,6 +63,8 @@ FRONTEND + UI:
 
   - token selector: when opened in a tablet (and maybe changing browser height) it
     does not fill all the height
+
+  - search for "// max button too!"
 
 
   - multi-language
