@@ -547,6 +547,9 @@ document.getElementById('token2').addEventListener('input', function() {
 $('#close-token-selector').click(function(){
   $("#token-selector").addClass('hidden')
 })
+$('#close-confirm-swap').click(function(){
+  $("#confirm-swap").addClass('hidden')
+})
 
 $('#select-token-aergo').click(on_token_selected)
 $('#select-token-gem').click(on_token_selected)
