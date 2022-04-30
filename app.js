@@ -2618,8 +2618,6 @@ function add_pool_update_info(){
     rate2_str = to_decimal_str(rate2, 18, 6)
 
   }
-  token_info[pair_token1].rate = rate1_str
-  token_info[pair_token2].rate = rate2_str
 
   // 0.000 XXX per YYY
   $('#add-rate1').html(rate1_str + ' ' + symbol1 + ' per ' + symbol2)
@@ -2630,13 +2628,14 @@ function add_pool_update_info(){
   var share = 100
 
   if(pair && pair_token1_amount > 0){
-    share = parseInt(to_add.token1_amount * BigInt(100) / pair_token1_amount)
+    share = parseFloat(to_add.token1_amount * BigInt(10000) / (pair_token1_amount + to_add.token1_amount)) / 100
   }
-
-  to_add.share = share
 
   $('#add-pool-share').html(share.toFixed(2) + '%')
 
+  to_add.rate1_str = rate1_str
+  to_add.rate2_str = rate2_str
+  to_add.share = share
 
   if(is_empty){
     rate1 = BigInt(0)
@@ -2846,6 +2845,8 @@ function confirm_add_img(n){
 
 $('#add-token1-button').click(function(){
 
+  if (to_add.token1_amount<=0 || to_add.token2_amount<=0) return
+
   $('#confirm-add-receive').html(to_decimal_str(to_add.token1_amount, token_info[pair_token1].decimals, 6))
 
   confirm_add_img(1)
@@ -2865,11 +2866,12 @@ $('#add-token1-button').click(function(){
 
   $("#confirm-add-pair").html(token_info[pair_token1].symbol + '/' + token_info[pair_token2].symbol)
   $("#confirm-add-rate1").html('1 ' + token_info[pair_token1].symbol +
-      ' = ' + token_info[pair_token2].rate + ' ' + token_info[pair_token2].symbol)
+      ' = ' + to_add.rate2_str + ' ' + token_info[pair_token2].symbol)
   $("#confirm-add-rate2").html('1 ' + token_info[pair_token2].symbol +
-      ' = ' + token_info[pair_token1].rate + ' ' + token_info[pair_token1].symbol)
+      ' = ' + to_add.rate1_str + ' ' + token_info[pair_token1].symbol)
 
   $("#confirm-add-share").html(to_add.share.toFixed(2) + '%')
+
   $("#confirm-add-liquidity").removeClass('hidden')
 })
 
