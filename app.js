@@ -2633,6 +2633,8 @@ function add_pool_update_info(){
     share = parseInt(to_add.token1_amount * BigInt(100) / pair_token1_amount)
   }
 
+  to_add.share = share
+
   $('#add-pool-share').html(share.toFixed(2) + '%')
 
 
@@ -2862,8 +2864,12 @@ $('#add-token1-button').click(function(){
       .html(token_info[pair_token2].symbol)
 
   $("#confirm-add-pair").html(token_info[pair_token1].symbol + '/' + token_info[pair_token2].symbol)
-  $("#confirm-add-rate1").html('1 ' + token_info[pair_token1].symbol + ' = ' + token_info[pair_token2].rate + ' ' + token_info[pair_token2].symbol)
-  $("#confirm-add-rate2").html('1 ' + token_info[pair_token2].symbol + ' = ' + token_info[pair_token1].rate + ' ' + token_info[pair_token2].symbol)
+  $("#confirm-add-rate1").html('1 ' + token_info[pair_token1].symbol +
+      ' = ' + token_info[pair_token2].rate + ' ' + token_info[pair_token2].symbol)
+  $("#confirm-add-rate2").html('1 ' + token_info[pair_token2].symbol +
+      ' = ' + token_info[pair_token1].rate + ' ' + token_info[pair_token1].symbol)
+
+  $("#confirm-add-share").html(to_add.share.toFixed(2) + '%')
   $("#confirm-add-liquidity").removeClass('hidden')
 })
 
