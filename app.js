@@ -550,11 +550,11 @@ document.getElementById('token2').addEventListener('input', function() {
 $('#close-token-selector').click(function(){
   $("#token-selector").addClass('hidden')
 })
-
+//Close confirm swap
 $('#close-confirm-swap').click(function(){
   $("#confirm-swap").addClass('hidden')
 })
-
+//Close confirm add liquidity
 $('#close-confirm-add-liquidity').click(function(){
   $("#confirm-add-liquidity").addClass('hidden')
 })
@@ -2644,7 +2644,7 @@ function add_pool_update_info(){
 function add_pool_update_buttons(){
 
   // they cannot be the same token
-  var is_same_token = (pair_token1==pair_token2) || 
+  var is_same_token = (pair_token1==pair_token2) ||
         (is_aergo(pair_token1) && is_aergo(pair_token2));
 
   if(is_same_token || pair_address==null || pair_address != ''){
@@ -2825,6 +2825,10 @@ function remove_first_token(){
 }
 
 $('#add-token1-button').click(function(){
+  $("#confirm-add-liquidity").removeClass('hidden')
+})
+
+$('#add-token1-button_OLD').click(function(){
 
   var button = this
 
