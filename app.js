@@ -2825,6 +2825,7 @@ function remove_first_token(){
 }
 
 $('#add-token1-button').click(function(){
+  $("#confirm-add-pair").html(token_info[pair_token1].symbol + '/' + token_info[pair_token2].symbol)
   $("#confirm-add-liquidity").removeClass('hidden')
 })
 
