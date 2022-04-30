@@ -2826,8 +2826,29 @@ function remove_first_token(){
 
 }
 
+function confirm_add_img(n){
+
+  if(n==1){
+    var symbol = token_info[pair_token1].symbol
+  }else{
+    var symbol = token_info[pair_token2].symbol
+  }
+
+  var imgsrc = 'https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/ethereum/assets/0x91Af0fBB28ABA7E31403Cb457106Ce79397FD4E6/logo.png'
+
+  var img = $('#confirm-add-img'+n)[0]
+  img.alt = symbol
+  img.src = imgsrc
+  img.srcset = imgsrc + ' 1x, ' + imgsrc + ' 2x'
+}
+
 $('#add-token1-button').click(function(){
+
   $('#confirm-add-receive').html(to_decimal_str(to_add.token1_amount, token_info[pair_token1].decimals, 6))
+
+  confirm_add_img(1)
+  confirm_add_img(2)
+
   $('#confirm-add-token1 > div:nth-child(1)').html(token_info[pair_token1].symbol + ' Deposited')
   $('#confirm-add-token1 > div:nth-child(2) > div')
       .html(to_decimal_str(to_add.token1_amount, token_info[pair_token1].decimals, 6))
