@@ -2873,7 +2873,7 @@ $('#add-token1-button').click(function(){
   $("#confirm-add-liquidity").removeClass('hidden')
 })
 
-$('#add-token1-button_OLD').click(function(){
+$('#confirm-add-button').click(function(){
 
   var button = this
 
