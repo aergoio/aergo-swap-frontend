@@ -2827,6 +2827,19 @@ function remove_first_token(){
 }
 
 $('#add-token1-button').click(function(){
+  $('#confirm-add-receive').html(to_decimal_str(to_add.token1_amount, token_info[pair_token1].decimals, 6))
+  $('#confirm-add-token1 > div:nth-child(1)').html(token_info[pair_token1].symbol + ' Deposited')
+  $('#confirm-add-token1 > div:nth-child(2) > div')
+      .html(to_decimal_str(to_add.token1_amount, token_info[pair_token1].decimals, 6))
+  $('#confirm-add-token1 > div:nth-child(2) > span')
+      .html(token_info[pair_token1].symbol)
+
+  $('#confirm-add-token2 > div:nth-child(1)').html(token_info[pair_token2].symbol + ' Deposited')
+  $('#confirm-add-token2 > div:nth-child(2) > div')
+      .html(to_decimal_str(to_add.token2_amount, token_info[pair_token2].decimals, 6))
+  $('#confirm-add-token2 > div:nth-child(2) > span')
+      .html(token_info[pair_token2].symbol)
+
   $("#confirm-add-pair").html(token_info[pair_token1].symbol + '/' + token_info[pair_token2].symbol)
   $("#confirm-add-rate1").html('1 ' + token_info[pair_token1].symbol + ' = ' + token_info[pair_token2].rate + ' ' + token_info[pair_token2].symbol)
   $("#confirm-add-rate2").html('1 ' + token_info[pair_token2].symbol + ' = ' + token_info[pair_token1].rate + ' ' + token_info[pair_token2].symbol)
