@@ -3,16 +3,14 @@ COMPUTATIONS + BLOCKCHAIN:
 
   - filter out ASLPT tokens
 
-  - update balances, after:
-    * adding each token to liquidity
-    * undo add token
-    * removing liquidity
-    * swapping
+  - confirm-swap: 'price udpated' section
+  - add 'disabled' to btn when price is updated - confirm-swap
 
-  after swap:
-    - clear inputs?
-    - update pair_info(s) of the pairs in the current route
-    - update user balances
+  - test swap with multi-hops
+  - test swap with exact output
+
+  - remove liq: choose to receive in waergo or aergo
+  - add liq: choose to send waergo or aergo  - add_first_token()
 
   /- it is choosing a route with bad price impact, after adding liquidity
       the route has pairs with bad price
@@ -31,6 +29,7 @@ COMPUTATIONS + BLOCKCHAIN:
 
   - use separate js files - with require or import
     "cat a.js b.js > concat.js && browserify concat.js -o bundle.js && rm concat.js"
+
 
   - update on ARC1: add field for additional info?
     it can contain the swap pair address on ASLPT contracts
@@ -64,6 +63,8 @@ FRONTEND + UI:
 
   - token selector: when opened in a tablet (and maybe changing browser height) it
     does not fill all the height
+
+  - search for "// max button too!"
 
 
   - multi-language
