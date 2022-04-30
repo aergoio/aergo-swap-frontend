@@ -550,6 +550,14 @@ document.getElementById('token2').addEventListener('input', function() {
 $('#close-token-selector').click(function(){
   $("#token-selector").addClass('hidden')
 })
+//Close confirm swap
+$('#close-confirm-swap').click(function(){
+  $("#confirm-swap").addClass('hidden')
+})
+//Close confirm add liquidity
+$('#close-confirm-add-liquidity').click(function(){
+  $("#confirm-add-liquidity").addClass('hidden')
+})
 
 $('#select-token-aergo').click(on_token_selected)
 $('#select-token-gem').click(on_token_selected)
@@ -2610,6 +2618,8 @@ function add_pool_update_info(){
     rate2_str = to_decimal_str(rate2, 18, 6)
 
   }
+  token_info[pair_token1].rate = rate1_str
+  token_info[pair_token2].rate = rate2_str
 
   // 0.000 XXX per YYY
   $('#add-rate1').html(rate1_str + ' ' + symbol1 + ' per ' + symbol2)
@@ -2622,6 +2632,8 @@ function add_pool_update_info(){
   if(pair && pair_token1_amount > 0){
     share = parseInt(to_add.token1_amount * BigInt(100) / pair_token1_amount)
   }
+
+  to_add.share = share
 
   $('#add-pool-share').html(share.toFixed(2) + '%')
 
@@ -2636,7 +2648,7 @@ function add_pool_update_info(){
 function add_pool_update_buttons(){
 
   // they cannot be the same token
-  var is_same_token = (pair_token1==pair_token2) || 
+  var is_same_token = (pair_token1==pair_token2) ||
         (is_aergo(pair_token1) && is_aergo(pair_token2));
 
   if(is_same_token || pair_address==null || pair_address != ''){
@@ -2816,7 +2828,52 @@ function remove_first_token(){
 
 }
 
+function confirm_add_img(n){
+
+  if(n==1){
+    var symbol = token_info[pair_token1].symbol
+  }else{
+    var symbol = token_info[pair_token2].symbol
+  }
+
+  var imgsrc = 'https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/ethereum/assets/0x91Af0fBB28ABA7E31403Cb457106Ce79397FD4E6/logo.png'
+
+  var img = $('#confirm-add-img'+n)[0]
+  img.alt = symbol
+  img.src = imgsrc
+  img.srcset = imgsrc + ' 1x, ' + imgsrc + ' 2x'
+}
+
 $('#add-token1-button').click(function(){
+
+  $('#confirm-add-receive').html(to_decimal_str(to_add.token1_amount, token_info[pair_token1].decimals, 6))
+
+  confirm_add_img(1)
+  confirm_add_img(2)
+
+  $('#confirm-add-token1 > div:nth-child(1)').html(token_info[pair_token1].symbol + ' Deposited')
+  $('#confirm-add-token1 > div:nth-child(2) > div')
+      .html(to_decimal_str(to_add.token1_amount, token_info[pair_token1].decimals, 6))
+  $('#confirm-add-token1 > div:nth-child(2) > span')
+      .html(token_info[pair_token1].symbol)
+
+  $('#confirm-add-token2 > div:nth-child(1)').html(token_info[pair_token2].symbol + ' Deposited')
+  $('#confirm-add-token2 > div:nth-child(2) > div')
+      .html(to_decimal_str(to_add.token2_amount, token_info[pair_token2].decimals, 6))
+  $('#confirm-add-token2 > div:nth-child(2) > span')
+      .html(token_info[pair_token2].symbol)
+
+  $("#confirm-add-pair").html(token_info[pair_token1].symbol + '/' + token_info[pair_token2].symbol)
+  $("#confirm-add-rate1").html('1 ' + token_info[pair_token1].symbol +
+      ' = ' + token_info[pair_token2].rate + ' ' + token_info[pair_token2].symbol)
+  $("#confirm-add-rate2").html('1 ' + token_info[pair_token2].symbol +
+      ' = ' + token_info[pair_token1].rate + ' ' + token_info[pair_token1].symbol)
+
+  $("#confirm-add-share").html(to_add.share.toFixed(2) + '%')
+  $("#confirm-add-liquidity").removeClass('hidden')
+})
+
+$('#confirm-add-button').click(function(){
 
   var button = this
 
