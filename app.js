@@ -2618,6 +2618,8 @@ function add_pool_update_info(){
     rate2_str = to_decimal_str(rate2, 18, 6)
 
   }
+  token_info[pair_token1].rate = rate1_str
+  token_info[pair_token2].rate = rate2_str
 
   // 0.000 XXX per YYY
   $('#add-rate1').html(rate1_str + ' ' + symbol1 + ' per ' + symbol2)
@@ -2826,6 +2828,8 @@ function remove_first_token(){
 
 $('#add-token1-button').click(function(){
   $("#confirm-add-pair").html(token_info[pair_token1].symbol + '/' + token_info[pair_token2].symbol)
+  $("#confirm-add-rate1").html('1 ' + token_info[pair_token1].symbol + ' = ' + token_info[pair_token2].rate + ' ' + token_info[pair_token2].symbol)
+  $("#confirm-add-rate2").html('1 ' + token_info[pair_token2].symbol + ' = ' + token_info[pair_token1].rate + ' ' + token_info[pair_token2].symbol)
   $("#confirm-add-liquidity").removeClass('hidden')
 })
 
