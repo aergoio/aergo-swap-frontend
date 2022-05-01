@@ -1,7 +1,7 @@
 
 COMPUTATIONS + BLOCKCHAIN:
 
-  - filter out ASLPT tokens
+  - filter out ASLPT tokens  (or use list of tokens?)
 
   - confirm-swap: show 'price udpated' section if the 'price' changes
     add 'disabled' to btn when price is updated
@@ -12,7 +12,6 @@ COMPUTATIONS + BLOCKCHAIN:
   - check calculations for swap with the result from the swap
 
   - remove liq: choose to receive in waergo or aergo
-  - add liq: choose to send waergo or aergo  - add_first_token()
 
   /- it is choosing a route with bad price impact, after adding liquidity
       the route has pairs with bad price
@@ -63,8 +62,6 @@ FRONTEND + UI:
 
   - token selector: when opened in a tablet (and maybe changing browser height) it
     does not fill all the height
-
-  - search for "// max button too!"
 
 
   - multi-language

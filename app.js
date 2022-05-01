@@ -2782,8 +2782,8 @@ function add_first_token(){
   // disable the input boxes, so the user cannot change the values while adding liquidity
   $('#add-token1-amount').prop('disabled', true)
   $('#add-token2-amount').prop('disabled', true)
-// max button too!
-
+  $('#max-token1').prop('disabled', true)
+  $('#max-token2').prop('disabled', true)
 
   // prepare and send the transaction
 
@@ -2857,6 +2857,8 @@ function remove_first_token(){
 
     $('#add-token1-amount').prop('disabled', false)
     $('#add-token2-amount').prop('disabled', false)
+    $('#max-token1').prop('disabled', false)
+    $('#max-token2').prop('disabled', false)
 
     get_account_balances([base_token])
 
