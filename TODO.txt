@@ -3,11 +3,13 @@ COMPUTATIONS + BLOCKCHAIN:
 
   - filter out ASLPT tokens
 
-  - confirm-swap: 'price udpated' section
-  - add 'disabled' to btn when price is updated - confirm-swap
+  - confirm-swap: show 'price udpated' section if the 'price' changes
+    add 'disabled' to btn when price is updated
 
   - test swap with multi-hops
   - test swap with exact output
+
+  - check calculations for swap with the result from the swap
 
   - remove liq: choose to receive in waergo or aergo
   - add liq: choose to send waergo or aergo  - add_first_token()
@@ -41,8 +43,6 @@ COMPUTATIONS + BLOCKCHAIN:
 
   - test with tokens with different decimals
 
-  - check/enhance calculations for swap
-
 
 
 
@@ -55,8 +55,8 @@ FRONTEND + UI:
   - success & failure dialog     id="popup-message"
   - general message dialog (replace swal?)
 
-  - display the price impact value (in percent) next to the output value
-    use different colors for the label, depending on the impact value
+  - display the price impact (in percent) next to the output value
+    use different colors for the label, depending on the impact value (yellow, orange, red)
 
   - account icon - remove the 'cooker', add an 'user'
   - account info + history of txns + link to aergoscan (to check balances)

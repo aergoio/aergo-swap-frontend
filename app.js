@@ -2501,7 +2501,7 @@ function on_add_token_input(event){
 
 function on_add_token_input_changed(n){
 
-  var rates = add_pool_update_info()
+  var rates = add_pool_update_info(n)
 
   var pair = pair_info[pair_address]
   if(pair && rates[0]!=0 && rates[1]!=0){
@@ -2510,16 +2510,10 @@ function on_add_token_input_changed(n){
     var decimals1 = token_info[pair_token1].decimals
     var decimals2 = token_info[pair_token2].decimals
 
-    var base1 = BigInt(10) ** BigInt(decimals1)
-    var base2 = BigInt(10) ** BigInt(decimals2)
-    var base3 = BigInt(10) ** BigInt(18)
-
     if(n==1){
-      to_add.token2_amount = to_add.token1_amount * rates[1] * base2 / (base3 * base1)
       other_input = to_decimal_str(to_add.token2_amount, decimals2, 6)
       id = 'add-token2-amount'
     }else{
-      to_add.token1_amount = to_add.token2_amount * rates[0] * base1 / (base3 * base2)
       other_input = to_decimal_str(to_add.token1_amount, decimals1, 6)
       id = 'add-token1-amount'
     }
@@ -2569,7 +2563,7 @@ function add_pool_update_balances(){
 
 }
 
-function add_pool_update_info(){
+function add_pool_update_info(n){
 
   var pair = pair_info[pair_address]
 
@@ -2617,24 +2611,47 @@ function add_pool_update_info(){
     rate1_str = to_decimal_str(rate1, 18, 6)
     rate2_str = to_decimal_str(rate2, 18, 6)
 
+    if(n==1){
+      to_add.token2_amount = to_add.token1_amount * rate2 * base2 / (base3 * base1)
+    }else if(n==2){
+      to_add.token1_amount = to_add.token2_amount * rate1 * base1 / (base3 * base2)
+    }
+
   }
 
   // 0.000 XXX per YYY
   $('#add-rate1').html(rate1_str + ' ' + symbol1 + ' per ' + symbol2)
   $('#add-rate2').html(rate2_str + ' ' + symbol2 + ' per ' + symbol1)
 
-  // compute the user share of the pool
-  var share = 100
 
-  if(pair && pair_token1_amount > 0){
-    share = parseFloat(to_add.token1_amount * BigInt(10000) / (pair_token1_amount + to_add.token1_amount)) / 100
+  // compute the amount of LP tokens to receive
+  var lptoken_supply = BigInt(pair ? pair.lptoken_amount : '0')
+  var lptoken_to_receive
+  if (lptoken_supply==0) {
+    var minimum_liquidity = BigInt("1000")
+    lptoken_to_receive = bigint_sqrt(to_add.token1_amount * to_add.token2_amount) - minimum_liquidity
+  }else{
+    var token1_ratio = lptoken_supply * to_add.token1_amount / pair.reserves[token1]
+    var token2_ratio = lptoken_supply * to_add.token2_amount / pair.reserves[token2]
+    if (token1_ratio <= token2_ratio) {
+      lptoken_to_receive = token1_ratio
+    }else{
+      lptoken_to_receive = token2_ratio
+    }
+  }
+
+  // compute the user share of the pool
+  var share = 0.0
+  if(pair && lptoken_to_receive > 0){
+    share = parseFloat(lptoken_to_receive * BigInt(10000) / (lptoken_supply + lptoken_to_receive)) / 100
   }
 
   $('#add-pool-share').html(share.toFixed(2) + '%')
 
+
   to_add.rate1_str = rate1_str
   to_add.rate2_str = rate2_str
-  to_add.receive_lptokens = calc_receive_lptokens(pair, token1, token2)
+  to_add.receive_lptokens = lptoken_to_receive
   to_add.share = share
 
   if(is_empty){
@@ -2642,29 +2659,6 @@ function add_pool_update_info(){
     rate2 = BigInt(0)
   }
   return [rate1, rate2]
-}
-
-function calc_receive_lptokens(pair, token1, token2){
-  var lptoken_supply = BigInt(pair.lptoken_amount)
-  var lptoken_to_mint
-
-  // is the pool empty?
-  if (lptoken_supply==0) {
-    var minimum_liquidity = BigInt("1000")
-    lptoken_to_mint = bigint_sqrt(to_add.token1_amount * to_add.token2_amount) - minimum_liquidity
-  }else{
-    // the ratio of added liquidity to the existing liquidty
-    var token1_ratio = lptoken_supply * to_add.token1_amount / pair.reserves[token1]
-    var token2_ratio = lptoken_supply * to_add.token2_amount / pair.reserves[token2]
-    // which one is lower?
-    if (token1_ratio <= token2_ratio) {
-      lptoken_to_mint = token1_ratio
-    }else{
-      lptoken_to_mint = token2_ratio
-    }
-  }
-
-  return lptoken_to_mint
 }
 
 function bigint_sqrt(value){
