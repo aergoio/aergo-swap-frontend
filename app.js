@@ -2578,8 +2578,8 @@ function add_pool_update_info(){
 
   var is_empty = false
 
-  pair_token1_amount = BigInt(0)
-  pair_token2_amount = BigInt(0)
+  var pair_token1_amount = BigInt(0)
+  var pair_token2_amount = BigInt(0)
   if( pair ){
     pair_token1_amount = pair.reserves[token1]
     pair_token2_amount = pair.reserves[token2]
@@ -2623,8 +2623,7 @@ function add_pool_update_info(){
   $('#add-rate1').html(rate1_str + ' ' + symbol1 + ' per ' + symbol2)
   $('#add-rate2').html(rate2_str + ' ' + symbol2 + ' per ' + symbol1)
 
-  // ...
-  // pair.lptoken_amount
+  // compute the user share of the pool
   var share = 100
 
   if(pair && pair_token1_amount > 0){
@@ -2635,6 +2634,7 @@ function add_pool_update_info(){
 
   to_add.rate1_str = rate1_str
   to_add.rate2_str = rate2_str
+  to_add.receive_lptokens = calc_receive_lptokens(pair, token1, token2)
   to_add.share = share
 
   if(is_empty){
@@ -2642,6 +2642,49 @@ function add_pool_update_info(){
     rate2 = BigInt(0)
   }
   return [rate1, rate2]
+}
+
+function calc_receive_lptokens(pair, token1, token2){
+  var lptoken_supply = BigInt(pair.lptoken_amount)
+  var lptoken_to_mint
+
+  // is the pool empty?
+  if (lptoken_supply==0) {
+    var minimum_liquidity = BigInt("1000")
+    lptoken_to_mint = bigint_sqrt(to_add.token1_amount * to_add.token2_amount) - minimum_liquidity
+  }else{
+    // the ratio of added liquidity to the existing liquidty
+    var token1_ratio = lptoken_supply * to_add.token1_amount / pair.reserves[token1]
+    var token2_ratio = lptoken_supply * to_add.token2_amount / pair.reserves[token2]
+    // which one is lower?
+    if (token1_ratio <= token2_ratio) {
+      lptoken_to_mint = token1_ratio
+    }else{
+      lptoken_to_mint = token2_ratio
+    }
+  }
+
+  return lptoken_to_mint
+}
+
+function bigint_sqrt(value){
+  if (value < 0n) {
+    throw 'square root of negative numbers is not supported'
+  }
+
+  if (value < 2n) {
+    return value
+  }
+
+  function newtonIteration(n, x0) {
+    const x1 = ((n / x0) + x0) >> 1n
+    if (x0 === x1 || x0 === (x1 - 1n)) {
+      return x0
+    }
+    return newtonIteration(n, x1)
+  }
+
+  return newtonIteration(value, 1n)
 }
 
 function add_pool_update_buttons(){
@@ -2847,7 +2890,7 @@ $('#add-token1-button').click(function(){
 
   if (to_add.token1_amount<=0 || to_add.token2_amount<=0) return
 
-  $('#confirm-add-receive').html(to_decimal_str(to_add.token1_amount, token_info[pair_token1].decimals, 6))
+  $('#confirm-add-receive').html(to_decimal_str(to_add.receive_lptokens, token_info[pair_token1].decimals, 6))
 
   confirm_add_img(1)
   confirm_add_img(2)
