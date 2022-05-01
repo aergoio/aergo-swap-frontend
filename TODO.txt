@@ -11,8 +11,6 @@ COMPUTATIONS + BLOCKCHAIN:
 
   - check calculations for swap with the result from the swap
 
-  - remove liq: choose to receive in waergo or aergo
-
   /- it is choosing a route with bad price impact, after adding liquidity
       the route has pairs with bad price
 

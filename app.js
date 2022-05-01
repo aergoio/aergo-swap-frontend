@@ -3000,6 +3000,7 @@ $('#show-remove-liquidity-page').click(function(){
 
 var remove_pool
 var percent_to_remove = 100
+var receive_aergo_as
 
 function on_remove_liquidity_click(){
   var i = $(this).parent().attr('pair')
@@ -3018,8 +3019,13 @@ function on_remove_liquidity_click(){
 
   $('#liquidity-percent').val('100')
 
+  receive_aergo_as = 'aergo'
+  if (pool.token1==waergo) symbol1 = 'AERGO'
+  if (pool.token2==waergo) symbol2 = 'AERGO'
+
   if(is_aergo(pool.token1) || is_aergo(pool.token2)){
     $('#receive-aergo').removeClass('hidden')
+    $('#receive-aergo').html('Receive WAERGO')
   }else{
     $('#receive-aergo').addClass('hidden')
   }
@@ -3118,6 +3124,20 @@ input.addEventListener('keydown', function(event) {
   }
 })
 
+$('#receive-aergo').click(function(){
+
+  receive_aergo_as = (receive_aergo_as=='aergo') ? waergo : 'aergo'
+
+  var other_token = (receive_aergo_as=='aergo') ? 'WAERGO' : 'AERGO'
+  $('#receive-aergo').html('Receive ' + other_token)
+
+  var symbol = (receive_aergo_as=='aergo') ? 'AERGO' : 'WAERGO'
+  var n = (remove_pool.token1==waergo) ? 1 : 2
+
+  $('#remove-liquidity-output > div:nth-child(' + n + ') > div:nth-child(2) > div:nth-child(2)')
+    .html(symbol)
+
+})
 
 $('#remove-liquidity-button').click(function(){
 
@@ -3132,7 +3152,7 @@ $('#remove-liquidity-button').click(function(){
 
   var args = {}
 
-  if (true) {
+  if (receive_aergo_as=='aergo') {
     args['unwrap_aergo'] = true
   }
 
