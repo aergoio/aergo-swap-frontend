@@ -2354,8 +2354,8 @@ function on_add_liquidity_click(){
   var pool = current_pool_list[i]
 
   pair_address = pool.pair
-  pair_token1  = pool.token1
-  pair_token2  = pool.token2
+  pair_token1 = (pool.token1==waergo) ? 'aergo' : pool.token1
+  pair_token2 = (pool.token2==waergo) ? 'aergo' : pool.token2
 
   update_add_liquidity()
   show_add_liquidity()
