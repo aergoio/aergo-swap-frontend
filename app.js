@@ -1607,10 +1607,13 @@ function update_pool_list(){
 
       if (!token_info[pool.token1] || !token_info[pool.token2]) continue
 
+      var symbol1 = (pool.token1==waergo) ? 'AERGO' : token_info[pool.token1].symbol
+      var symbol2 = (pool.token2==waergo) ? 'AERGO' : token_info[pool.token2].symbol
+
       var html = item_template
       html = html.replaceAll('%pair%', i.toString())
-      html = html.replaceAll('%symbol1%', token_info[pool.token1].symbol)
-      html = html.replaceAll('%symbol2%', token_info[pool.token2].symbol)
+      html = html.replaceAll('%symbol1%', symbol1)
+      html = html.replaceAll('%symbol2%', symbol2)
       html = html.replaceAll('%img1%', 'https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/ethereum/assets/0x91Af0fBB28ABA7E31403Cb457106Ce79397FD4E6/logo.png')  //token_info[address].logo)
       html = html.replaceAll('%img2%', 'https://res.cloudinary.com/sushi-cdn/image/fetch/w_64,f_auto,q_auto,fl_sanitize/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/ethereum/assets/0x91Af0fBB28ABA7E31403Cb457106Ce79397FD4E6/logo.png')  //token_info[address].logo)
 
