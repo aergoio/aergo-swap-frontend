@@ -550,14 +550,6 @@ document.getElementById('token2').addEventListener('input', function() {
 $('#close-token-selector').click(function(){
   $("#token-selector").addClass('hidden')
 })
-//Close confirm swap
-$('#close-confirm-swap').click(function(){
-  $("#confirm-swap").addClass('hidden')
-})
-//Close confirm add liquidity
-$('#close-confirm-add-liquidity').click(function(){
-  $("#confirm-add-liquidity").addClass('hidden')
-})
 
 $('#select-token-aergo').click(on_token_selected)
 $('#select-token-gem').click(on_token_selected)
@@ -2915,6 +2907,10 @@ $('#add-token1-button').click(function(){
   $("#confirm-add-share").html(to_add.share.toFixed(2) + '%')
 
   $("#confirm-add-liquidity").removeClass('hidden')
+})
+
+$('#close-confirm-add-liquidity').click(function(){
+  $("#confirm-add-liquidity").addClass('hidden')
 })
 
 $('#confirm-add-button').click(function(){
