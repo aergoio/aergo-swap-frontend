@@ -1399,7 +1399,12 @@ $('#confirm-swap-button').click(function(){
 
   }
 
-  var title = 'Swap'
+  var title = tr('Swap {0} {1} by {2} {3}',
+    $('#confirm-swap-amount1').html(),
+    token_info[token1].symbol,
+    $('#confirm-swap-amount2').html(),
+    token_info[token2].symbol
+  )
 
   startTxSendRequest(txdata, title, function(result){
 
@@ -1453,7 +1458,12 @@ function process_aergo(){
     return
   }
 
-  var title = 'Swap'
+  var title = tr('Swap {0} {1} by {2} {3}',
+    $('#confirm-swap-amount1').html(),
+    token_info[token1].symbol,
+    $('#confirm-swap-amount2').html(),
+    token_info[token2].symbol
+  )
 
   startTxSendRequest(txdata, title, function(result){
 
@@ -2749,7 +2759,7 @@ $('#create-pair > button').click(function(){
     }
   }
 
-  startTxSendRequest(txdata, 'Create pool', function(result){
+  startTxSendRequest(txdata, tr('Create pool'), function(result){
 
     pair_address = result.replace(/^"|"$/g, '')
 
@@ -2985,7 +2995,7 @@ $('#add-token2-button').click(function(){
     }
   }
 
-  startTxSendRequest(txdata, 'Add liquidity', function(result){
+  startTxSendRequest(txdata, tr('Add liquidity'), function(result){
 
     sent_base_token = false
     //add_pool_update_buttons()
@@ -3182,7 +3192,7 @@ $('#remove-liquidity-button').click(function(){
     }
   }
 
-  startTxSendRequest(txdata, 'Remove Liquidity', function(){
+  startTxSendRequest(txdata, tr('Remove Liquidity'), function(){
 
     // on success:
     load_user_pools(true)
@@ -3193,6 +3203,30 @@ $('#remove-liquidity-button').click(function(){
   });
 
 })
+
+
+//---------------------------------------------------------------------
+// TRANSLATIONS
+//---------------------------------------------------------------------
+
+var current_lang
+
+function translate(text){
+  if (!current_lang) return text
+  var translated = current_lang[text]
+  if (!translated) translated = text
+  return translated
+}
+
+function tr(format){
+  format = translate(format)
+  var args = Array.prototype.slice.call(arguments, 1);
+  return format.replace(/{(\d+)}/g, function(match, number) {
+    return typeof args[number] != 'undefined'
+      ? args[number]
+      : match
+  })
+}
 
 
 //---------------------------------------------------------------------
