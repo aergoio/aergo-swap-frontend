@@ -1,7 +1,14 @@
 
 COMPUTATIONS + BLOCKCHAIN:
 
-  - filter out ASLPT tokens  (or use list of tokens?)
+  ?- filter out ASLPT tokens  (or use list of tokens?)
+
+
+  - add liq: without selecting pair: failing - let the 2nd token to be selected ?  or use GEM
+
+  - show list of existing pairs, with amount of liquidity, movement per day/week/month, fees
+    use a simple backend replicated with aergolite (?)
+
 
   - confirm-swap: show 'price udpated' section if the 'price' changes
     add 'disabled' to btn when price is updated
@@ -55,7 +62,11 @@ FRONTEND + UI:
   - display the price impact (in percent) next to the output value
     use different colors for the label, depending on the impact value (yellow, orange, red)
 
-  - account icon - remove the 'cooker', add an 'user'
+  - account icon - remove the 'cooker', add an 'user' or use the same from aergoscan:
+    https://jdenticon.com/
+    https://github.com/aergoio/aergoscan/blob/eaa820afc6bc94be30b0054ee3d9edf5e47e29b7/frontend/src/vue/components/Identicon.vue
+    <Identicon :text="''+address" size="50" />
+    https://github.com/aergoio/aergoscan/blob/eaa820afc6bc94be30b0054ee3d9edf5e47e29b7/frontend/src/vue/components/AccountBox.vue
   - account info + history of txns + link to aergoscan (to check balances)
 
   - token selector: when opened in a tablet (and maybe changing browser height) it

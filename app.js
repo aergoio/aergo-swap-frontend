@@ -133,7 +133,7 @@ async function getActiveAccount() {
   return result.account.address;
 }
 
-async function startTxSendRequest(txdata, msg, callback) {
+async function startTxSendRequest(txdata, title, callback) {
   const result = await aergoConnectCall('SEND_TX', 'AERGO_SEND_TX_RESULT', txdata);
   console.log('AERGO_SEND_TX_RESULT', result);
 
@@ -159,36 +159,19 @@ async function startTxSendRequest(txdata, msg, callback) {
 
   var site = chainId.replace('aergo', 'aergoscan')
   if (site == 'aergoscan.io') site = 'mainnet.aergoscan.io'
+  var url = 'https://' + site + '/transaction/' + result.hash
 
   if (receipt.status == "SUCCESS") {
+    show_popup(title, url)
     if (callback) callback(receipt.result)
   } else {
     swal.fire({
       icon: 'error',
-      title: 'Failed!',
+      title: 'Error',
       text: receipt.result
     })
     return false
   }
-
-  var url = 'https://' + site + '/transaction/' + result.hash
-
-  swal.fire({
-    icon: 'success',
-    //title: 'OK',
-    html: '<br>' + msg + '<br>&nbsp;',
-    confirmButtonText: 'View on Aergoscan',
-    cancelButtonText: 'Close',
-    showCancelButton: true,
-    width: 600,
-    padding: '3em',
-    confirmButtonColor: '#e5007d',
-    background: '#fff',
-    preConfirm: function() {
-      var win = window.open(url, '_blank');
-      win.focus();
-    }
-  })
 
 }
 
@@ -1416,7 +1399,9 @@ $('#confirm-swap-button').click(function(){
 
   }
 
-  startTxSendRequest(txdata, 'The txn was sent', function(result){
+  var title = 'Swap'
+
+  startTxSendRequest(txdata, title, function(result){
 
     $('#amount1')[0].value = ''
     $('#amount2')[0].value = ''
@@ -1468,7 +1453,16 @@ function process_aergo(){
     return
   }
 
-  startTxSendRequest(txdata, 'The txn was sent', function(result){
+  var title = 'Swap'
+
+  startTxSendRequest(txdata, title, function(result){
+
+    $('#amount1')[0].value = ''
+    $('#amount2')[0].value = ''
+
+    swap_input = 1
+    swap_token1_amount = BigInt(0)
+    swap_token2_amount = BigInt(0)
 
     get_account_balances([waergo])
 
@@ -1522,6 +1516,28 @@ input.addEventListener('keydown', function(event) {
   if (key === "Backspace" || key === "Delete") {
     on_slippage_change(event)
   }
+})
+
+
+//---------------------------------------------------------------------
+// POPUP MESSAGE
+//---------------------------------------------------------------------
+
+function show_popup(title, url){
+
+  $('#popup-message-title').html(title)
+  $('#popup-message-link').html(url)
+
+  $('#popup-message').removeClass('hidden')
+
+  setTimeout(function(){
+    $('#popup-message').addClass('hidden')
+  }, 5000)
+
+}
+
+$('#close-popup-message').click(function(){
+  $("#popup-message").addClass('hidden')
 })
 
 
@@ -2733,7 +2749,7 @@ $('#create-pair > button').click(function(){
     }
   }
 
-  startTxSendRequest(txdata, 'The pair was created!', function(result){
+  startTxSendRequest(txdata, 'Create pool', function(result){
 
     pair_address = result.replace(/^"|"$/g, '')
 
@@ -2969,7 +2985,7 @@ $('#add-token2-button').click(function(){
     }
   }
 
-  startTxSendRequest(txdata, 'The liquidity was added!', function(result){
+  startTxSendRequest(txdata, 'Add liquidity', function(result){
 
     sent_base_token = false
     //add_pool_update_buttons()
@@ -3166,7 +3182,7 @@ $('#remove-liquidity-button').click(function(){
     }
   }
 
-  startTxSendRequest(txdata, 'The liquidity was removed!', function(){
+  startTxSendRequest(txdata, 'Remove Liquidity', function(){
 
     // on success:
     load_user_pools(true)
