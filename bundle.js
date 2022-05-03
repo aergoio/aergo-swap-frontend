@@ -792,9 +792,9 @@ function update_seltoken_balances(n, address){
 
   if(balances[address] && balances[address] != '0'){
     var balance = to_decimal_str(balances[address], token_info[address].decimals, 6)
-    $('#balance' + n).html('Balance: ' + balance)
+    $('#balance' + n).html(tr('Balance') + ': ' + balance)
   }else{
-    $('#balance' + n).html('Balance: 0')
+    $('#balance' + n).html(tr('Balance') + ': 0')
   }
 
 }
@@ -1209,18 +1209,18 @@ function update_swap_info(){
   swap_info.price_impact = swap_info.price_impact.toFixed(2) + '%'
 
   if( swap_input==1 ){
-    swap_info.expected_title = 'Expected Output'
+    swap_info.expected_title = tr('Expected Output')
     swap_info.expected_amount = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
   }else if( swap_input==2 ){
-    swap_info.expected_title = 'Expected Input'
+    swap_info.expected_title = tr('Expected Input')
     swap_info.expected_amount = document.getElementById('amount1').value + ' ' + token_info[token1].symbol
   }
 
   if( swap_input==1 ){
-    swap_info.minimum_title = 'Minimum received after slippage (' + slippage.toFixed(2) + '%)'
+    swap_info.minimum_title = tr('Minimum received after slippage') + ' (' + slippage.toFixed(2) + '%)'
     swap_info.minimum_amount = swap_info.min_output_str + ' ' + token_info[token2].symbol
   }else if( swap_input==2 ){
-    swap_info.minimum_title = 'Maximum spent after slippage (' + slippage.toFixed(2) + '%)'
+    swap_info.minimum_title = tr('Maximum spent after slippage') + ' (' + slippage.toFixed(2) + '%)'
     swap_info.minimum_amount = swap_info.max_input_str + ' ' + token_info[token1].symbol
   }
 
@@ -1233,10 +1233,10 @@ function update_swap_info(){
   var html, amount
   if( swap_input==1 ){
     amount = swap_info.min_output_str + ' ' + token_info[token2].symbol
-    html = 'Output is estimated. You will receive at least'
+    html = tr('Output is estimated. You will receive at least')
   }else if( swap_input==2 ){
     amount = swap_info.max_input_str + ' ' + token_info[token1].symbol
-    html = 'Input is estimated. You will sell at most'
+    html = tr('Input is estimated. You will sell at most')
   }
   html += ' <span class="text-xs leading-4 font-bold text-high-emphesis">' + amount + '</span> or the transaction will revert.'
   $('#confirm-swap-message').html(html)
@@ -3007,7 +3007,7 @@ $('#remove-liquidity-button').click(function(){
     }
   }
 
-  startTxSendRequest(txdata, 'The liquidity was removed!', function(){
+  startTxSendRequest(txdata, tr('The liquidity was removed!'), function(){
     // on success:
     load_user_pools(true)
     show_page('pool-page')
@@ -3023,7 +3023,13 @@ function tr(key, ...args) {
   if (typeof key !== 'string') {
     throw new TypeError("key argument is expected to of type string.");
   }
-
+  if (Array.isArray(args) && args.length) {
+    args.forEach((arg, idx) => {
+      if ((typeof arg === 'string' || typeof arg === 'number') && key.includes(`{${idx}`)) {
+        key.replace(`{${idx}`, arg.toString());
+      }
+    })
+  }
   return window.App.I18N.localeStrings[key] ?? key;
 }
 
@@ -3032,6 +3038,7 @@ const $langTrigger = $langSelector.find('button');
 const $langSelectorListHolder = $langSelector.find('#lang_selector_list_holder');
 const $langSelectorLocaleName = $langSelector.find('#lang_selector_locale_name');
 const $translateStrings = $('[data-i18n-tr]');
+const $translateStringsAttrs = $('[data-i18n-tr-attr]');
 
 function render_lang_list() {
   fetch('/langs/langs_list.json')
@@ -3076,6 +3083,7 @@ function init_i18n() {
           locale: 'en',
           localeStrings: {},
           translateElems: new Map(),
+          translateElemsAttrs: new Map(),
           localeSelectorUI: new Proxy(
               {
                 isShown: false
@@ -3107,9 +3115,27 @@ function init_i18n() {
                   .then((res) => res.json())
                   .then((translations) => {
                     obj.localeStrings = {...translations};
-                    [...window.App.I18N.translateElems.entries()].forEach(([key, el]) => {
-                      $(el).html(tr(key));
-                    })
+                    [...window.App.I18N.translateElems.entries()].forEach(([key, els]) => {
+                      try {
+                        els.forEach((el) => $(el).html(tr(key)));
+                      } catch (e) {
+                        console.error(e);
+                      }
+                    });
+                    [...window.App.I18N.translateElemsAttrs.entries()].forEach(([key, els]) => {
+                      els.forEach((el) => {
+                        const trAttr = el.getAttribute('data-i18n-tr-attr');
+                        if (trAttr.includes(':::')) {
+                          const [attrName, _] = trAttr.split(':::');
+                          const [__, value] = key.split(':::');
+                          try {
+                            el.setAttribute(attrName, tr(value));
+                          } catch (e) {
+                            console.error(e);
+                          }
+                        }
+                      })
+                    });
                   })
                   .catch((err) => console.error(err))
                   .finally(() => {
@@ -3124,9 +3150,23 @@ function init_i18n() {
     )
   }
   $translateStrings.each((_, el) => {
-    const key = el.getAttribute('data-i18n-tr');
-    window.App.I18N.translateElems.set(key, el);
+    let key = el.getAttribute('data-i18n-tr');
+    window.App.I18N.translateElems.set(
+        key,
+        window.App.I18N.translateElems.has(key) && Array.isArray(window.App.I18N.translateElems.get(key))
+            ? [...window.App.I18N.translateElems.get(key), el]
+            : [el]
+    );
   });
+  $translateStringsAttrs.each((_, el) => {
+    let key = el.getAttribute('data-i18n-tr-attr');
+    window.App.I18N.translateElemsAttrs.set(
+        key,
+        window.App.I18N.translateElemsAttrs.has(key) && Array.isArray(window.App.I18N.translateElemsAttrs.get(key))
+            ? [...window.App.I18N.translateElemsAttrs.get(key), el]
+            : [el]
+    );
+  })
   render_lang_list()
 }
 

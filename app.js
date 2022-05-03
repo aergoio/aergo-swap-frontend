@@ -791,9 +791,9 @@ function update_seltoken_balances(n, address){
 
   if(balances[address] && balances[address] != '0'){
     var balance = to_decimal_str(balances[address], token_info[address].decimals, 6)
-    $('#balance' + n).html('Balance: ' + balance)
+    $('#balance' + n).html(tr('Balance') + ': ' + balance)
   }else{
-    $('#balance' + n).html('Balance: 0')
+    $('#balance' + n).html(tr('Balance') + ': 0')
   }
 
 }
@@ -3022,7 +3022,13 @@ function tr(key, ...args) {
   if (typeof key !== 'string') {
     throw new TypeError("key argument is expected to of type string.");
   }
-
+  if (Array.isArray(args) && args.length) {
+    args.forEach((arg, idx) => {
+      if ((typeof arg === 'string' || typeof arg === 'number') && key.includes(`{${idx}`)) {
+        key.replace(`{${idx}`, arg.toString());
+      }
+    })
+  }
   return window.App.I18N.localeStrings[key] ?? key;
 }
 
@@ -3031,6 +3037,7 @@ const $langTrigger = $langSelector.find('button');
 const $langSelectorListHolder = $langSelector.find('#lang_selector_list_holder');
 const $langSelectorLocaleName = $langSelector.find('#lang_selector_locale_name');
 const $translateStrings = $('[data-i18n-tr]');
+const $translateStringsAttrs = $('[data-i18n-tr-attr]');
 
 function render_lang_list() {
   fetch('/langs/langs_list.json')
@@ -3075,6 +3082,7 @@ function init_i18n() {
           locale: 'en',
           localeStrings: {},
           translateElems: new Map(),
+          translateElemsAttrs: new Map(),
           localeSelectorUI: new Proxy(
               {
                 isShown: false
@@ -3106,9 +3114,27 @@ function init_i18n() {
                   .then((res) => res.json())
                   .then((translations) => {
                     obj.localeStrings = {...translations};
-                    [...window.App.I18N.translateElems.entries()].forEach(([key, el]) => {
-                      $(el).html(tr(key));
-                    })
+                    [...window.App.I18N.translateElems.entries()].forEach(([key, els]) => {
+                      try {
+                        els.forEach((el) => $(el).html(tr(key)));
+                      } catch (e) {
+                        console.error(e);
+                      }
+                    });
+                    [...window.App.I18N.translateElemsAttrs.entries()].forEach(([key, els]) => {
+                      els.forEach((el) => {
+                        const trAttr = el.getAttribute('data-i18n-tr-attr');
+                        if (trAttr.includes(':::')) {
+                          const [attrName, _] = trAttr.split(':::');
+                          const [__, value] = key.split(':::');
+                          try {
+                            el.setAttribute(attrName, tr(value));
+                          } catch (e) {
+                            console.error(e);
+                          }
+                        }
+                      })
+                    });
                   })
                   .catch((err) => console.error(err))
                   .finally(() => {
@@ -3123,9 +3149,23 @@ function init_i18n() {
     )
   }
   $translateStrings.each((_, el) => {
-    const key = el.getAttribute('data-i18n-tr');
-    window.App.I18N.translateElems.set(key, el);
+    let key = el.getAttribute('data-i18n-tr');
+    window.App.I18N.translateElems.set(
+        key,
+        window.App.I18N.translateElems.has(key) && Array.isArray(window.App.I18N.translateElems.get(key))
+            ? [...window.App.I18N.translateElems.get(key), el]
+            : [el]
+    );
   });
+  $translateStringsAttrs.each((_, el) => {
+    let key = el.getAttribute('data-i18n-tr-attr');
+    window.App.I18N.translateElemsAttrs.set(
+        key,
+        window.App.I18N.translateElemsAttrs.has(key) && Array.isArray(window.App.I18N.translateElemsAttrs.get(key))
+            ? [...window.App.I18N.translateElemsAttrs.get(key), el]
+            : [el]
+    );
+  })
   render_lang_list()
 }
 
