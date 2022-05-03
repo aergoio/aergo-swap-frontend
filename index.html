@@ -1,4 +1,4 @@
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 
 <head>
   <meta name="viewport" content="width=device-width">
@@ -393,7 +393,7 @@
                   style="position: fixed; inset: 0px 0px auto auto; transform: translate3d(-449.5px, 232px, 0px);"
                   data-popper-reference-hidden="false" data-popper-escaped="false" data-popper-placement="bottom-end">
                   <div class="flex flex-col gap-3 p-3 border rounded shadow-xl bg-dark-900 w-80 border-dark-700">
-                    <div class="flex flex-col gap-4 p-3 border rounded border-dark-800/60">
+                    <div class="flex flex-col gap-4 p-3">
                       <div class="text-[0.625rem] leading-[1.2] font-bold text-secondary">
                         <span data-i18n-tr="Transaction Settings">Transaction Settings</span>
                       </div>
@@ -416,11 +416,11 @@
                             <div
                               class="border-dark-800 border-2 h-[36px] flex items-center px-2 rounded bg-dark-1000/40"
                               tabindex="-1">
-                              <div class="flex items-center justify-between gap-1"><input id="text-slippage"
+                              <div class="flex items-center justify-between gap-1"><input id="config-slippage"
                                   class="bg-transparent placeholder-low-emphesis min-w-0 w-full font-bold" color=""
                                   autocomplete="off" value="0.50">%</div>
                             </div>
-                            <div><button
+                            <div><button id="config-auto-slippage"
                                 class="border-2 disabled:pointer-events-none disabled:opacity-40 border-none bg-blue/20 hover:bg-blue/40 active:bg-blue/60 text-blue focus:bg-blue/40 text-sm rounded-full px-3 h-[36px] font-bold flex items-center justify-center gap-1">Auto</button>
                             </div>
                           </div>
@@ -708,11 +708,7 @@ claimed by withdrawing your liquidity.">
             <div class="relative filter z-10">
               <div class="p-4 space-y-4 rounded bg-dark-900" style="z-index: 1;">
                 <div class="flex items-center justify-between mb-4 space-x-3">
-                  <div class="flex rounded bg-dark-800 h-[46px]"><a
-                      class="flex items-center justify-center px-4 text-base font-medium text-center rounded-md text-secondary hover:text-high-emphesis font-bold border rounded text-high-emphesis border-dark-800 bg-gradient-to-r from-opaque-blue to-opaque-pink hover:from-blue hover:to-pink"
-                      href="/add-xxx">
-                    <span data-i18n-tr="Liquidity">Liquidity</span>
-                  </a></div>
+                  <div class="flex rounded bg-dark-800 h-[46px]"></div>
                   <div class="flex items-center">
                     <div class="grid grid-flow-col gap-1">
                       <div class="relative flex items-center w-full h-full rounded hover:bg-dark-800">
@@ -910,11 +906,7 @@ claimed by withdrawing your liquidity.">
             <div class="relative filter z-10">
               <div class="p-4 space-y-4 rounded bg-dark-900" style="z-index: 1;">
                 <div class="flex items-center justify-between mb-4 space-x-3">
-                  <div class="flex rounded bg-dark-800 h-[46px]"><a
-                      class="flex items-center justify-center px-4 text-base font-medium text-center rounded-md text-secondary hover:text-high-emphesis font-bold border rounded text-high-emphesis border-dark-800 bg-gradient-to-r from-opaque-blue to-opaque-pink hover:from-blue hover:to-pink"
-                      href="/remove/ETH/0xc2132D05D31c914a87C6611C10748AEb04B58e8F">
-                    <span data-i18n-tr="Liquidity">Liquidity</span>
-                  </a></div>
+                  <div class="flex rounded bg-dark-800 h-[46px]"></div>
                   <div class="flex items-center">
                     <div class="grid grid-flow-col gap-1">
                       <div class="relative flex items-center w-full h-full rounded hover:bg-dark-800">
@@ -969,7 +961,7 @@ claimed by withdrawing your liquidity.">
                             <div class="grid">
                               <div><span data-i18n-tr="You Will Receive">You Will Receive</span>:</div>
                               <div class="w-full flex p-0 text-sm"><a id="receive-aergo"
-                                  class="text-baseline text-blue opacity-80 hover:opacity-100 focus:opacity-100 whitespace-nowrap">
+                                  class="text-baseline text-blue opacity-80 hover:opacity-100 focus:opacity-100 whitespace-nowrap cursor-pointer">
                                 <span data-i18n-tr="Receive">Receive</span>
                                   WAERGO</a></div>
                             </div>
@@ -1114,7 +1106,7 @@ claimed by withdrawing your liquidity.">
                   </a>
                 </div>
               </div>
-              <div class="cursor-pointer hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
+              <div id="close-popup-message" class="cursor-pointer hover:text-white"><svg xmlns="http://www.w3.org/2000/svg" fill="none"
                   viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" width="24" height="24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg></div>
@@ -1631,7 +1623,7 @@ us!">Our community is building a comprehensive decentralized trading platform fo
                     <span data-i18n-tr="You will receive">You will receive</span>
                   </div>
                 </div>
-                <div class="flex items-center justify-center w-6 h-6 cursor-pointer"><svg
+                <div id="close-confirm-add-liquidity" class="flex items-center justify-center w-6 h-6 cursor-pointer"><svg
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
                     aria-hidden="true" width="24" height="24" class="text-high-emphesis">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
@@ -1640,7 +1632,7 @@ us!">Our community is building a comprehensive decentralized trading platform fo
               </div>
               <div class="pb-4">
                 <div class="flex items-center justify-start gap-3">
-                  <div class="text-xl font-bold md:text-3xl text-high-emphesis">233.304</div>
+                  <div id="confirm-add-receive" class="text-xl font-bold md:text-3xl text-high-emphesis">233.304</div>
                   <div class="grid grid-flow-col gap-2">
                     <div class="flex items-center space-x-2">
                       <div class="rounded-full" style="width: 48px; height: 48px;">

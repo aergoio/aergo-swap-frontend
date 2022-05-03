@@ -1,10 +1,22 @@
 
 COMPUTATIONS + BLOCKCHAIN:
 
-  after swap:
-    - clear inputs?
-    - update pair_info(s) of the pairs in the current route
-    - update user balances
+  ?- filter out ASLPT tokens  (or use list of tokens?)
+
+
+  - add liq: without selecting pair: failing - let the 2nd token to be selected ?  or use GEM
+
+  - show list of existing pairs, with amount of liquidity, movement per day/week/month, fees
+    use a simple backend replicated with aergolite (?)
+
+
+  - confirm-swap: show 'price udpated' section if the 'price' changes
+    add 'disabled' to btn when price is updated
+
+  - test swap with multi-hops
+  - test swap with exact output
+
+  - check calculations for swap with the result from the swap
 
   /- it is choosing a route with bad price impact, after adding liquidity
       the route has pairs with bad price
@@ -24,7 +36,6 @@ COMPUTATIONS + BLOCKCHAIN:
   - use separate js files - with require or import
     "cat a.js b.js > concat.js && browserify concat.js -o bundle.js && rm concat.js"
 
-  - filter out ASLPT tokens
 
   - update on ARC1: add field for additional info?
     it can contain the swap pair address on ASLPT contracts
@@ -32,17 +43,9 @@ COMPUTATIONS + BLOCKCHAIN:
 
   - make aergo/waergo be the base token on new_pair (?) (on contract)
 
-  - update balances, after:
-    * adding each token to liquidity
-    * undo add token
-    * removing liquidity
-    * swapping
-
   - the tokens cannot be the same
 
   - test with tokens with different decimals
-
-  - check/enhance calculations for swap
 
 
 
@@ -56,10 +59,15 @@ FRONTEND + UI:
   - success & failure dialog     id="popup-message"
   - general message dialog (replace swal?)
 
-  - display the price impact value (in percent) next to the output value
-    use different colors for the label, depending on the impact value
+  - display the price impact (in percent) next to the output value
+    use different colors for the label, depending on the impact value (yellow, orange, red)
 
-  - capture slippage when typed on the config page
+  - account icon - remove the 'cooker', add an 'user' or use the same from aergoscan:
+    https://jdenticon.com/
+    https://github.com/aergoio/aergoscan/blob/eaa820afc6bc94be30b0054ee3d9edf5e47e29b7/frontend/src/vue/components/Identicon.vue
+    <Identicon :text="''+address" size="50" />
+    https://github.com/aergoio/aergoscan/blob/eaa820afc6bc94be30b0054ee3d9edf5e47e29b7/frontend/src/vue/components/AccountBox.vue
+  - account info + history of txns + link to aergoscan (to check balances)
 
   - token selector: when opened in a tablet (and maybe changing browser height) it
     does not fill all the height
