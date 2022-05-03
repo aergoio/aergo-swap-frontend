@@ -6084,3 +6084,7 @@ input[type=range]::-webkit-slider-thumb {
     color: #c0bdbf;
     font-size: .875rem;
 }
+
+[data-i18n-tr] {
+    display: contents;
+}

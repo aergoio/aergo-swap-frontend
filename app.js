@@ -1208,18 +1208,18 @@ function update_swap_info(){
   swap_info.price_impact = swap_info.price_impact.toFixed(2) + '%'
 
   if( swap_input==1 ){
-    swap_info.expected_title = 'Expected Output'
+    swap_info.expected_title = tr('Expected Output')
     swap_info.expected_amount = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
   }else if( swap_input==2 ){
-    swap_info.expected_title = 'Expected Input'
+    swap_info.expected_title = tr('Expected Input')
     swap_info.expected_amount = document.getElementById('amount1').value + ' ' + token_info[token1].symbol
   }
 
   if( swap_input==1 ){
-    swap_info.minimum_title = 'Minimum received after slippage (' + slippage.toFixed(2) + '%)'
+    swap_info.minimum_title = tr('Minimum received after slippage') + ' (' + slippage.toFixed(2) + '%)'
     swap_info.minimum_amount = swap_info.min_output_str + ' ' + token_info[token2].symbol
   }else if( swap_input==2 ){
-    swap_info.minimum_title = 'Maximum spent after slippage (' + slippage.toFixed(2) + '%)'
+    swap_info.minimum_title = tr('Maximum spent after slippage') + ' (' + slippage.toFixed(2) + '%)'
     swap_info.minimum_amount = swap_info.max_input_str + ' ' + token_info[token1].symbol
   }
 
@@ -1232,10 +1232,10 @@ function update_swap_info(){
   var html, amount
   if( swap_input==1 ){
     amount = swap_info.min_output_str + ' ' + token_info[token2].symbol
-    html = 'Output is estimated. You will receive at least'
+    html = tr('Output is estimated. You will receive at least')
   }else if( swap_input==2 ){
     amount = swap_info.max_input_str + ' ' + token_info[token1].symbol
-    html = 'Input is estimated. You will sell at most'
+    html = tr('Input is estimated. You will sell at most')
   }
   html += ' <span class="text-xs leading-4 font-bold text-high-emphesis">' + amount + '</span> or the transaction will revert.'
   $('#confirm-swap-message').html(html)
@@ -3006,7 +3006,7 @@ $('#remove-liquidity-button').click(function(){
     }
   }
 
-  startTxSendRequest(txdata, 'The liquidity was removed!', function(){
+  startTxSendRequest(txdata, tr('The liquidity was removed!'), function(){
     // on success:
     load_user_pools(true)
     show_page('pool-page')
@@ -3014,6 +3014,120 @@ $('#remove-liquidity-button').click(function(){
 
 })
 
+//---------------------------------------------------------------------
+// I18N
+//---------------------------------------------------------------------
+
+function tr(key, ...args) {
+  if (typeof key !== 'string') {
+    throw new TypeError("key argument is expected to of type string.");
+  }
+
+  return window.App.I18N.localeStrings[key] ?? key;
+}
+
+const $langSelector = $('#lang_selector');
+const $langTrigger = $langSelector.find('button');
+const $langSelectorListHolder = $langSelector.find('#lang_selector_list_holder');
+const $langSelectorLocaleName = $langSelector.find('#lang_selector_locale_name');
+const $translateStrings = $('[data-i18n-tr]');
+
+function render_lang_list() {
+  fetch('/langs/langs_list.json')
+    .then((res) => res.json())
+    .then((langList) => {
+      $langSelector.addClass('lg:flex');
+      const $langList = $(`
+        <div 
+            id="lang_selector_list"
+            class="hidden absolute max-h-[240px] overflow-auto w-full border-2 mt-2 divide-y rounded shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border-dark-900 bg-dark-1000 divide-dark-900">
+            ${Object.entries(langList).map(([key, val]) => (`
+                <div
+                    data-i18n-lang-key="${key}" 
+                    class="text-sm leading-5 font-bold cursor-pointer select-none text-primary px-3 py-2 cursor-pointer hover:bg-dark-900/40">
+                ${val}
+                </div>
+            `)).join("")}
+        </div>
+      `);
+      $langSelectorListHolder.append($langList);
+
+      $langList.find('[data-i18n-lang-key]').each((_, el) => {
+        el.addEventListener('click', (event) => {
+          const locale = event.target.getAttribute('data-i18n-lang-key');
+          $langSelectorLocaleName.html(langList[locale]);
+          window.App.I18N.locale = locale;
+        })
+      });
+      $langTrigger.on('click', () => {
+        window.App.I18N.localeSelectorUI.isShown = !window.App.I18N.localeSelectorUI.isShown;
+      });
+
+    })
+    .catch(err => console.error(err));
+}
+
+function init_i18n() {
+  window.App = {
+    ...(window.App ? window.App : {}),
+    I18N: new Proxy(
+        {
+          locale: 'en',
+          localeStrings: {},
+          translateElems: new Map(),
+          localeSelectorUI: new Proxy(
+              {
+                isShown: false
+              },
+              {
+                set: function (obj, prop, value) {
+                  switch (prop) {
+                    case 'isShown': {
+                      const $langList = $('#lang_selector_list');
+                      if (value === true) {
+                        $langList.removeClass('hidden');
+                      } else {
+                        $langList.addClass('hidden');
+                      }
+                      break;
+                    }
+                  }
+                  obj[prop] = value;
+                }
+              }
+          )
+        },
+      {
+        set: function (obj, prop, value) {
+          switch (prop) {
+            case 'locale': {
+              const $langList = $('#lang_selector_list');
+              fetch(`/langs/${value}.json`)
+                  .then((res) => res.json())
+                  .then((translations) => {
+                    obj.localeStrings = {...translations};
+                    [...window.App.I18N.translateElems.entries()].forEach(([key, el]) => {
+                      $(el).html(tr(key));
+                    })
+                  })
+                  .catch((err) => console.error(err))
+                  .finally(() => {
+                    $langList.addClass('hidden');
+                  })
+              break;
+            }
+          }
+          obj[prop] = value;
+        }
+      }
+    )
+  }
+  $translateStrings.each((_, el) => {
+    const key = el.getAttribute('data-i18n-tr');
+    window.App.I18N.translateElems.set(key, el);
+  });
+  render_lang_list()
+}
 
 //---------------------------------------------------------------------
 // ONLOAD
@@ -3034,5 +3148,5 @@ document.body.onload = function() {
 
   on_chain_selected()
   get_token_list()
-
+  init_i18n()
 }
