@@ -5,6 +5,7 @@ COMPUTATIONS + BLOCKCHAIN:
 
 
   - add liq: without selecting pair: failing - let the 2nd token to be selected ?  or use GEM
+    update_add_liquidity()
 
   - show list of existing pairs, with amount of liquidity, movement per day/week/month, fees
     use a simple backend replicated with aergolite (?)
@@ -59,6 +60,10 @@ FRONTEND + UI:
   - success & failure dialog     id="popup-message"
   - general message dialog (replace swal?)
 
+  - user account dialog
+    account info + history of txns + link to aergoscan (to check balances)
+    allow to select another account?
+
   - display the price impact (in percent) next to the output value
     use different colors for the label, depending on the impact value (yellow, orange, red)
 
@@ -67,15 +72,12 @@ FRONTEND + UI:
     https://github.com/aergoio/aergoscan/blob/eaa820afc6bc94be30b0054ee3d9edf5e47e29b7/frontend/src/vue/components/Identicon.vue
     <Identicon :text="''+address" size="50" />
     https://github.com/aergoio/aergoscan/blob/eaa820afc6bc94be30b0054ee3d9edf5e47e29b7/frontend/src/vue/components/AccountBox.vue
-  - account info + history of txns + link to aergoscan (to check balances)
 
   - token selector: when opened in a tablet (and maybe changing browser height) it
     does not fill all the height
 
 
-  - multi-language
-      the placement of token symbol in the sentence can vary, so use {1} or %1 to represent
-      the place to put variables
+  - multi-language support
 
 
 

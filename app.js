@@ -2887,7 +2887,7 @@ function remove_first_token(){
 
 }
 
-function confirm_add_img(n){
+function confirm_add_set_img(n){
 
   if(n==1){
     var symbol = token_info[pair_token1].symbol
@@ -2903,14 +2903,14 @@ function confirm_add_img(n){
   img.srcset = imgsrc + ' 1x, ' + imgsrc + ' 2x'
 }
 
-$('#add-token1-button').click(function(){
+function show_confirm_add_dialog(){
 
   if (to_add.token1_amount<=0 || to_add.token2_amount<=0) return
 
   $('#confirm-add-receive').html(to_decimal_str(to_add.receive_lptokens, token_info[pair_token1].decimals, 6))
 
-  confirm_add_img(1)
-  confirm_add_img(2)
+  confirm_add_set_img(1)
+  confirm_add_set_img(2)
 
   $('#confirm-add-token1 > div:nth-child(1)').html(token_info[pair_token1].symbol + ' Deposited')
   $('#confirm-add-token1 > div:nth-child(2) > div')
@@ -2940,16 +2940,19 @@ $('#close-confirm-add-liquidity').click(function(){
 })
 
 $('#confirm-add-button').click(function(){
+  add_first_token()
+  $("#confirm-add-liquidity").addClass('hidden')
+})
 
-  var button = this
+$('#add-token1-button').click(function(){
 
-  if(button.innerHTML.substr(0,3) == 'Add'){
-    add_first_token()
-  }else{
+  if(sent_base_token){
     remove_first_token()
+  }else{
+    show_confirm_add_dialog()
   }
 
-})
+}
 
 $('#add-token2-button').click(function(){
 
