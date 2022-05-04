@@ -777,9 +777,9 @@ function update_seltoken_balances(n, address){
 
   if(balances[address] && balances[address] != '0'){
     var balance = to_decimal_str(balances[address], token_info[address].decimals, 6)
-    $('#balance' + n).html(tr('Balance') + ': ' + balance)
+    $('#balance' + n).html(tr('Balance:') + ' ' + balance)
   }else{
-    $('#balance' + n).html(tr('Balance') + ': 0')
+    $('#balance' + n).html(tr('Balance:') + ' 0')
   }
 
 }
@@ -1223,7 +1223,7 @@ function update_swap_info(){
     amount = swap_info.max_input_str + ' ' + token_info[token1].symbol
     html = tr('Input is estimated. You will sell at most')
   }
-  html += ' <span class="text-xs leading-4 font-bold text-high-emphesis">' + amount + '</span> or the transaction will revert.'
+  html += ` <span class="text-xs leading-4 font-bold text-high-emphesis">${amount}</span> ${tr('or the transaction will revert.')}`
   $('#confirm-swap-message').html(html)
 
 }
@@ -2572,7 +2572,7 @@ function add_pool_update_balances(){
   }catch(e){
     amount = '0'
   }
-  $('#add-balance-token1').html('Balance: ' + amount)
+  $('#add-balance-token1').html(tr('Balance:') + ' ' + amount)
 
   try{
     amount = balances[pair_token2].toString()
@@ -2580,7 +2580,7 @@ function add_pool_update_balances(){
   }catch(e){
     amount = '0'
   }
-  $('#add-balance-token2').html('Balance: ' + amount)
+  $('#add-balance-token2').html(tr('Balance:') + ' ' + amount)
 
 }
 
@@ -2933,6 +2933,8 @@ $('#add-token1-button').click(function(){
   $("#confirm-add-share").html(to_add.share.toFixed(2) + '%')
 
   $("#confirm-add-liquidity").removeClass('hidden')
+
+  $("#confirm-add-slippage").html(tr('Output is estimated. If the price changes by more than {0}% your transaction will revert.', slippage))
 })
 
 $('#close-confirm-add-liquidity').click(function(){
@@ -3208,18 +3210,21 @@ $('#remove-liquidity-button').click(function(){
 // I18N
 //---------------------------------------------------------------------
 
-function tr(key, ...args) {
-  if (typeof key !== 'string') {
-    throw new TypeError("key argument is expected to of type string.");
-  }
-  if (Array.isArray(args) && args.length) {
-    args.forEach((arg, idx) => {
-      if ((typeof arg === 'string' || typeof arg === 'number') && key.includes(`{${idx}`)) {
-        key.replace(`{${idx}`, arg.toString());
-      }
-    })
-  }
-  return window.App.I18N.localeStrings[key] ?? key;
+function translate(text){
+  if (!window.App.I18N.locale) return text
+  var translated = window.App.I18N.localeStrings[text]
+  if (!translated) translated = text
+  return translated
+}
+
+function tr(format){
+  format = translate(format)
+  var args = Array.prototype.slice.call(arguments, 1);
+  return format.replace(/{(\d+)}/g, function(match, number) {
+    return typeof args[number] != 'undefined'
+        ? args[number]
+        : match
+  })
 }
 
 const $langSelector = $('#lang_selector');
@@ -3227,12 +3232,27 @@ const $langTrigger = $langSelector.find('button');
 const $langSelectorListHolder = $langSelector.find('#lang_selector_list_holder');
 const $langSelectorLocaleName = $langSelector.find('#lang_selector_locale_name');
 const $translateStrings = $('[data-i18n-tr]');
+$translateStrings.each((_, el) => {
+  el.setAttribute('data-i18n-tr', el.textContent)
+});
 const $translateStringsAttrs = $('[data-i18n-tr-attr]');
+$translateStringsAttrs.each((_, el) => {
+  const attrName = el.getAttribute('data-i18n-tr-attr')
+  const value = el.getAttribute(attrName)
+  el.setAttribute('data-i18n-tr-attr', `${attrName}:::${value}`)
+})
 
 function render_lang_list() {
   fetch('/langs/langs_list.json')
     .then((res) => res.json())
     .then((langList) => {
+      Object.keys(langList).forEach((l) => window.App.I18N.locales.add(l))
+      const matchingLocale = [...window.App.I18N.locales.values()]
+          .find((l) => new RegExp(`^${l}`).test(navigator.language))
+      if (matchingLocale) {
+        window.App.I18N.locale = matchingLocale
+        $langSelectorLocaleName.html(langList[matchingLocale])
+      }
       $langSelector.addClass('lg:flex');
       const $langList = $(`
         <div 
@@ -3273,6 +3293,7 @@ function init_i18n() {
           localeStrings: {},
           translateElems: new Map(),
           translateElemsAttrs: new Map(),
+          locales: new Set(),
           localeSelectorUI: new Proxy(
               {
                 isShown: false
