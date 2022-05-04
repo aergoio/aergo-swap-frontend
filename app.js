@@ -305,8 +305,8 @@ async function connect_wallet_click() {
 
 function on_account_connected(){
 
-  update_swap_button('Swap', true)
-  update_add_button('Add New Position')
+  update_swap_button(tr('Swap'), true)
+  update_add_button(tr('Add New Position'))
   load_user_pools(false)
 
   $('#connect-wallet').addClass('hidden')
@@ -579,13 +579,16 @@ function select_token_click(){
 $('#select-token1').click(select_token_click)
 $('#select-token2').click(select_token_click)
 
+var token2_selected = false
+
 function on_token_selected_swap(address){
 
   var id = '#token' + selecting_token + '-symbol'
 
-  if(selecting_token==2 && $(id).html()=='Select a token'){
+  if(selecting_token==2 && !token2_selected){
     $(id).removeClass('ml-2')
     $('#select-token2 > div > div').removeClass('hidden')
+    token2_selected = true
   }
 
   //var name = token_info[address].name
@@ -998,7 +1001,7 @@ function show_swap_price(){
 
     if (swap_token2_amount <= 0) {
       document.getElementById('amount2').value = ''
-      update_swap_button('Insufficient liquidity', false)
+      update_swap_button(tr('Insufficient liquidity'), false)
       hide_swap_info()
       return
     }
@@ -1010,7 +1013,7 @@ function show_swap_price(){
 
     if (swap_token1_amount <= 0) {
       document.getElementById('amount1').value = ''
-      update_swap_button('Insufficient liquidity', false)
+      update_swap_button(tr('Insufficient liquidity'), false)
       hide_swap_info()
       return
     }
@@ -1020,7 +1023,7 @@ function show_swap_price(){
 
   }
 
-  update_swap_button('Swap', true)
+  update_swap_button(tr('Swap'), true)
   show_swap_info()
 
 }
@@ -1267,10 +1270,10 @@ function update_swap_info_aergo(){
   swap_info.fee = '0%'
   swap_info.price_impact = '0%'
 
-  swap_info.expected_title = 'Exact Output'
+  swap_info.expected_title = tr('Exact Output')
   swap_info.expected_amount = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
 
-  swap_info.minimum_title  = 'Minimum received'
+  swap_info.minimum_title  = tr('Minimum received')
   swap_info.minimum_amount = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
 
   // update both dialogs
@@ -1611,7 +1614,7 @@ function update_pool_list(){
     var parent = $('#pool-list')[0]
 
     if (current_pool_list.length==0) {
-      $(parent).find('> div > div').html('No liquidity was found')
+      $(parent).find('> div > div').html(tr('No liquidity found'))
       return
     }
 
@@ -2641,8 +2644,8 @@ function add_pool_update_info(n){
   }
 
   // 0.000 XXX per YYY
-  $('#add-rate1').html(rate1_str + ' ' + symbol1 + ' per ' + symbol2)
-  $('#add-rate2').html(rate2_str + ' ' + symbol2 + ' per ' + symbol1)
+  $('#add-rate1').html(rate1_str + ' ' + tr('{0} per {1}', symbol1,  symbol2))
+  $('#add-rate2').html(rate2_str + ' ' + tr('{0} per {1}', symbol2,  symbol1))
 
 
   // compute the amount of LP tokens to receive
@@ -2734,8 +2737,8 @@ function add_pool_update_buttons(){
     other_token = 'aergo'
   }
 
-  var prefix = sent_base_token ? 'Undo ' : ''
-  $('#add-token1-button').html(prefix + 'Add ' + token_info[base_token].symbol)
+  var prefix = sent_base_token ? 'Withdraw' : 'Add'
+  $('#add-token1-button').html(tr(prefix) + ' ' + token_info[base_token].symbol)
   $('#add-token2-button').html('Add ' + token_info[other_token].symbol)
 
   $('#add-token1-button').prop('disabled', false)
@@ -3055,7 +3058,7 @@ function on_remove_liquidity_click(){
 
   if(is_aergo(pool.token1) || is_aergo(pool.token2)){
     $('#receive-aergo').removeClass('hidden')
-    $('#receive-aergo').html('Receive WAERGO')
+    $('#receive-aergo').html(tr('Receive') + ' WAERGO')
   }else{
     $('#receive-aergo').addClass('hidden')
   }
@@ -3159,7 +3162,7 @@ $('#receive-aergo').click(function(){
   receive_aergo_as = (receive_aergo_as=='aergo') ? waergo : 'aergo'
 
   var other_token = (receive_aergo_as=='aergo') ? 'WAERGO' : 'AERGO'
-  $('#receive-aergo').html('Receive ' + other_token)
+  $('#receive-aergo').html(tr('Receive') + ' ' + other_token)
 
   var symbol = (receive_aergo_as=='aergo') ? 'AERGO' : 'WAERGO'
   var n = (remove_pool.token1==waergo) ? 1 : 2
@@ -3402,5 +3405,6 @@ document.body.onload = function() {
 
   on_chain_selected()
   get_token_list()
+
   init_i18n()
 }
