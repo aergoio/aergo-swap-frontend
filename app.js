@@ -306,8 +306,8 @@ async function connect_wallet_click() {
 
 function on_account_connected(){
 
-  update_swap_button('Swap', true)
-  update_add_button('Add New Position')
+  update_swap_button(tr('Swap'), true)
+  update_add_button(tr('Add New Position'))
   load_user_pools(false)
 
   $('#connect-wallet').addClass('hidden')
@@ -582,13 +582,16 @@ function select_token_click(){
 $('#select-token1').click(select_token_click)
 $('#select-token2').click(select_token_click)
 
+var token2_selected = false
+
 function on_token_selected_swap(address){
 
   var id = '#token' + selecting_token + '-symbol'
 
-  if(selecting_token==2 && $(id).html()=='Select a token'){
+  if(selecting_token==2 && !token2_selected){
     $(id).removeClass('ml-2')
     $('#select-token2 > div > div').removeClass('hidden')
+    token2_selected = true
   }
 
   //var name = token_info[address].name
@@ -780,9 +783,9 @@ function update_seltoken_balances(n, address){
 
   if(balances[address] && balances[address] != '0'){
     var balance = to_decimal_str(balances[address], token_info[address].decimals, 6)
-    $('#balance' + n).html('Balance: ' + balance)
+    $('#balance' + n).html(tr('Balance:') + ' ' + balance)
   }else{
-    $('#balance' + n).html('Balance: 0')
+    $('#balance' + n).html(tr('Balance:') + ' 0')
   }
 
 }
@@ -1021,7 +1024,7 @@ function show_swap_price(){
 
     if (swap_token2_amount <= 0) {
       document.getElementById('amount2').value = ''
-      update_swap_button('Insufficient liquidity', false)
+      update_swap_button(tr('Insufficient liquidity'), false)
       hide_swap_info()
       return
     }
@@ -1033,7 +1036,7 @@ function show_swap_price(){
 
     if (swap_token1_amount <= 0) {
       document.getElementById('amount1').value = ''
-      update_swap_button('Insufficient liquidity', false)
+      update_swap_button(tr('Insufficient liquidity'), false)
       hide_swap_info()
       return
     }
@@ -1043,7 +1046,7 @@ function show_swap_price(){
 
   }
 
-  update_swap_button('Swap', true)
+  update_swap_button(tr('Swap'), true)
   show_swap_info()
 
 }
@@ -1218,18 +1221,18 @@ function update_swap_info(){
   swap_info.impact_long  = swap_info.price_impact.toFixed(2) + '%'
 
   if( swap_input==1 ){
-    swap_info.expected_title = 'Expected Output'
+    swap_info.expected_title = tr('Expected Output')
     swap_info.expected_amount = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
   }else if( swap_input==2 ){
-    swap_info.expected_title = 'Expected Input'
+    swap_info.expected_title = tr('Expected Input')
     swap_info.expected_amount = document.getElementById('amount1').value + ' ' + token_info[token1].symbol
   }
 
   if( swap_input==1 ){
-    swap_info.minimum_title = 'Minimum received after slippage (' + slippage.toFixed(2) + '%)'
+    swap_info.minimum_title = tr('Minimum received after slippage') + ' (' + slippage.toFixed(2) + '%)'
     swap_info.minimum_amount = swap_info.min_output_str + ' ' + token_info[token2].symbol
   }else if( swap_input==2 ){
-    swap_info.minimum_title = 'Maximum spent after slippage (' + slippage.toFixed(2) + '%)'
+    swap_info.minimum_title = tr('Maximum spent after slippage') + ' (' + slippage.toFixed(2) + '%)'
     swap_info.minimum_amount = swap_info.max_input_str + ' ' + token_info[token1].symbol
   }
 
@@ -1244,12 +1247,12 @@ function update_swap_info(){
   var html, amount
   if( swap_input==1 ){
     amount = swap_info.min_output_str + ' ' + token_info[token2].symbol
-    html = 'Output is estimated. You will receive at least'
+    html = tr('Output is estimated. You will receive at least')
   }else if( swap_input==2 ){
     amount = swap_info.max_input_str + ' ' + token_info[token1].symbol
-    html = 'Input is estimated. You will sell at most'
+    html = tr('Input is estimated. You will sell at most')
   }
-  html += ' <span class="text-xs leading-4 font-bold text-high-emphesis">' + amount + '</span> or the transaction will revert.'
+  html += ` <span class="text-xs leading-4 font-bold text-high-emphesis">${amount}</span> ${tr('or the transaction will revert.')}`
   $('#confirm-swap-message').html(html)
 
 }
@@ -1295,10 +1298,10 @@ function update_swap_info_aergo(){
   swap_info.impact_short = '0%'
   swap_info.impact_long = '0%'
 
-  swap_info.expected_title = 'Exact Output'
+  swap_info.expected_title = tr('Exact Output')
   swap_info.expected_amount = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
 
-  swap_info.minimum_title  = 'Minimum received'
+  swap_info.minimum_title  = tr('Minimum received')
   swap_info.minimum_amount = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
 
   // update both dialogs
@@ -1641,7 +1644,7 @@ function update_pool_list(){
     var parent = $('#pool-list')[0]
 
     if (current_pool_list.length==0) {
-      $(parent).find('> div > div').html('No liquidity was found')
+      $(parent).find('> div > div').html(tr('No liquidity found'))
       return
     }
 
@@ -2602,7 +2605,7 @@ function add_pool_update_balances(){
   }catch(e){
     amount = '0'
   }
-  $('#add-balance-token1').html('Balance: ' + amount)
+  $('#add-balance-token1').html(tr('Balance:') + ' ' + amount)
 
   try{
     amount = balances[pair_token2].toString()
@@ -2610,7 +2613,7 @@ function add_pool_update_balances(){
   }catch(e){
     amount = '0'
   }
-  $('#add-balance-token2').html('Balance: ' + amount)
+  $('#add-balance-token2').html(tr('Balance:') + ' ' + amount)
 
 }
 
@@ -2671,8 +2674,8 @@ function add_pool_update_info(n){
   }
 
   // 0.000 XXX per YYY
-  $('#add-rate1').html(rate1_str + ' ' + symbol1 + ' per ' + symbol2)
-  $('#add-rate2').html(rate2_str + ' ' + symbol2 + ' per ' + symbol1)
+  $('#add-rate1').html(rate1_str + ' ' + tr('{0} per {1}', symbol1,  symbol2))
+  $('#add-rate2').html(rate2_str + ' ' + tr('{0} per {1}', symbol2,  symbol1))
 
 
   // compute the amount of LP tokens to receive
@@ -2764,8 +2767,8 @@ function add_pool_update_buttons(){
     other_token = 'aergo'
   }
 
-  var prefix = sent_base_token ? 'Undo ' : ''
-  $('#add-token1-button').html(prefix + 'Add ' + token_info[base_token].symbol)
+  var prefix = sent_base_token ? 'Withdraw' : 'Add'
+  $('#add-token1-button').html(tr(prefix) + ' ' + token_info[base_token].symbol)
   $('#add-token2-button').html('Add ' + token_info[other_token].symbol)
 
   $('#add-token1-button').prop('disabled', false)
@@ -2963,6 +2966,8 @@ function show_confirm_add_dialog(){
   $("#confirm-add-share").html(to_add.share.toFixed(2) + '%')
 
   $("#confirm-add-liquidity").removeClass('hidden')
+
+  $("#confirm-add-slippage").html(tr('Output is estimated. If the price changes by more than {0}% your transaction will revert.', slippage))
 }
 
 $('#close-confirm-add-liquidity').click(function(){
@@ -3083,7 +3088,7 @@ function on_remove_liquidity_click(){
 
   if(is_aergo(pool.token1) || is_aergo(pool.token2)){
     $('#receive-aergo').removeClass('hidden')
-    $('#receive-aergo').html('Receive WAERGO')
+    $('#receive-aergo').html(tr('Receive') + ' WAERGO')
   }else{
     $('#receive-aergo').addClass('hidden')
   }
@@ -3187,7 +3192,7 @@ $('#receive-aergo').click(function(){
   receive_aergo_as = (receive_aergo_as=='aergo') ? waergo : 'aergo'
 
   var other_token = (receive_aergo_as=='aergo') ? 'WAERGO' : 'AERGO'
-  $('#receive-aergo').html('Receive ' + other_token)
+  $('#receive-aergo').html(tr('Receive') + ' ' + other_token)
 
   var symbol = (receive_aergo_as=='aergo') ? 'AERGO' : 'WAERGO'
   var n = (remove_pool.token1==waergo) ? 1 : 2
@@ -3237,16 +3242,13 @@ $('#remove-liquidity-button').click(function(){
 
 })
 
-
 //---------------------------------------------------------------------
-// TRANSLATIONS
+// I18N
 //---------------------------------------------------------------------
-
-var current_lang
 
 function translate(text){
-  if (!current_lang) return text
-  var translated = current_lang[text]
+  if (!window.App.I18N.locale) return text
+  var translated = window.App.I18N.localeStrings[text]
   if (!translated) translated = text
   return translated
 }
@@ -3256,11 +3258,181 @@ function tr(format){
   var args = Array.prototype.slice.call(arguments, 1);
   return format.replace(/{(\d+)}/g, function(match, number) {
     return typeof args[number] != 'undefined'
-      ? args[number]
-      : match
+        ? args[number]
+        : match
   })
 }
 
+const $langSelector = $('#lang_selector');
+const $langTrigger = $langSelector.find('button');
+const $langSelectorListHolder = $langSelector.find('#lang_selector_list_holder');
+const $langSelectorLocaleName = $langSelector.find('#lang_selector_locale_name');
+const $translateStrings = $('[data-i18n-tr]');
+$translateStrings.each((_, el) => {
+  el.setAttribute('data-i18n-tr', el.textContent)
+});
+const $translateStringsAttrs = $('[data-i18n-tr-attr]');
+$translateStringsAttrs.each((_, el) => {
+  const attrName = el.getAttribute('data-i18n-tr-attr')
+  const value = el.getAttribute(attrName)
+  el.setAttribute('data-i18n-tr-attr', `${attrName}:::${value}`)
+})
+
+function render_lang_list() {
+  return fetch('/langs/langs_list.json')
+    .then((res) => res.json())
+    .then((langList) => {
+      $langSelector.addClass('lg:flex');
+      const $langList = $(`
+        <div 
+            id="lang_selector_list"
+            class="hidden absolute max-h-[240px] overflow-auto w-full border-2 mt-2 divide-y rounded shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border-dark-900 bg-dark-1000 divide-dark-900">
+            ${Object.entries(langList).map(([key, val]) => (`
+                <div
+                    data-i18n-lang-key="${key}" 
+                    class="text-sm leading-5 font-bold cursor-pointer select-none text-primary px-3 py-2 cursor-pointer hover:bg-dark-900/40">
+                ${val}
+                </div>
+            `)).join("")}
+        </div>
+      `);
+      $langSelectorListHolder.append($langList);
+
+      $langList.find('[data-i18n-lang-key]').each((_, el) => {
+        el.addEventListener('click', (event) => {
+          const locale = event.target.getAttribute('data-i18n-lang-key');
+          $langSelectorLocaleName.html(langList[locale]);
+          window.App.I18N.locale = locale;
+        })
+      });
+      $langTrigger.on('click', () => {
+        window.App.I18N.localeSelectorUI.isShown = !window.App.I18N.localeSelectorUI.isShown;
+      });
+      return new Promise((res) => res(langList));
+    })
+    .catch(err => console.error(err));
+}
+
+function set_default_locale(langList) {
+  const presetLocale = localStorage.getItem('locale');
+  if (!presetLocale) {
+    Object.keys(langList).forEach((l) => window.App.I18N.locales.add(l))
+    const matchingLocale = [...window.App.I18N.locales.values()]
+        .find((l) => new RegExp(`^${l}`).test(navigator.language))
+    if (matchingLocale) {
+      window.App.I18N.locale = matchingLocale
+      $langSelectorLocaleName.html(langList[matchingLocale])
+    }
+  } else {
+    window.App.I18N.locale = presetLocale
+  }
+}
+
+function init_i18n() {
+  window.App = {
+    ...(window.App ? window.App : {}),
+    I18N: new Proxy(
+        {
+          locale: 'en',
+          localeStrings: {},
+          translateElems: new Map(),
+          translateElemsAttrs: new Map(),
+          locales: new Set(),
+          localeSelectorUI: new Proxy(
+              {
+                isShown: false
+              },
+              {
+                set: function (obj, prop, value) {
+                  switch (prop) {
+                    case 'isShown': {
+                      const $langList = $('#lang_selector_list');
+                      if (value === true) {
+                        $langList.removeClass('hidden');
+                      } else {
+                        $langList.addClass('hidden');
+                      }
+                      break;
+                    }
+                  }
+                  obj[prop] = value;
+                }
+              }
+          )
+        },
+      {
+        set: function (obj, prop, value) {
+          switch (prop) {
+            case 'locale': {
+              const $langList = $('#lang_selector_list');
+              fetch(`/langs/${value}.json`)
+                  .then((res) => res.json())
+                  .then((translations) => {
+                    obj.localeStrings = {...translations};
+                    [...window.App.I18N.translateElems.entries()].forEach(([key, els]) => {
+                      try {
+                        els.forEach((el) => $(el).html(tr(key)));
+                      } catch (e) {
+                        console.error(e);
+                      }
+                    });
+                    [...window.App.I18N.translateElemsAttrs.entries()].forEach(([key, els]) => {
+                      els.forEach((el) => {
+                        const trAttr = el.getAttribute('data-i18n-tr-attr');
+                        if (trAttr.includes(':::')) {
+                          const [attrName, _] = trAttr.split(':::');
+                          const [__, value] = key.split(':::');
+                          try {
+                            el.setAttribute(attrName, tr(value));
+                          } catch (e) {
+                            console.error(e);
+                          }
+                        }
+                      })
+                    });
+                    update_balances()
+                    add_pool_update_balances()
+                    add_pool_update_info()
+                    update_swap_info()
+                    if (!token2_selected) {
+                      $('#token2-symbol').html(tr('Select a token'))
+                    }
+                  })
+                  .catch((err) => console.error(err))
+                  .finally(() => {
+                    $langList.addClass('hidden');
+                    localStorage.setItem('locale', value);
+                  })
+              break;
+            }
+          }
+          obj[prop] = value;
+        }
+      }
+    )
+  }
+  $translateStrings.each((_, el) => {
+    let key = el.getAttribute('data-i18n-tr');
+    window.App.I18N.translateElems.set(
+        key,
+        window.App.I18N.translateElems.has(key) && Array.isArray(window.App.I18N.translateElems.get(key))
+            ? [...window.App.I18N.translateElems.get(key), el]
+            : [el]
+    );
+  });
+  $translateStringsAttrs.each((_, el) => {
+    let key = el.getAttribute('data-i18n-tr-attr');
+    window.App.I18N.translateElemsAttrs.set(
+        key,
+        window.App.I18N.translateElemsAttrs.has(key) && Array.isArray(window.App.I18N.translateElemsAttrs.get(key))
+            ? [...window.App.I18N.translateElemsAttrs.get(key), el]
+            : [el]
+    );
+  })
+  render_lang_list()
+      .then(set_default_locale)
+      .catch(e => console.error(e))
+}
 
 //---------------------------------------------------------------------
 // ONLOAD
@@ -3282,4 +3454,5 @@ document.body.onload = function() {
   on_chain_selected()
   get_token_list()
 
+  init_i18n()
 }

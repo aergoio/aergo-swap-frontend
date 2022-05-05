@@ -107,14 +107,17 @@
                 </div>
                 <div id="show-swap-page"
                   class="text-sm leading-5 font-bold cursor-pointer select-none hover:text-white font-bold py-5 px-2 rounded flex gap-3">
-                  Swap</div>
+                  <span data-i18n-tr>Swap</span>
+                </div>
                 <div id="show-pool-page"
                   class="text-sm leading-5 font-bold cursor-pointer select-none hover:text-white font-bold py-5 px-2 rounded flex gap-3">
-                  Pool</div>
+                  <span data-i18n-tr>Pool</span>
+                </div>
                 <div class="relative flex">
                   <div><button id="headlessui-popover-button-11" type="button" aria-expanded="false">
                       <div class="text-sm leading-5 font-bold font-bold py-5 px-2 rounded flex gap-3 items-center">
-                        Analytics<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        <span data-i18n-tr>Analytics</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                           stroke="currentColor" aria-hidden="true" stroke-width="5" width="12">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
                           </path>
@@ -126,10 +129,13 @@
               <div class="flex items-center justify-end w-auto shadow select-none whitespace-nowrap">
 
                 <button id="connect-wallet"
-                  class="border-2 disabled:pointer-events-none disabled:opacity-40 border-dark-700 hover:bg-dark-700/30 active:bg-dark-700/50 focus:bg-dark-700/30 text-sm rounded-full px-3 h-[36px] font-bold flex items-center justify-center gap-1 !bg-dark-900 bg-gradient-to-r from-pink/80 hover:from-pink to-purple/80 hover:to-purple text-white h-[38px] !border-none">Connect
-                  to a wallet</button>
+                  class="border-2 disabled:pointer-events-none disabled:opacity-40 border-dark-700 hover:bg-dark-700/30 active:bg-dark-700/50 focus:bg-dark-700/30 text-sm rounded-full px-3 h-[36px] font-bold flex items-center justify-center gap-1 !bg-dark-900 bg-gradient-to-r from-pink/80 hover:from-pink to-purple/80 hover:to-purple text-white h-[38px] !border-none">
+                  <span data-i18n-tr>Connect to a wallet</span>
+                </button>
 
-                <div id="balance" class="hidden text-sm leading-5 font-bold px-2 py-5 font-bold">LOADING...</div>
+                <div id="balance" class="hidden text-sm leading-5 font-bold px-2 py-5 font-bold">
+                  <span data-i18n-tr>LOADING...</span>
+                </div>
                 <div id="status-logo" class="hidden">
                   <div
                     class="flex items-center text-sm font-bold cursor-pointer pointer-events-auto select-none whitespace-nowrap">
@@ -227,7 +233,7 @@
                     <div class="flex gap-1 justify-between items-baseline px-1.5">
                       <div
                         class="text-2xl leading-7 tracking-[-0.01em] font-bold relative flex items-baseline flex-grow gap-3 overflow-hidden">
-                        <input id="amount1" inputmode="decimal" title="Token Amount" autocomplete="off"
+                        <input id="amount1" inputmode="decimal" data-i18n-tr-attr="title" title="Token Amount" autocomplete="off"
                           autocorrect="off" type="text" pattern="^[0-9]*[.,]?[0-9]*$" placeholder="0.00" min="0"
                           minlength="1" maxlength="79" spellcheck="false"
                           class="relative font-bold outline-none border-none flex-auto overflow-hidden overflow-ellipsis placeholder-low-emphesis focus:placeholder-primary leading-[36px] focus:placeholder:text-low-emphesis flex-grow w-full text-left bg-transparent text-inherit disabled:cursor-not-allowed"
@@ -241,7 +247,9 @@
                       </div>
                       <div id="balance1"
                         class="text-sm leading-5 font-medium cursor-pointer select-none flex text-secondary whitespace-nowrap"
-                        role="button">Balance: 0</div>
+                        role="button">
+                        Balance: 0
+                      </div>
                     </div>
                   </div>
                   <div class="z-0 flex justify-center -mt-6 -mb-6">
@@ -283,7 +291,7 @@
                     <div class="flex gap-1 justify-between items-baseline px-1.5">
                       <div
                         class="text-2xl leading-7 tracking-[-0.01em] font-bold relative flex items-baseline flex-grow gap-3 overflow-hidden">
-                        <input id="amount2" inputmode="decimal" title="Token Amount" autocomplete="off"
+                        <input id="amount2" inputmode="decimal" data-i18n-tr-attr="title" title="Token Amount" autocomplete="off"
                           autocorrect="off" type="text" pattern="^[0-9]*[.,]?[0-9]*$" placeholder="0.00" min="0"
                           minlength="1" maxlength="79" spellcheck="false"
                           class="relative font-bold outline-none border-none flex-auto overflow-hidden overflow-ellipsis placeholder-low-emphesis focus:placeholder-primary leading-[36px] focus:placeholder:text-low-emphesis flex-grow w-full text-left bg-transparent text-inherit disabled:cursor-not-allowed"
@@ -327,27 +335,36 @@
                           <div class="flex flex-col divide-y divide-dark-850">
                             <div class="flex flex-col gap-1 pb-2">
                               <div class="flex justify-between gap-4" id="si-expected">
-                                <div class="text-xs leading-4 font-medium currentColor">Expected Output</div>
+                                <div class="text-xs leading-4 font-medium currentColor">
+                                  Expected Output
+                                </div>
                                 <div class="text-xs leading-4 font-bold text-right">26.1297 SUSHI</div>
                               </div>
                               <div class="flex justify-between gap-4">
-                                <div class="text-xs leading-4 font-medium currentColor">Price Impact</div>
+                                <div class="text-xs leading-4 font-medium currentColor">
+                                  <span data-i18n-tr>Price Impact</span>
+                                </div>
                                 <div class="text-xs leading-4 font-medium text-right" id="si-impact">0.30%</div>
                               </div>
                             </div>
                             <div class="flex flex-col gap-1 pt-2">
                               <div class="flex justify-between gap-4" id="si-minimum">
-                                <div class="text-xs leading-4 font-medium text-secondary">Minimum received after
-                                  slippage (0.50%)</div>
+                                <div class="text-xs leading-4 font-medium text-secondary">
+                                  Minimum received after slippage (0.50%)
+                                </div>
                                 <div class="text-xs leading-4 font-medium text-right text-secondary">25.9997 SUSHI</div>
                               </div>
                               <div class="flex justify-between gap-4">
-                                <div class="text-xs leading-4 font-medium text-secondary">Liquidity provider fee</div>
+                                <div class="text-xs leading-4 font-medium text-secondary">
+                                  <span data-i18n-tr>Liquidity provider fee</span>
+                                </div>
                                 <div class="text-xs leading-4 font-medium text-right text-secondary" id="si-fee">0.30%
                                 </div>
                               </div>
                               <div class="grid grid-cols-2 gap-4">
-                                <div class="text-xs leading-4 font-medium text-secondary">Route</div>
+                                <div class="text-xs leading-4 font-medium text-secondary">
+                                  <span data-i18n-tr>Route</span>
+                                </div>
                                 <div class="text-xs leading-4 font-medium text-right text-secondary" id="si-route">WETH
                                   &gt; SUSHI</div>
                               </div>
@@ -358,8 +375,9 @@
                     </div>
                   </div>
                   <button id="main-button"
-                    class="text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40 bg-aergo-pink rounded px-4 h-[52px] w-full font-bold flex items-center justify-center gap-1 rounded-2xl md:rounded !border-none">Connect
-                    to a wallet</button>
+                    class="text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40 bg-aergo-pink rounded px-4 h-[52px] w-full font-bold flex items-center justify-center gap-1 rounded-2xl md:rounded !border-none">
+                    <span data-i18n-tr>Connect to a wallet</span>
+                  </button>
                 </div>
               </div>
               <span id="popover-portal" class="hidden" style="z-index: 1000;">
@@ -369,11 +387,15 @@
                   data-popper-reference-hidden="false" data-popper-escaped="false" data-popper-placement="bottom-end">
                   <div class="flex flex-col gap-3 p-3 border rounded shadow-xl bg-dark-900 w-80 border-dark-700">
                     <div class="flex flex-col gap-4 p-3">
-                      <div class="text-[0.625rem] leading-[1.2] font-bold text-secondary">Transaction Settings</div>
+                      <div class="text-[0.625rem] leading-[1.2] font-bold text-secondary">
+                        <span data-i18n-tr>Transaction Settings</span>
+                      </div>
                       <div class="flex flex-col gap-4">
                         <div class="grid gap-2">
                           <div class="flex items-center">
-                            <div class="text-xs leading-4 font-bold text-high-emphesis">Slippage tolerance</div>
+                            <div class="text-xs leading-4 font-bold text-high-emphesis">
+                              <span data-i18n-tr>Slippage tolerance</span>
+                            </div>
                             <div
                               class="ml-1 flex items-center justify-center outline-none cursor-help hover:text-primary"
                               id="headlessui-popover-button-195" aria-expanded="false"><svg
@@ -477,24 +499,32 @@
 
         <div class="py-4 space-y-6 md:py-8 lg:py-12 max-w-2xl w-full hidden" id="pool-page">
           <div class="p-4 mb-3 space-y-3">
-            <h1 class="text-3xl tracking-[-0.02em] font-medium currentColor">My Liquidity Positions</h1>
+            <h1 class="text-3xl tracking-[-0.02em] font-medium currentColor">
+              <span data-i18n-tr>My Liquidity Positions</span>
+            </h1>
           </div>
           <div class="flex flex-row rounded p-4 gap-3 bg-purple bg-opacity-20 text-high-emphesis">
             <div class="flex flex-col gap-1.5 justify-center">
-              <div class="text-base leading-5 font-bold text-high-emphesis text-left inline leading-6">Liquidity
-                Provider Rewards</div>
-              <div class="text-sm leading-5 font-bold text-high-emphesis text-left">Liquidity providers earn a 0.25% fee
-                on all trades proportional to their share of
-                the pool. Fees are added to the pool, accrue in real time and can be claimed by
-                withdrawing your liquidity</div>
-            </div><button type="button"
-              class="inline-flex opacity-80 hover:opacity-100 focused:opacity-100 rounded text-primary hover:text-high-emphesis focus:text-high-emphesis focus:outline-none focus:ring focus:ring-offset focus:ring-offset-purple focus:ring-purple"><span
-                class="sr-only">Dismiss</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+              <div class="text-base leading-5 font-bold text-high-emphesis text-left inline leading-6">
+                <span data-i18n-tr>Liquidity Provider Rewards</span>
+              </div>
+              <div class="text-sm leading-5 font-bold text-high-emphesis text-left">
+                <span data-i18n-tr>
+                Liquidity providers earn a 0.25% fee on all trades proportional to their share of the pool. Fees are added to the pool, accrue in real time and can be claimed by withdrawing your liquidity
+                </span>
+              </div>
+            </div>
+            <button type="button"
+              class="inline-flex opacity-80 hover:opacity-100 focused:opacity-100 rounded text-primary hover:text-high-emphesis focus:text-high-emphesis focus:outline-none focus:ring focus:ring-offset focus:ring-offset-purple focus:ring-purple">
+              <span class="sr-only">
+                <span data-i18n-tr>Dismiss</span>
+              </span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                 fill="currentColor" aria-hidden="true" class="w-5 h-5">
                 <path fill-rule="evenodd"
                   d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
                   clip-rule="evenodd"></path>
-              </svg></button>
+              </svg>
+            </button>
           </div>
 
           <div class="p-4 space-y-4 rounded bg-dark-900">
@@ -504,7 +534,9 @@
               <template id="pool-text">
                 <div
                   class="flex flex-col justify-center items-center py-4 px-3 rounded min-h-empty flex text-lg text-center text-low-emphesis">
-                  <div class="px-4 py-2">Searching...</div>
+                  <div class="px-4 py-2">
+                    <span data-i18n-tr>Searching...</span>
+                  </div>
                 </div>
               </template>
 
@@ -537,7 +569,9 @@
                       </div>
                       <div class="text-xl font-semibold">%symbol1%/%symbol2%</div>
                     </div>
-                    <div class="flex items-center space-x-4">Manage<svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                    <div class="flex items-center space-x-4">
+                      <span data-i18n-tr>Manage</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true" width="20px" height="20px"
                         class="ml-4">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
@@ -547,7 +581,9 @@
                     <div class="p-4 space-y-4">
                       <div class="px-4 py-4 space-y-1 text-sm rounded text-high-emphesis bg-dark-900">
                         <div class="flex items-center justify-between">
-                          <div>Your total pool tokens:</div>
+                          <div>
+                            <span data-i18n-tr>Your total pool tokens</span>:
+                          </div>
                           <div class="font-semibold">%lptoken_amount%</div>
                         </div>
                         <div class="flex items-center justify-between">
@@ -567,7 +603,9 @@
                           </div>
                         </div>
                         <div class="flex items-center justify-between">
-                          <div>Pooled %symbol2%:</div>
+                          <div>
+                            <span data-i18n-tr>Pooled</span> %symbol2%:
+                          </div>
                           <div class="flex items-center space-x-2">
                             <div class="font-semibold ">%token2_amount%</div>
                             <div class="rounded-full" style="width: 20px; height: 20px;">
@@ -583,7 +621,9 @@
                           </div>
                         </div>
                         <div class="flex items-center justify-between">
-                          <div>Your pool share:</div>
+                          <div>
+                            <span data-i18n-tr>Your pool share</span>:
+                          </div>
                           <div class="font-semibold">%pool_share%</div>
                         </div>
                       </div>
@@ -605,8 +645,9 @@
           <div class="grid">
             <div class="w-full flex p-0 justify-between"></div>
             <button id="show-add-liquidity-page"
-              class="text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40 bg-blue rounded px-4 h-[52px] font-bold flex items-center justify-center gap-1">Connect
-              to a wallet</button>
+              class="text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40 bg-blue rounded px-4 h-[52px] font-bold flex items-center justify-center gap-1">
+              <span data-i18n-tr>Connect to a wallet</span>
+            </button>
           </div>
 
 
@@ -623,18 +664,32 @@
                   xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg><span>Go Back</span></a></div>
-            <h1 class="text-3xl tracking-[-0.02em] font-medium currentColor">Add Liquidity</h1>
+                </svg><span>
+              <span data-i18n-tr>Go Back</span>
+            </span></a></div>
+            <h1 class="text-3xl tracking-[-0.02em] font-medium currentColor">
+              <span data-i18n-tr>Add Liquidity</span>
+            </h1>
           </div>
           <div class="flex flex-row rounded p-4 gap-3 bg-purple bg-opacity-20 text-high-emphesis">
             <div class="flex flex-col gap-1.5 justify-center">
-              <div class="text-sm leading-5 font-bold text-high-emphesis text-left"><b>Tip:</b> By adding liquidity
+              <div class="text-sm leading-5 font-bold text-high-emphesis text-left"><b>
+                <span data-i18n-tr>Tip:</span>
+              </b>
+                <span data-i18n-tr="By adding liquidity you'll earn 0.25% of all trades on this pair
+proportional to your share of the pool. Fees are added to the pool, accrue in real time and can be
+claimed by withdrawing your liquidity.">
+                By adding liquidity
                 you'll earn 0.25% of all trades on this pair
                 proportional to your share of the pool. Fees are added to the pool, accrue in real time and can be
-                claimed by withdrawing your liquidity.</div>
+                claimed by withdrawing your liquidity.
+                </span>
+                </div>
             </div><button type="button"
               class="inline-flex opacity-80 hover:opacity-100 focused:opacity-100 rounded text-primary hover:text-high-emphesis focus:text-high-emphesis focus:outline-none focus:ring focus:ring-offset focus:ring-offset-purple focus:ring-purple"><span
-                class="sr-only">Dismiss</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                class="sr-only">
+            <span data-i18n-tr>Dismiss</span>
+          </span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                 fill="currentColor" aria-hidden="true" class="w-5 h-5">
                 <path fill-rule="evenodd"
                   d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -683,7 +738,9 @@
                                 </div>
                               </div>
                               <div class="flex flex-1 flex-col items-start justify-center mx-3.5">
-                                <div class="text-xs font-medium text-secondary whitespace-nowrap">Input</div>
+                                <div class="text-xs font-medium text-secondary whitespace-nowrap">
+                                  <span data-i18n-tr>Input</span>
+                                </div>
                                 <div class="flex items-center">
                                   <div class="text-lg font-bold token-symbol-container md:text-2xl">MATIC</div><svg
                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -701,14 +758,15 @@
                           class="flex items-center w-full space-x-3 rounded bg-dark-900 focus:bg-dark-700 p-3 sm:w-3/5">
                           <button id="max-token1"
                             class="border-2 disabled:pointer-events-none disabled:opacity-40 border-none bg-blue/20 hover:bg-blue/40 active:bg-blue/60 text-blue focus:bg-blue/40 text-xs rounded-full px-2 h-[28px] !border font-bold flex items-center justify-center gap-1">Max</button>
-                          <input id="add-token1-amount" inputmode="decimal" title="Token Amount" autocomplete="off"
+                          <input id="add-token1-amount" inputmode="decimal" data-i18n-tr-attr="title" title="Token Amount" autocomplete="off"
                             autocorrect="off" type="text" pattern="^[0-9]*[.,]?[0-9]*$" placeholder="0.0" min="0"
                             minlength="1" maxlength="79" spellcheck="false"
                             class="relative font-bold outline-none border-none flex-auto overflow-hidden overflow-ellipsis placeholder-low-emphesis focus:placeholder-primary w-0 p-0 text-2xl bg-transparent"
                             value="">
                           <div class="flex flex-col">
                             <div id="add-balance-token1"
-                              class="text-xs font-medium text-right cursor-pointer text-low-emphesis">Balance: 10140
+                              class="text-xs font-medium text-right cursor-pointer text-low-emphesis">
+                              Balance: 10140
                               MATIC</div>
                             <div class="flex justify-end space-x-1 text-xs font-medium text-right text-secondary"></div>
                           </div>
@@ -761,14 +819,15 @@
                           class="flex items-center w-full space-x-3 rounded bg-dark-900 focus:bg-dark-700 p-3 sm:w-3/5">
                           <button id="max-token2"
                             class="border-2 disabled:pointer-events-none disabled:opacity-40 border-none bg-blue/20 hover:bg-blue/40 active:bg-blue/60 text-blue focus:bg-blue/40 text-xs rounded-full px-2 h-[28px] !border font-bold flex items-center justify-center gap-1">Max</button>
-                          <input id="add-token2-amount" inputmode="decimal" title="Token Amount" autocomplete="off"
+                          <input id="add-token2-amount" inputmode="decimal" data-i18n-tr-attr="title" title="Token Amount" autocomplete="off"
                             autocorrect="off" type="text" pattern="^[0-9]*[.,]?[0-9]*$" placeholder="0.0" min="0"
                             minlength="1" maxlength="79" spellcheck="false"
                             class="relative font-bold outline-none border-none flex-auto overflow-hidden overflow-ellipsis placeholder-low-emphesis focus:placeholder-primary w-0 p-0 text-2xl bg-transparent"
                             value="">
                           <div class="flex flex-col">
                             <div id="add-balance-token2"
-                              class="text-xs font-medium text-right cursor-pointer text-low-emphesis">Balance: 5006
+                              class="text-xs font-medium text-right cursor-pointer text-low-emphesis">
+                              Balance: 5006
                               USDT</div>
                             <div class="flex justify-end space-x-1 text-xs font-medium text-right text-secondary"></div>
                           </div>
@@ -779,14 +838,18 @@
                   <div class="p-1 rounded bg-dark-800">
                     <div class="flex justify-between items-center rounded py-2 px-4 bg-dark-900 bg-dark-900">
                       <div class="flex flex-col w-full text-secondary">
-                        <div id="add-rate1" class="text-sm leading-5 font-medium select-none">1.68172 USDT per MATIC
+                        <div id="add-rate1" class="text-sm leading-5 font-medium select-none">
+                          1.68172 USDT per MATIC
                         </div>
-                        <div id="add-rate2" class="text-sm leading-5 font-medium select-none">0.594629 MATIC per USDT
+                        <div id="add-rate2" class="text-sm leading-5 font-medium select-none">0.594629
+                          MATIC per USDT
                         </div>
                       </div>
                       <div class="flex flex-col w-full text-right text-secondary">
                         <div id="add-pool-share" class="text-sm leading-5 font-medium select-none">14.10%</div>
-                        <div class="text-sm leading-5 font-medium select-none">Share of Pool</div>
+                        <div class="text-sm leading-5 font-medium select-none">
+                          <span data-i18n-tr>Share of Pool</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -824,8 +887,12 @@
                   xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
                   stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg><span>Go Back</span></a></div>
-            <h1 class="text-3xl tracking-[-0.02em] font-medium currentColor">Remove Liquidity</h1>
+                </svg><span>
+              <span data-i18n-tr>Go Back</span>
+            </span></a></div>
+            <h1 class="text-3xl tracking-[-0.02em] font-medium currentColor">
+              <span data-i18n-tr>Remove Liquidity</span>
+            </h1>
           </div>
           <div class="relative w-full max-w-2xl">
             <div class="from-pink/5 to-blue/5 fixed inset-0 bg-gradient-radial z-0 pointer-events-none"></div>
@@ -856,10 +923,12 @@
                     <div>
                       <div class="p-5 rounded bg-dark-800">
                         <div class="flex flex-col justify-between space-y-3 sm:space-y-0 sm:flex-row">
-                          <div class="w-full text-white sm:w-2/5" style="margin: auto 0px;">Amount to Remove</div>
+                          <div class="w-full text-white sm:w-2/5" style="margin: auto 0px;">
+                            <span data-i18n-tr>Amount to Remove</span>
+                          </div>
                           <div
                             class="flex items-center w-full p-3 space-x-3 text-xl font-bold rounded bg-dark-900 sm:w-3/5">
-                            <input id="liquidity-percent" inputmode="decimal" title="Token Amount" autocomplete="off"
+                            <input id="liquidity-percent" inputmode="decimal" data-i18n-tr-attr="title" title="Token Amount" autocomplete="off"
                               autocorrect="off" type="text" pattern="^[0-9]*$" placeholder="100" maxlength="3"
                               class="text-right font-medium bg-transparent whitespace-nowrap overflow-ellipsis flex-auto token-amount-input"
                               style="font-size: 24px;" value="">
@@ -883,9 +952,10 @@
                         <div class="flex flex-col justify-between space-y-3 sm:space-y-0 sm:flex-row">
                           <div class="w-full text-white sm:w-2/5" style="margin: auto 0px;">
                             <div class="grid">
-                              <div>You Will Receive:</div>
+                              <div><span data-i18n-tr>You Will Receive</span>:</div>
                               <div class="w-full flex p-0 text-sm"><a id="receive-aergo"
-                                  class="text-baseline text-blue opacity-80 hover:opacity-100 focus:opacity-100 whitespace-nowrap cursor-pointer">Receive
+                                  class="text-baseline text-blue opacity-80 hover:opacity-100 focus:opacity-100 whitespace-nowrap cursor-pointer">
+                                <span data-i18n-tr>Receive</span>
                                   WAERGO</a></div>
                             </div>
                           </div>
@@ -926,15 +996,18 @@
                     <div style="position: relative;">
                       <div class="grid grid-cols-1 gap-4">
                         <button id="remove-liquidity-button"
-                          class="text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40 bg-blue rounded px-4 h-[52px] w-full font-bold flex items-center justify-center gap-1">Confirm
-                          Withdrawal</button>
+                          class="text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40 bg-blue rounded px-4 h-[52px] w-full font-bold flex items-center justify-center gap-1">
+                          <span data-i18n-tr>Confirm Withdrawal</span>
+                        </button>
                       </div>
                     </div>
                   </div>
                 </div>
                 <div class="p-5 rounded bg-dark-800 text-high-emphesis">
                   <div class="grid" style="row-gap: 12px;">
-                    <div class="text-lg">Your Position</div>
+                    <div class="text-lg">
+                      <span data-i18n-tr>Your Position</span>
+                    </div>
                     <div class="flex flex-col md:flex-row md:justify-between">
                       <div class="flex items-center w-auto space-x-4">
                         <div class="flex items-center space-x-2">
@@ -959,13 +1032,17 @@
                       </div>
                       <div class="flex items-center mt-3 space-x-2 text-base md:mt-0">
                         <div id="remove-lptokens">0.001881 </div>
-                        <div class="text-secondary">Pool Tokens</div>
+                        <div class="text-secondary">
+                          <span data-i18n-tr>Pool Tokens</span>
+                        </div>
                       </div>
                     </div>
                     <div id="remove-new-position"
                       class="flex flex-col w-full p-3 mt-3 space-y-1 text-sm rounded bg-dark-900 text-high-emphesis">
                       <div class="flex justify-between">
-                        <div>Your pool share</div>
+                        <div>
+                          <span data-i18n-tr>Your pool share</span>
+                        </div>
                         <div class="font-bold">14.098388%</div>
                       </div>
                       <div class="flex justify-between">
@@ -1008,7 +1085,9 @@
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                   </svg></div>
                 <div class="flex flex-col gap-1">
-                  <div id="popup-message-title" class="font-bold text-high-emphesis">Add 500 MATIC and 180 SUSHI</div>
+                  <div id="popup-message-title" class="font-bold text-high-emphesis">
+                    Add 500 MATIC and 180 SUSHI
+                  </div>
                   <a id="popup-message-link" target="_blank" rel="noopener noreferrer" href=""
                     class="text-baseline whitespace-nowrap text-primary hover:text-high-emphesis focus:text-high-emphesis p-0 text-blue hover:underline md:p-0">
                     <div class="flex flex-row items-center gap-1">View on explorer <svg
@@ -1055,8 +1134,9 @@
                   class="text-3xl tracking-[-0.02em] font-bold tracking-[0.02em] scale-y-90 hover:text-high-emphesis">
                   Sushi</div>
               </div>
-              <div class="text-xs leading-4 font-medium text-low-emphesis">Our community is building a comprehensive
-                decentralized trading platform for the future of finance. Join us!
+              <div class="text-xs leading-4 font-medium text-low-emphesis">
+                <span data-i18n-tr="Our community is building a comprehensive decentralized trading platform for the future of finance. Join
+us!">Our community is building a comprehensive decentralized trading platform for the future of finance. Join us!</span>
               </div>
               <div class="flex items-center gap-4"><a href="https://twitter.com/sushiswap" target="_blank"
                   rel="noreferrer"><svg width="16" class="text-low-emphesis" viewBox="0 0 19 14" fill="none"
@@ -1125,53 +1205,75 @@
               </a>
             </div>
             <div class="flex flex-col gap-1 text-right xs:text-right md:text-left lg:text-right">
-              <div class="text-xs leading-4 font-bold mt-2.5 hover:text-high-emphesis">Developers</div>
+              <div class="text-xs leading-4 font-bold mt-2.5 hover:text-high-emphesis">
+                Developers
+              </div>
               <a href="https://docs.sushi.com" target="_blank" rel="noreferrer">
-                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">GitBook</div>
+                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">
+                  GitBook
+                </div>
               </a>
               <a href="https://github.com/sushiswap" target="_blank" rel="noreferrer">
-                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">GitHub</div>
+                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">
+                  GitHub
+                </div>
               </a>
               <a href="https://dev.sushi.com" target="_blank" rel="noreferrer">
-                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">Development</div>
+                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">
+                  Development
+                </div>
               </a>
               <a href="https://docs.openmev.org" target="_blank" rel="noreferrer">
-                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">Sushi Relay</div>
+                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">
+                  Sushi Relay
+                </div>
               </a>
             </div>
             <div class="flex flex-col gap-1 md:text-right lg:text-right">
-              <div class="text-xs leading-4 font-bold mt-2.5 hover:text-high-emphesis">Governance</div>
+              <div class="text-xs leading-4 font-bold mt-2.5 hover:text-high-emphesis">
+                Governance
+              </div>
               <a href="https://forum.sushi.com" target="_blank" rel="noreferrer">
-                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">Forum &amp;
-                  Proposals</div>
+                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">
+                  Forum &amp; Proposals
+                </div>
               </a>
               <a href="https://snapshot.org/#/sushigov.eth" target="_blank" rel="noreferrer">
-                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">Vote</div>
+                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">
+                  Vote
+                </div>
               </a>
             </div>
             <div class="flex flex-col gap-1 text-right">
-              <div class="text-xs leading-4 font-bold mt-2.5 hover:text-high-emphesis">Protocol</div>
+              <div class="text-xs leading-4 font-bold mt-2.5 hover:text-high-emphesis">
+                Protocol
+              </div>
               <a href="https://docs.google.com/document/d/1VcdrqAn1sR8Wa0BSSU-jAl68CfoECR62LCzIyzUpZ_U" target="_blank"
                 rel="noreferrer">
-                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">Apply for Onsen
+                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">
+                  Apply for Onsen
                 </div>
               </a>
               <a href="https://docs.google.com/forms/d/e/1FAIpQLSecahmrXOJytn-wOUB8tEfONzOTP4zjKqz3sIzNzDDs9J8zcA/viewform"
                 target="_blank" rel="noreferrer">
-                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">Apply for Miso
+                <div class="text-xs leading-4 font-medium text-low-emphesis hover:text-high-emphesis">
+                  Apply for Miso
                 </div>
               </a>
               <div
                 class="text-xs leading-4 font-medium cursor-pointer select-none text-low-emphesis hover:text-high-emphesis"
-                href="/vesting">Vesting</div>
+                href="/vesting">
+                Vesting
+              </div>
             </div>
-            <div class="hidden lg:flex">
+            <div class="hidden" id="lang_selector">
               <div class="relative inline-block w-full text-left">
-                <div><button
+                <div id="lang_selector_list_holder">
+                  <button
                     class="w-full px-4 py-2 text-sm font-bold bg-transparent border-2 rounded shadow-sm text-primary border-dark-800 hover:border-dark-700 bg-dark-1000"
                     id="headlessui-menu-button-17" type="button" aria-haspopup="true" aria-expanded="false">
                     <div class="flex flex-row items-center justify-between">
-                      <div class="text-sm leading-5 font-bold currentColor">English</div><svg
+                      <div class="text-sm leading-5 font-bold currentColor" id="lang_selector_locale_name">English</div><svg
                         xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
                         class="w-5 h-5 ml-2 -mr-1">
                         <path fill-rule="evenodd"
@@ -1179,7 +1281,8 @@
                           clip-rule="evenodd"></path>
                       </svg>
                     </div>
-                  </button></div>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -1237,7 +1340,8 @@
             <div class="flex flex-col gap-4">
               <div class="flex items-start justify-between">
                 <div class="flex flex-col gap-1 justify-center">
-                  <div class="text-base leading-5 font-bold flex gap-3 text-high-emphesis items-center">Confirm Swap
+                  <div class="text-base leading-5 font-bold flex gap-3 text-high-emphesis items-center">
+                    <span data-i18n-tr>Confirm Swap</span>
                   </div>
                 </div>
                 <div id="close-confirm-swap" class="flex items-center justify-center w-6 h-6 cursor-pointer">
@@ -1330,25 +1434,35 @@
                         <div class="flex flex-col divide-y divide-dark-850">
                           <div class="flex flex-col gap-1 pb-2">
                             <div id="confirm-swap-expected" class="flex justify-between gap-4">
-                              <div class="text-xs leading-4 font-medium currentColor">Expected Output</div>
+                              <div class="text-xs leading-4 font-medium currentColor">
+                                Expected Output
+                              </div>
                               <div class="text-xs leading-4 font-bold text-right">26.1297 SUSHI</div>
                             </div>
                             <div class="flex justify-between gap-4">
-                              <div class="text-xs leading-4 font-medium currentColor">Price Impact</div>
+                              <div class="text-xs leading-4 font-medium currentColor">
+                                <span data-i18n-tr>Price Impact</span>
+                              </div>
                               <div id="confirm-swap-impact" class="text-xs leading-4 font-medium text-right">0.30%</div>
                             </div>
                           </div>
                           <div class="flex flex-col gap-1 pt-2">
                             <div id="confirm-swap-minimum" class="flex justify-between gap-4">
-                              <div class="text-xs leading-4 font-medium text-secondary">Minimum received after slippage (0.50%)</div>
+                              <div class="text-xs leading-4 font-medium text-secondary">
+                                Minimum received after slippage (0.50%)
+                              </div>
                               <div class="text-xs leading-4 font-medium text-right text-secondary">25.9997 SUSHI</div>
                             </div>
                             <div class="flex justify-between gap-4">
-                              <div class="text-xs leading-4 font-medium text-secondary">Liquidity provider fee</div>
+                              <div class="text-xs leading-4 font-medium text-secondary">
+                                <span data-i18n-tr>Liquidity provider fee</span>
+                              </div>
                               <div id="confirm-swap-fee" class="text-xs leading-4 font-medium text-right text-secondary">0.30%</div>
                             </div>
                             <div class="grid grid-cols-2 gap-4">
-                              <div class="text-xs leading-4 font-medium text-secondary">Route</div>
+                              <div class="text-xs leading-4 font-medium text-secondary">
+                                <span data-i18n-tr>Route</span>
+                              </div>
                               <div id="confirm-swap-route" class="text-xs leading-4 font-medium text-right text-secondary">WETH &gt; SUSHI</div>
                             </div>
                           </div>
@@ -1359,21 +1473,26 @@
                 </div>
                 <div id="confirm-swap-price-updated" class="border !border-dark-800 border border-dark-800/60 rounded p-4 hidden">
                   <div class="flex items-center justify-between">
-                    <div class="text-sm leading-5 font-bold currentColor">Price Updated</div>
+                    <div class="text-sm leading-5 font-bold currentColor">
+                      <span data-i18n-tr>Price Updated</span>
+                    </div>
                     <button class="border-2 disabled:pointer-events-none disabled:opacity-40 border-none bg-blue/20 hover:bg-blue/40 active:bg-blue/60 text-blue focus:bg-blue/40 text-xs rounded-full px-2 h-[28px] !border font-bold flex items-center justify-center gap-1">Accept</button>
                   </div>
                 </div>
                 <div class="justify-start text-sm text-center text-secondary py-2">
-                  <div id="confirm-swap-message" class="text-xs leading-4 font-medium text-secondary">Input is estimated. You will sell at most
-                    <span class="text-xs leading-4 font-bold text-high-emphesis">4975.34 USDT</span> or the transaction
-                    will revert.
+                  <div id="confirm-swap-message" class="text-xs leading-4 font-medium text-secondary">
+                    Input is estimated. You will sell at most
+                    <span class="text-xs leading-4 font-bold text-high-emphesis">4975.34 USDT</span>
+                    or the transaction will revert.
                   </div>
                 </div>
               </div>
               <div class="flex flex-col gap-4">
                 <button id="confirm-swap-button"
                   class="text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40 bg-blue rounded px-4 h-[52px] font-bold flex items-center justify-center gap-1"
-                  tabindex="0">Confirm Swap</button>
+                  tabindex="0">
+                  <span data-i18n-tr>Confirm Swap</span>
+                </button>
               </div>
             </div>
           </div>
@@ -1394,7 +1513,8 @@
             <div class="lg:max-h-[92vh] lg:h-[40rem] h-full flex flex-col gap-4">
               <div class="flex items-start justify-between">
                 <div class="flex flex-col gap-1 justify-center">
-                  <div class="text-base leading-5 font-bold flex gap-3 text-high-emphesis items-center">Select a token
+                  <div class="text-base leading-5 font-bold flex gap-3 text-high-emphesis items-center">
+                    <span data-i18n-tr>Select a token</span>
                   </div>
                 </div>
                 <div id="close-token-selector" class="flex items-center justify-center w-6 h-6 cursor-pointer"><svg
@@ -1403,7 +1523,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
                   </svg></div>
-              </div><input type="text" id="token-search-input" placeholder="Search name or paste address"
+              </div><input type="text" id="token-search-input" data-i18n-tr-attr="placeholder" placeholder="Search name or paste address"
                 autocomplete="off"
                 class="w-full bg-[rgba(0,0,0,0.2)] border border-dark-800 focus:border-blue rounded placeholder-secondary font-bold text-base p-4 appearance-none"
                 value="" tabindex="0">
@@ -1469,8 +1589,9 @@
                 </div>
               </div>
               <div class="flex justify-center"><button id="list-token-manage-button"
-                  class="bg-transparent hover:brightness-[90%] focus:brightness-[90%] active:brightness-[80%] disabled:pointer-events-none disabled:opacity-40 text-blue text-sm rounded-full font-bold flex items-center justify-center gap-1">Manage
-                  Token Lists</button></div>
+                  class="bg-transparent hover:brightness-[90%] focus:brightness-[90%] active:brightness-[80%] disabled:pointer-events-none disabled:opacity-40 text-blue text-sm rounded-full font-bold flex items-center justify-center gap-1">
+                <span data-i18n-tr>Manage Token Lists</span>
+              </button></div>
             </div>
           </div>
         </div>
@@ -1491,7 +1612,8 @@
             <div class="flex flex-col gap-4">
               <div class="flex items-start justify-between">
                 <div class="flex flex-col gap-1 justify-center">
-                  <div class="text-base leading-5 font-bold flex gap-3 text-high-emphesis items-center">You will receive
+                  <div class="text-base leading-5 font-bold flex gap-3 text-high-emphesis items-center">
+                    <span data-i18n-tr>You will receive</span>
                   </div>
                 </div>
                 <div id="close-confirm-add-liquidity" class="flex items-center justify-center w-6 h-6 cursor-pointer"><svg
@@ -1530,16 +1652,19 @@
                   </div>
                 </div>
                 <div class="text-lg font-medium md:text-2xl text-high-emphesis"><span
-                    id="confirm-add-pair">MATIC/SUSHI</span>&nbsp;Pool Tokens</div>
-                <div class="pt-3 text-xs italic text-secondary">Output is estimated. If the price changes by more than
-                  <span id="confirm-add-slippage">0.5</span>% your transaction
-                  will revert.
+                    id="confirm-add-pair">MATIC/SUSHI</span>&nbsp;
+                  <span data-i18n-tr>Pool Tokens</span>
+                </div>
+                <div class="pt-3 text-xs italic text-secondary" id="confirm-add-slippage">
+
                 </div>
               </div>
               <div class="p-6 mt-0 -m-6 rounded bg-dark-800">
                 <div class="grid gap-1">
                   <div class="flex items-center justify-between">
-                    <div class="text-sm text-high-emphesis">Rates</div>
+                    <div class="text-sm text-high-emphesis">
+                      <span data-i18n-tr>Rates</span>
+                    </div>
                     <div id="confirm-add-rate1"
                       class="text-sm font-bold justify-center items-center flex right-align pl-1.5 text-high-emphesis">1
                       MATIC = 0.377 SUSHI</div>
@@ -1567,14 +1692,18 @@
                     </div>
                   </div>
                   <div class="flex items-center justify-between">
-                    <div class="text-sm text-secondary">Share of Pool:</div>
+                    <div class="text-sm text-secondary">
+                      <span data-i18n-tr>Share of Pool:</span>
+                    </div>
                     <div id="confirm-add-share"
                       class="text-sm font-bold justify-center items-center flex right-align pl-1.5 text-high-emphesis">
                       1.263%</div>
                   </div>
                 </div><button id="confirm-add-button"
                   class="text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40 !bg-gradient-to-r from-blue to-pink-600 hover:from-blue/80 hover:to-pink-600/80 focus:from-blue/80 focus:to-pink-600/80 active:from-blue/70 active:to-pink-600/70 focus:border-blue-700 rounded px-4 h-[52px] w-full font-bold flex items-center justify-center gap-1"
-                  tabindex="0">Confirm Supply</button>
+                  tabindex="0">
+                <span data-i18n-tr>Confirm Supply</span>
+              </button>
               </div>
             </div>
           </div>
@@ -1597,8 +1726,9 @@
             <div class="flex flex-col gap-4">
               <div class="flex items-start justify-between">
                 <div class="flex flex-col gap-1 justify-center">
-                  <div class="text-base leading-5 font-bold flex gap-3 text-high-emphesis items-center">Confirm
-                    transaction</div>
+                  <div class="text-base leading-5 font-bold flex gap-3 text-high-emphesis items-center">
+                    <span data-i18n-tr>Confirm transaction</span>
+                  </div>
                 </div>
                 <div class="flex items-center justify-center w-6 h-6 cursor-pointer"><svg
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -1614,8 +1744,12 @@
                       preserveAspectRatio="xMidYMid meet">
                     </svg></div>
                 </div>
-                <div class="text-lg leading-6 font-bold text-white">Supplying 2976.1 MATIC and 5006.4 USDT</div>
-                <div class="text-sm leading-5 font-medium currentColor">Confirm this transaction in your wallet</div>
+                <div class="text-lg leading-6 font-bold text-white">
+                  Supplying 2976.1 MATIC and 5006.4 USDT
+                </div>
+                <div class="text-sm leading-5 font-medium currentColor">
+                  <span data-i18n-tr>Confirm this transaction in your wallet</span>
+                </div>
               </div>
             </div>
           </div>
