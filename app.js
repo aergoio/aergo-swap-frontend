@@ -2938,7 +2938,7 @@ function show_confirm_add_dialog(){
   $("#confirm-add-liquidity").removeClass('hidden')
 
   $("#confirm-add-slippage").html(tr('Output is estimated. If the price changes by more than {0}% your transaction will revert.', slippage))
-})
+}
 
 $('#close-confirm-add-liquidity').click(function(){
   $("#confirm-add-liquidity").addClass('hidden')
@@ -2957,7 +2957,7 @@ $('#add-token1-button').click(function(){
     show_confirm_add_dialog()
   }
 
-}
+})
 
 $('#add-token2-button').click(function(){
 
@@ -3249,16 +3249,9 @@ $translateStringsAttrs.each((_, el) => {
 })
 
 function render_lang_list() {
-  fetch('/langs/langs_list.json')
+  return fetch('/langs/langs_list.json')
     .then((res) => res.json())
     .then((langList) => {
-      Object.keys(langList).forEach((l) => window.App.I18N.locales.add(l))
-      const matchingLocale = [...window.App.I18N.locales.values()]
-          .find((l) => new RegExp(`^${l}`).test(navigator.language))
-      if (matchingLocale) {
-        window.App.I18N.locale = matchingLocale
-        $langSelectorLocaleName.html(langList[matchingLocale])
-      }
       $langSelector.addClass('lg:flex');
       const $langList = $(`
         <div 
@@ -3285,9 +3278,24 @@ function render_lang_list() {
       $langTrigger.on('click', () => {
         window.App.I18N.localeSelectorUI.isShown = !window.App.I18N.localeSelectorUI.isShown;
       });
-
+      return new Promise((res) => res(langList));
     })
     .catch(err => console.error(err));
+}
+
+function set_default_locale(langList) {
+  const presetLocale = localStorage.getItem('locale');
+  if (!presetLocale) {
+    Object.keys(langList).forEach((l) => window.App.I18N.locales.add(l))
+    const matchingLocale = [...window.App.I18N.locales.values()]
+        .find((l) => new RegExp(`^${l}`).test(navigator.language))
+    if (matchingLocale) {
+      window.App.I18N.locale = matchingLocale
+      $langSelectorLocaleName.html(langList[matchingLocale])
+    }
+  } else {
+    window.App.I18N.locale = presetLocale
+  }
 }
 
 function init_i18n() {
@@ -3356,6 +3364,7 @@ function init_i18n() {
                   .catch((err) => console.error(err))
                   .finally(() => {
                     $langList.addClass('hidden');
+                    localStorage.setItem('locale', value);
                   })
               break;
             }
@@ -3384,6 +3393,8 @@ function init_i18n() {
     );
   })
   render_lang_list()
+      .then(set_default_locale)
+      .catch(e => console.error(e))
 }
 
 //---------------------------------------------------------------------
