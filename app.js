@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var swal = require('sweetalert2');
 var herajs = require('@herajs/client');
+var jdenticon = require('jdenticon')
 var aergo;
 var chainId = '';
 var account_address;
@@ -312,14 +313,16 @@ function on_account_connected(){
   $('#connect-wallet').addClass('hidden')
 
   // show the account address (part)
+  var addr = account_address.substr(0,4) + "..." + account_address.substr(-4)
+  $('#status-connected > div > div').html(addr)
+
+  // show the identicon
+  $('#status-connected > div > span').html(jdenticon.toSvg(account_address, 30))
 
   $('#balance').removeClass('hidden')
   $('#status-logo').removeClass('hidden')
   $('#status-logo').addClass('sm:inline-block')
   $('#status-connected').removeClass('hidden')
-
-  var addr = account_address.substr(0,4) + "..." + account_address.substr(-4)
-  $('#status-connected > div > div').html(addr)
 
   get_token_list()
 
@@ -900,18 +903,38 @@ input.addEventListener('keydown', function(event) {
 // TOKEN PRICES
 //---------------------------------------------------------------------
 
-function xx(){
+function get_equiv_price(){
+
+  // can it be computed instead of retrieving price data for all?
+  // if we have the price of just AERGO and GEM, it may be enough for most use cases (at start)
+
+  swap_info.equiv_price1 = ''
+  swap_info.equiv_price2 = ''  // ~$502.30  ~₩1,200 (no decimals)
 
 
-// can it be computed instead of retrieving price data for all?
-// if we have the price of just AERGO and GEM, it may be enough for most use cases (at start)
+}
 
+function update_equiv_price(){
 
+  get_equiv_price()
 
-  $("#equiv-amount1").html('~$93.10 ')
-  $("#equiv-amount2").html('~$93.32 <span class="text-low-emphesis">(0.3%)</span>')
+  var color
 
+  if (swap_info.price_impact < 5) {
+    color = 'text-low-emphesis'
+  }else if (swap_info.price_impact < 15) {
+    color = 'text-yellow'
+  }else{
+    color = 'text-red'
+  }
 
+  $("#equiv-amount1").html(swap_info.equiv_price1)
+  $("#equiv-amount2").html(swap_info.equiv_price2 +
+      ' <span class="' + color + '">(' + swap_info.impact_short + ')</span>')
+
+  $("#confirm-swap-value1").html(swap_info.equiv_price1)
+  $("#confirm-swap-value2").html(swap_info.equiv_price2 +
+      ' <span class="text-xs leading-4 font-medium currentColor">(' + swap_info.impact_short + ')</span></div>')
 
 }
 
@@ -1194,7 +1217,8 @@ function update_swap_info(){
 
   swap_info.fee = swap_info.fee.toFixed(2) + '%'
 
-  swap_info.price_impact = swap_info.price_impact.toFixed(2) + '%'
+  swap_info.impact_short = swap_info.price_impact.toPrecision(2) + '%'
+  swap_info.impact_long  = swap_info.price_impact.toFixed(2) + '%'
 
   if( swap_input==1 ){
     swap_info.expected_title = tr('Expected Output')
@@ -1217,6 +1241,8 @@ function update_swap_info(){
   update_swap_info_dialog('#si')
   update_swap_info_dialog('#confirm-swap')
 
+  update_equiv_price()
+
 
   var html, amount
   if( swap_input==1 ){
@@ -1236,7 +1262,7 @@ function update_swap_info_dialog(prefix){
   $(prefix + '-rate'  ).html(swap_info.rate)
   $(prefix + '-route' ).html(swap_info.route)
   $(prefix + '-fee'   ).html(swap_info.fee)
-  $(prefix + '-impact').html(swap_info.price_impact)
+  $(prefix + '-impact').html(swap_info.impact_long)
 
   var div = $(prefix + '-expected > div')
   div[0].innerHTML = swap_info.expected_title
@@ -1268,7 +1294,9 @@ function update_swap_info_aergo(){
   swap_info.route = token_info[token1].symbol + ' &gt; ' + token_info[token2].symbol
 
   swap_info.fee = '0%'
-  swap_info.price_impact = '0%'
+  swap_info.price_impact = 0
+  swap_info.impact_short = '0%'
+  swap_info.impact_long = '0%'
 
   swap_info.expected_title = tr('Exact Output')
   swap_info.expected_amount = document.getElementById('amount2').value + ' ' + token_info[token2].symbol
@@ -1279,6 +1307,8 @@ function update_swap_info_aergo(){
   // update both dialogs
   update_swap_info_dialog('#si')
   update_swap_info_dialog('#confirm-swap')
+
+  update_equiv_price()
 
 }
 
