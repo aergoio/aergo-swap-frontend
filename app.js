@@ -3390,6 +3390,13 @@ function init_i18n() {
                         }
                       })
                     });
+                    update_balances()
+                    add_pool_update_balances()
+                    add_pool_update_info()
+                    update_swap_info()
+                    if (!token2_selected) {
+                      $('#token2-symbol').html(tr('Select a token'))
+                    }
                   })
                   .catch((err) => console.error(err))
                   .finally(() => {
