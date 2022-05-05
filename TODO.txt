@@ -7,9 +7,6 @@ COMPUTATIONS + BLOCKCHAIN:
   - add liq: without selecting pair: failing - let the 2nd token to be selected ?  or use GEM
     update_add_liquidity()
 
-  - show list of existing pairs, with amount of liquidity, movement per day/week/month, fees
-    use a simple backend replicated with aergolite (?)
-
 
   - confirm-swap: show 'price udpated' section if the 'price' changes
     add 'disabled' to btn when price is updated
@@ -18,6 +15,32 @@ COMPUTATIONS + BLOCKCHAIN:
   - test swap with exact output
 
   - check calculations for swap with the result from the swap
+
+
+  - the tokens cannot be the same
+
+  - test with tokens with different decimals
+
+
+
+  BACKEND
+
+  - show list of existing pairs, with amount of liquidity, movement per day/week/month, fees
+    use a simple backend replicated with aergolite (?)
+
+  - retrieve price information for AERGO - in USD, EUR, KRW
+    from:
+      BUSD: Binance, Coinbase, MEXC, Kucoin
+      KRW: Upbit, Bithumb
+        https://www.coingecko.com/en/coins/aergo#markets
+      then take the median value
+      and store in the database, or keep in memory
+      it must be available for REST request
+    FRONTEND
+    let the user choose the base token to be displayed?
+      use the current config dialog?
+
+
 
   /- it is choosing a route with bad price impact, after adding liquidity
       the route has pairs with bad price
@@ -34,19 +57,30 @@ COMPUTATIONS + BLOCKCHAIN:
     if using a multi-hop route, subscribe to each contract on the route/path
     if using many / split routes, subscribe to each contract on all the paths
 
+
   - use separate js files - with require or import
     "cat a.js b.js > concat.js && browserify concat.js -o bundle.js && rm concat.js"
 
+core-blockchain.js
+core-
+core-
+ui-general.js
+ui-token-selector.js
+ui-swap.js
+ui-user-pools.js
+ui-add-liq.js
+ui-remove-liq.js
+
+
+
+  CONTRACTS
 
   - update on ARC1: add field for additional info?
     it can contain the swap pair address on ASLPT contracts
     use the 'contract owner'?
+    field 'metadata' 'extra' 'description' 'info' -- set only at mint time
 
   - make aergo/waergo be the base token on new_pair (?) (on contract)
-
-  - the tokens cannot be the same
-
-  - test with tokens with different decimals
 
 
 
@@ -67,11 +101,6 @@ FRONTEND + UI:
   - display the price impact (in percent) next to the output value
     use different colors for the label, depending on the impact value (yellow, orange, red)
 
-  - account icon - remove the 'cooker', add an 'user' or use the same from aergoscan:
-    https://jdenticon.com/
-    https://github.com/aergoio/aergoscan/blob/eaa820afc6bc94be30b0054ee3d9edf5e47e29b7/frontend/src/vue/components/Identicon.vue
-    <Identicon :text="''+address" size="50" />
-    https://github.com/aergoio/aergoscan/blob/eaa820afc6bc94be30b0054ee3d9edf5e47e29b7/frontend/src/vue/components/AccountBox.vue
 
   - token selector: when opened in a tablet (and maybe changing browser height) it
     does not fill all the height

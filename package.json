@@ -25,6 +25,7 @@
         "@herajs/client": "^1.1.0",
         "cors": "^2.8.5",
         "express": "^4.17.3",
+        "jdenticon": "^3.1.1",
         "jquery": "^3.5.1",
         "morgan": "^1.10.0",
         "sweetalert2": "^10.3.3"

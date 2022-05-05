@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var swal = require('sweetalert2');
 var herajs = require('@herajs/client');
+var jdenticon = require('jdenticon')
 var aergo;
 var chainId = '';
 var account_address;
@@ -312,14 +313,16 @@ function on_account_connected(){
   $('#connect-wallet').addClass('hidden')
 
   // show the account address (part)
+  var addr = account_address.substr(0,4) + "..." + account_address.substr(-4)
+  $('#status-connected > div > div').html(addr)
+
+  // show the identicon
+  $('#status-connected > div > span').html(jdenticon.toSvg(account_address, 30))
 
   $('#balance').removeClass('hidden')
   $('#status-logo').removeClass('hidden')
   $('#status-logo').addClass('sm:inline-block')
   $('#status-connected').removeClass('hidden')
-
-  var addr = account_address.substr(0,4) + "..." + account_address.substr(-4)
-  $('#status-connected > div > div').html(addr)
 
   get_token_list()
 
@@ -2933,7 +2936,7 @@ function show_confirm_add_dialog(){
   $("#confirm-add-share").html(to_add.share.toFixed(2) + '%')
 
   $("#confirm-add-liquidity").removeClass('hidden')
-})
+}
 
 $('#close-confirm-add-liquidity').click(function(){
   $("#confirm-add-liquidity").addClass('hidden')
@@ -2952,7 +2955,7 @@ $('#add-token1-button').click(function(){
     show_confirm_add_dialog()
   }
 
-}
+})
 
 $('#add-token2-button').click(function(){
 
