@@ -1030,7 +1030,7 @@ function show_swap_price(){
     }
 
     document.getElementById('amount2').value =
-      to_decimal_str(swap_token2_amount, decimals2)
+      to_decimal_str(swap_token2_amount, decimals2, 6)
 
   }else{
 
@@ -1042,7 +1042,7 @@ function show_swap_price(){
     }
 
     document.getElementById('amount1').value =
-      to_decimal_str(swap_token1_amount, decimals1);
+      to_decimal_str(swap_token1_amount, decimals1, 6);
 
   }
 
@@ -1989,10 +1989,12 @@ get the one with best output (or compute input if giving output)
 
 function find_routes(){
 
+  console.log('find_routes', token1, token2)
+
+  if (!token1 || !token2) return;
+
   last_route_req += 1
   let current_route_req = last_route_req  // use let here
-
-  console.log('find_routes', token1, token2)
 
   routes = []
   pre_routes = []
@@ -2630,6 +2632,8 @@ function add_pool_update_info(n){
   var token1 = (pair_token1=='aergo') ? waergo : pair_token1
   var token2 = (pair_token2=='aergo') ? waergo : pair_token2
 
+  if (!pair_token1 || !pair_token2) return [0,0];
+
   var is_empty = false
 
   var pair_token1_amount = BigInt(0)
@@ -3202,6 +3206,8 @@ $('#receive-aergo').click(function(){
 })
 
 function update_receive_aergo(){
+
+  if (!remove_pool) return
 
   var other_token = (receive_aergo_as=='aergo') ? 'WAERGO' : 'AERGO'
   $('#receive-aergo').html(tr('Receive') + ' ' + other_token)
