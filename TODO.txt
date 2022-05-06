@@ -7,19 +7,28 @@ COMPUTATIONS + BLOCKCHAIN:
   - add liq: without selecting pair: failing - let the 2nd token to be selected ?  or use GEM
     update_add_liquidity()
 
-
   - confirm-swap: show 'price udpated' section if the 'price' changes
     add 'disabled' to btn when price is updated
+    re-enable the btn when click on Accept
+
+
+  - not recognizing browser lang (on tablet)
+
+
+  - price impact calculation: the value is different depending on the route...
+    maybe compute for all the routes and get the median value
+
 
   - test swap with multi-hops
   - test swap with exact output
 
   - check calculations for swap with the result from the swap
 
-
   - the tokens cannot be the same
 
   - test with tokens with different decimals
+
+  - test with AERGO/WAERGO
 
 
 
@@ -39,6 +48,25 @@ COMPUTATIONS + BLOCKCHAIN:
     FRONTEND
     let the user choose the base token to be displayed?
       use the current config dialog?
+
+    OR: -> retrieve the price directly!
+
+    https://api.binance.com/api/v3/ticker/price?symbol=AERGOBUSD
+      {"symbol":"AERGOBUSD","price":"0.19820000"}
+
+    https://www.mexc.com/open/api/v2/market/ticker?symbol=AERGO_USDT
+      {"code":200,"data":[{"symbol":"AERGO_USDT","volume":"1616211.93","high":"0.22195","low":"0.19215","bid":"0.1967","ask":"0.1975","open":"0.22107","last":"0.19722","time":1651820100000,"change_rate":"-0.10788438"}]}
+      average between `ask` and `bid`
+
+    https://api.upbit.com/v1/ticker?markets=KRW-AERGO
+      [{"market":"KRW-AERGO","trade_date":"20220506","trade_price":255.0000}]
+
+    https://pub1.bithumb.com/trade-info/v1/orderbook/AERGO_KRW/1?
+      {"message":"Success","data":{"ask":[{"p":"254.8","q":"4315.0000"},{"p":"256.1","q":"2199.9999"},{"p":"256.2","q":"3694.4593"},{"p":"256.3","q":"7670.7000"},{"p":"256.8","q":"28.8175"}],"bid":[{"p":"253.7","q":"7.2790"},{"p":"253.5","q":"4315.0000"},{"p":"253.4","q":"8113.0000"},{"p":"253.2","q":"402.9293"},{"p":"253.1","q":"28.8175"}],"timestamp":"1651821220374129"},"error":"0000"}
+      average between `ask` and `bid`
+    https://api.bithumb.com/public/orderbook/AERGO_KRW
+
+    https://api.bithumb.com/public/ticker/AERGO_KRW
 
 
 
@@ -94,16 +122,10 @@ FRONTEND + UI:
   - success & failure dialog     id="popup-message"
   - general message dialog (replace swal?)
 
+
   - user account dialog
     account info + history of txns + link to aergoscan (to check balances)
     allow to select another account?
-
-
-  - move the price impact label according to the input2 size
-
-
-  - token selector: when opened in a tablet (and maybe changing browser height) it
-    does not fill all the height
 
 
 

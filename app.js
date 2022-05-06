@@ -533,6 +533,26 @@ document.getElementById('token2').addEventListener('input', function() {
 })
 */
 
+// Adjust token list width and length responsively
+function adjust_token_list_element() {
+  if ($("#token-selector").is(":visible")) {
+    $('#token-list-parent').css('height', Math.round($('#all-currencies-list').parent().height()))
+    $('#token-list-parent').css('width', Math.round($('#all-currencies-list').parent().width()))
+  }
+}
+
+// Resize token-selector panel responsively
+function adjust_token_selector_modal(action) {
+  let elm = $('#token-selector > div > div > div:nth-child(3)')
+  if (action == 1) {
+    elm.removeClass('lgmax-w-lg w-full');
+    elm.addClass('w-[85vw] max-h-[85vh] overflow-y-auto mx-auto');
+  } else {
+    elm.removeClass('w-[85vw] max-h-[85vh] overflow-y-auto mx-auto');
+    elm.addClass('lgmax-w-lg w-full');
+  }
+}
+
 $('#close-token-selector').click(function(){
   $("#token-selector").addClass('hidden')
 })
@@ -642,6 +662,8 @@ function on_token_selected_swap(address){
 }
 
 $('#swap-order').click(function(){
+
+  if (!token1 || !token2) return;
 
   var el1, el2, temp
 
@@ -3517,26 +3539,6 @@ function on_lang_changed(){
     $('#token2-symbol').html(tr('Select a token'))
   }
 
-}
-
-//Adjust token list width and length responsively
-function adjust_token_list_element() {
-  if ($("#token-selector").is(":visible")) {
-    $('#token-list-parent').css('height', Math.round($('#all-currencies-list').parent().height()))
-    $('#token-list-parent').css('width', Math.round($('#all-currencies-list').parent().width()))
-  }
-}
-
-//Resize token-selector panel responsively
-function adjust_token_selector_modal(action) {
-  let elm = $('#token-selector > div > div > div:nth-child(3)')
-  if (action == 1) {
-    elm.removeClass('lgmax-w-lg w-full');
-    elm.addClass('w-[85vw] max-h-[85vh] overflow-y-auto mx-auto');
-  } else {
-    elm.removeClass('w-[85vw] max-h-[85vh] overflow-y-auto mx-auto');
-    elm.addClass('lgmax-w-lg w-full');
-  }
 }
 
 
