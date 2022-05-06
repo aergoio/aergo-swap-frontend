@@ -616,16 +616,26 @@ function on_token_selected_swap(address){
   $('#amount1')[0].value = ''
   $('#amount2')[0].value = ''
 
+  $("#equiv-amount1").html('')
+  $("#equiv-amount2").html('')
+
   swap_input = 1
   swap_token1_amount = BigInt(0)
   swap_token2_amount = BigInt(0)
 
-  disable_router_timer()
-
   routes = []
   pre_routes = []
   best_route = null
-  last_route_req = 0
+  route_search_started = false
+  route_search_completed = false
+  disable_router_timer()
+
+  if (is_aergo(token1) && is_aergo(token2)) {
+    //update_swap_button(tr('Swap'), false)
+  }else{
+    update_swap_button(tr('Loading...'), false)
+  }
+
   update_swap_price()
 
 }
@@ -669,6 +679,9 @@ $('#swap-order').click(function(){
 
   $('#amount1')[0].value = ''
   $('#amount2')[0].value = ''
+
+  $("#equiv-amount1").html('')
+  $("#equiv-amount2").html('')
 
   temp = token1
   token1 = token2
@@ -955,7 +968,14 @@ function no_routes(){
   if(is_aergo(token1) && is_aergo(token2)){
     return false
   }
-  return (routes.length==0 && last_route_req>0)
+  return (route_search_completed && routes.length==0)
+}
+
+function empty_route(){
+  if(is_aergo(token1) && is_aergo(token2)){
+    return false
+  }
+  return route_search_completed
 }
 
 function update_swap_button(text, enabled){
@@ -975,16 +995,18 @@ function on_input1(){
 
   var typed_amount = document.getElementById('amount1').value
 
+/*
   if (typed_amount.length == 0) {
     document.getElementById('amount2').value = ''
     hide_swap_info()
     return
   }
+*/
 
   var decimals1 = token_info[token1].decimals
 
   var token1_amount = convert_typed_amount(typed_amount, decimals1)
-  if (!token1_amount) return;
+  if (!token1_amount) token1_amount = '0'
   swap_token1_amount = BigInt(token1_amount)
 
   update_swap_price()
@@ -999,16 +1021,18 @@ function on_input2(){
 
   var typed_amount = document.getElementById('amount2').value
 
+/*
   if (typed_amount.length == 0) {
     document.getElementById('amount1').value = ''
     hide_swap_info()
     return
   }
+*/
 
   var decimals2 = token_info[token2].decimals
 
   var token2_amount = convert_typed_amount(typed_amount, decimals2)
-  if (!token2_amount) return;
+  if (!token2_amount) token2_amount = '0'
   swap_token2_amount = BigInt(token2_amount)
 
   update_swap_price()
@@ -1017,6 +1041,8 @@ function on_input2(){
 
 function show_swap_price(){
 
+  if (!token1 || !token2) return;
+
   var decimals1 = token_info[token1].decimals
   var decimals2 = token_info[token2].decimals
 
@@ -1024,7 +1050,11 @@ function show_swap_price(){
 
     if (swap_token2_amount <= 0) {
       document.getElementById('amount2').value = ''
-      update_swap_button(tr('Insufficient liquidity'), false)
+      $("#equiv-amount1").html('')
+      $("#equiv-amount2").html('')
+      if (empty_route()) {
+        update_swap_button(tr('Insufficient liquidity'), false)
+      }
       hide_swap_info()
       return
     }
@@ -1036,7 +1066,11 @@ function show_swap_price(){
 
     if (swap_token1_amount <= 0) {
       document.getElementById('amount1').value = ''
-      update_swap_button(tr('Insufficient liquidity'), false)
+      $("#equiv-amount1").html('')
+      $("#equiv-amount2").html('')
+      if (empty_route()) {
+        update_swap_button(tr('Insufficient liquidity'), false)
+      }
       hide_swap_info()
       return
     }
@@ -1966,7 +2000,9 @@ var routes = []
 var pre_routes = []
 var best_route = null
 
-var last_route_req = 0   // reset when token is selected
+var route_search_started = false
+var route_search_completed = false
+var last_route_req = 0
 
 /*
 
@@ -1993,11 +2029,16 @@ function find_routes(){
 
   if (!token1 || !token2) return;
 
-  last_route_req += 1
-  let current_route_req = last_route_req  // use let here
+  if (is_aergo(token1) && is_aergo(token2)) {
+    return
+  }
 
   routes = []
   pre_routes = []
+
+  route_search_started = true
+  last_route_req += 1
+  let current_route_req = last_route_req  // use let here
 
   var tokenA = (token1=='aergo') ? waergo : token1
   var tokenB = (token2=='aergo') ? waergo : token2
@@ -2103,7 +2144,10 @@ function get_routes_info(){
 
   console.log('get_routes_info - pre_routes:', pre_routes)
 
-  if (pre_routes.length == 0) return
+  if (pre_routes.length == 0) {
+    route_search_completed = true
+    return
+  }
 
   let current_route_req = last_route_req  // use let here
 
@@ -2151,6 +2195,8 @@ function get_routes_info(){
       routes.push(new_route)
     }
 
+    route_search_completed = true
+
 // select best route based in input or exact output
 // subscribe to events on all pairs from the selected route - or all possible routes - or just use a timer
 // also called with input amount is changed, and when pair is updated (event or timer)
@@ -2165,9 +2211,8 @@ function update_swap_price(){
 
   console.log('update_swap_price - routes:', routes.length)
 
-  if(routes.length==0 && last_route_req==0){
+  if(routes.length==0 && !route_search_started){
     find_routes()
-    return
   }
 
   if (swap_input==1) {
@@ -2259,11 +2304,15 @@ function update_input_price(){
     for (var i = route.length - 1; i >= 0; i--) {
       var pair = route[i]
       var tokenA = pair.other_token[tokenB]
-      amount = calculate_input(amount, pair.reserves[tokenA], pair.reserves[tokenB])
+      if (amount > 0) {
+        amount = calculate_input(amount, pair.reserves[tokenA], pair.reserves[tokenB])
+      }
       path = token_info[tokenA].symbol + ' > ' + path
       tokenB = tokenA
     }
+    console.log(amount, '-', path)
     if (tokenB!=first_token) amount = null
+    if (amount < 0) amount = null
     route.path = path
     route.input_amount = amount
   }
