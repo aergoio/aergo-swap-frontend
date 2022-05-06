@@ -954,27 +954,20 @@ function update_equiv_price(){
 
 }
 
-//Calculate equiv-amount2 width
-
 function calc_width_equiv(){
   let inputText = $("#amount2").val();
-  let text = document.createElement("span");
-  document.body.appendChild(text);
-  text.setAttribute("id", "calcWidth");
-
-  text.style.font = "DM Sans";
-  text.style.fontSize = 25 + "px";
-  text.style.height = 'auto';
-  text.style.width = 'auto';
-  text.style.position = 'absolute';
-  text.style.whiteSpace = 'no-wrap';
-  text.innerHTML = inputText;
-
-  let width = Math.ceil(text.clientWidth);
-  let formattedWidth = width + "px";
-  $("#equiv-amount2").css("left",formattedWidth)
-  $("#calcWidth").remove();
+  let width = getTextWidth(inputText, getComputedStyle($('#amount2')[0]).font);
+  $("#equiv-amount2").css("left", (width + 10) + "px")
 }
+
+function getTextWidth(text, font) {
+  const canvas = getTextWidth.canvas || (getTextWidth.canvas = document.createElement("canvas"));
+  const context = canvas.getContext("2d");
+  context.font = font;
+  const metrics = context.measureText(text);
+  return metrics.width;
+}
+
 
 //---------------------------------------------------------------------
 // SWAP RATES
