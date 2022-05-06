@@ -106,9 +106,6 @@ FRONTEND + UI:
     does not fill all the height
 
 
-  - multi-language support
-
-
 
   - show only 1 WAERGO token contract? use curated list of tokens?
 

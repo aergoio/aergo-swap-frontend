@@ -429,7 +429,7 @@
   "Liquidity Provider Fee": "Opłata Dostawcy Płynności",
   "Liquidity Provision": "",
   "Liquidity pair token is set to the payment currency from your auction.": "Token pary płynności jest ustawiony na walutę płatności z Twojej aukcji.",
-  "Liquidity provider fee": "",
+  "Liquidity provider fee": "Opłata Dostawcy Płynności",
   "Liquidity providers earn a 0.25% fee on all trades proportional to their share of\nthe pool. Fees are added to the pool, accrue in real time and can be claimed by\nwithdrawing your liquidity": "Dostawcy płynności zarabiają 0,25% opłaty od wszystkich transakcji proporcjonalnie\ndo ich udziału w puli. Opłaty są dodawane do puli, naliczane w czasie rzeczywistym i możliwe\ndo odebrania, wypłacając płynność",
   "Lists": "Listy",
   "Live": "Na Żywo",
