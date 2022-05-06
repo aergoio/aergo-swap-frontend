@@ -98,8 +98,8 @@ FRONTEND + UI:
     account info + history of txns + link to aergoscan (to check balances)
     allow to select another account?
 
-  - display the price impact (in percent) next to the output value
-    use different colors for the label, depending on the impact value (yellow, orange, red)
+
+  - move the price impact label according to the input2 size
 
 
   - token selector: when opened in a tablet (and maybe changing browser height) it

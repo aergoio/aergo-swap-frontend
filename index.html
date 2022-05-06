@@ -184,9 +184,8 @@
                 <div class="px-2">
                   <div class="flex items-center justify-between gap-1">
                     <div class="flex gap-4">
-                      <div class="text-base leading-5 font-bold select-none text-secondary text-high-emphesis">Swap
-                      </div>
-                      <!--div class="text-base leading-5 font-bold cursor-pointer select-none text-secondary hover:text-white">Limit</div-->
+                      <div class="text-base leading-5 font-bold select-none text-secondary text-high-emphesis"><span data-i18n-tr>Swap</span></div>
+                      <!--div class="text-base leading-5 font-bold cursor-pointer select-none text-secondary hover:text-white"><span data-i18n-tr>Limit</span></div-->
                     </div>
                     <div class="flex gap-4">
                       <div id="show-config"
@@ -414,7 +413,7 @@
                                   autocomplete="off" value="0.50">%</div>
                             </div>
                             <div><button id="config-auto-slippage"
-                                class="border-2 disabled:pointer-events-none disabled:opacity-40 border-none bg-blue/20 hover:bg-blue/40 active:bg-blue/60 text-blue focus:bg-blue/40 text-sm rounded-full px-3 h-[36px] font-bold flex items-center justify-center gap-1">Auto</button>
+                                class="border-2 disabled:pointer-events-none disabled:opacity-40 border-none bg-blue/20 hover:bg-blue/40 active:bg-blue/60 text-blue focus:bg-blue/40 text-sm rounded-full px-3 h-[36px] font-bold flex items-center justify-center gap-1"><span data-i18n-tr>Auto</span></button>
                             </div>
                           </div>
                         </div>
@@ -535,7 +534,7 @@
                 <div
                   class="flex flex-col justify-center items-center py-4 px-3 rounded min-h-empty flex text-lg text-center text-low-emphesis">
                   <div class="px-4 py-2">
-                    <span data-i18n-tr>Searching...</span>
+                    <span data-i18n-tr>Loading...</span>
                   </div>
                 </div>
               </template>
@@ -629,9 +628,9 @@
                       </div>
                       <div pair="%pair%" class="grid grid-cols-2 gap-4">
                         <button
-                          class="text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40 bg-blue rounded px-4 h-[52px] font-bold flex items-center justify-center gap-1">Add</button>
+                          class="text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40 bg-blue rounded px-4 h-[52px] font-bold flex items-center justify-center gap-1"><span data-i18n-tr>Add</span></button>
                         <button
-                          class="text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40 bg-blue rounded px-4 h-[52px] font-bold flex items-center justify-center gap-1">Remove</button>
+                          class="text-higher-emphesis hover:bg-gradient-to-b hover:from-black/20 focus:to-black/20 focus:bg-gradient-to-b focus:from-black/20 hover:to-black/20 active:bg-gradient-to-b active:from-black/40 active:to-black/40 disabled:pointer-events-none disabled:opacity-40 bg-blue rounded px-4 h-[52px] font-bold flex items-center justify-center gap-1"><span data-i18n-tr>Remove</span></button>
                       </div>
                     </div>
                   </div>
@@ -757,7 +756,9 @@ claimed by withdrawing your liquidity.">
                         <div
                           class="flex items-center w-full space-x-3 rounded bg-dark-900 focus:bg-dark-700 p-3 sm:w-3/5">
                           <button id="max-token1"
-                            class="border-2 disabled:pointer-events-none disabled:opacity-40 border-none bg-blue/20 hover:bg-blue/40 active:bg-blue/60 text-blue focus:bg-blue/40 text-xs rounded-full px-2 h-[28px] !border font-bold flex items-center justify-center gap-1">Max</button>
+                            class="border-2 disabled:pointer-events-none disabled:opacity-40 border-none bg-blue/20 hover:bg-blue/40 active:bg-blue/60 text-blue focus:bg-blue/40 text-xs rounded-full px-2 h-[28px] !border font-bold flex items-center justify-center gap-1">
+                            <span data-i18n-tr>Max</span>
+                          </button>
                           <input id="add-token1-amount" inputmode="decimal" data-i18n-tr-attr="title" title="Token Amount" autocomplete="off"
                             autocorrect="off" type="text" pattern="^[0-9]*[.,]?[0-9]*$" placeholder="0.0" min="0"
                             minlength="1" maxlength="79" spellcheck="false"
@@ -818,7 +819,9 @@ claimed by withdrawing your liquidity.">
                         <div
                           class="flex items-center w-full space-x-3 rounded bg-dark-900 focus:bg-dark-700 p-3 sm:w-3/5">
                           <button id="max-token2"
-                            class="border-2 disabled:pointer-events-none disabled:opacity-40 border-none bg-blue/20 hover:bg-blue/40 active:bg-blue/60 text-blue focus:bg-blue/40 text-xs rounded-full px-2 h-[28px] !border font-bold flex items-center justify-center gap-1">Max</button>
+                            class="border-2 disabled:pointer-events-none disabled:opacity-40 border-none bg-blue/20 hover:bg-blue/40 active:bg-blue/60 text-blue focus:bg-blue/40 text-xs rounded-full px-2 h-[28px] !border font-bold flex items-center justify-center gap-1">
+                            <span data-i18n-tr>Max</span>
+                          </button>
                           <input id="add-token2-amount" inputmode="decimal" data-i18n-tr-attr="title" title="Token Amount" autocomplete="off"
                             autocorrect="off" type="text" pattern="^[0-9]*[.,]?[0-9]*$" placeholder="0.0" min="0"
                             minlength="1" maxlength="79" spellcheck="false"
@@ -924,7 +927,7 @@ claimed by withdrawing your liquidity.">
                       <div class="p-5 rounded bg-dark-800">
                         <div class="flex flex-col justify-between space-y-3 sm:space-y-0 sm:flex-row">
                           <div class="w-full text-white sm:w-2/5" style="margin: auto 0px;">
-                            <span data-i18n-tr>Amount to Remove</span>
+                            <span data-i18n-tr>Amount to Remove:</span>
                           </div>
                           <div
                             class="flex items-center w-full p-3 space-x-3 text-xl font-bold rounded bg-dark-900 sm:w-3/5">
@@ -952,11 +955,9 @@ claimed by withdrawing your liquidity.">
                         <div class="flex flex-col justify-between space-y-3 sm:space-y-0 sm:flex-row">
                           <div class="w-full text-white sm:w-2/5" style="margin: auto 0px;">
                             <div class="grid">
-                              <div><span data-i18n-tr>You Will Receive</span>:</div>
+                              <div><span data-i18n-tr>You will receive</span>:</div>
                               <div class="w-full flex p-0 text-sm"><a id="receive-aergo"
-                                  class="text-baseline text-blue opacity-80 hover:opacity-100 focus:opacity-100 whitespace-nowrap cursor-pointer">
-                                <span data-i18n-tr>Receive</span>
-                                  WAERGO</a></div>
+                                  class="text-baseline text-blue opacity-80 hover:opacity-100 focus:opacity-100 whitespace-nowrap cursor-pointer">Receive WAERGO</a></div>
                             </div>
                           </div>
                           <div id="remove-liquidity-output"
@@ -1041,7 +1042,7 @@ claimed by withdrawing your liquidity.">
                       class="flex flex-col w-full p-3 mt-3 space-y-1 text-sm rounded bg-dark-900 text-high-emphesis">
                       <div class="flex justify-between">
                         <div>
-                          <span data-i18n-tr>Your pool share</span>
+                          <span data-i18n-tr>Share of Pool</span>
                         </div>
                         <div class="font-bold">14.098388%</div>
                       </div>
@@ -1656,7 +1657,7 @@ us!">Our community is building a comprehensive decentralized trading platform fo
                   <span data-i18n-tr>Pool Tokens</span>
                 </div>
                 <div class="pt-3 text-xs italic text-secondary" id="confirm-add-slippage">
-
+                  Output is estimated. If the price changes by more than 0.5% your transaction will revert.
                 </div>
               </div>
               <div class="p-6 mt-0 -m-6 rounded bg-dark-800">

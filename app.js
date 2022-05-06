@@ -1644,7 +1644,7 @@ function update_pool_list(){
     var parent = $('#pool-list')[0]
 
     if (current_pool_list.length==0) {
-      $(parent).find('> div > div').html(tr('No liquidity found'))
+      $(parent).find('> div > div').html(tr('No Liquidity found'))
       return
     }
 
@@ -2769,7 +2769,7 @@ function add_pool_update_buttons(){
 
   var prefix = sent_base_token ? 'Withdraw' : 'Add'
   $('#add-token1-button').html(tr(prefix) + ' ' + token_info[base_token].symbol)
-  $('#add-token2-button').html('Add ' + token_info[other_token].symbol)
+  $('#add-token2-button').html(tr('Add') + ' ' + token_info[other_token].symbol)
 
   $('#add-token1-button').prop('disabled', false)
   $('#add-token2-button').prop('disabled', !sent_base_token)
@@ -2965,9 +2965,10 @@ function show_confirm_add_dialog(){
 
   $("#confirm-add-share").html(to_add.share.toFixed(2) + '%')
 
-  $("#confirm-add-liquidity").removeClass('hidden')
-
   $("#confirm-add-slippage").html(tr('Output is estimated. If the price changes by more than {0}% your transaction will revert.', slippage))
+
+  // display the dialog
+  $("#confirm-add-liquidity").removeClass('hidden')
 }
 
 $('#close-confirm-add-liquidity').click(function(){
@@ -3188,8 +3189,11 @@ input.addEventListener('keydown', function(event) {
 })
 
 $('#receive-aergo').click(function(){
-
   receive_aergo_as = (receive_aergo_as=='aergo') ? waergo : 'aergo'
+  update_receive_aergo()
+})
+
+function update_receive_aergo(){
 
   var other_token = (receive_aergo_as=='aergo') ? 'WAERGO' : 'AERGO'
   $('#receive-aergo').html(tr('Receive') + ' ' + other_token)
@@ -3200,7 +3204,7 @@ $('#receive-aergo').click(function(){
   $('#remove-liquidity-output > div:nth-child(' + n + ') > div:nth-child(2) > div:nth-child(2)')
     .html(symbol)
 
-})
+}
 
 $('#remove-liquidity-button').click(function(){
 
@@ -3390,13 +3394,7 @@ function init_i18n() {
                         }
                       })
                     });
-                    update_balances()
-                    add_pool_update_balances()
-                    add_pool_update_info()
-                    update_swap_info()
-                    if (!token2_selected) {
-                      $('#token2-symbol').html(tr('Select a token'))
-                    }
+                    on_lang_changed()
                   })
                   .catch((err) => console.error(err))
                   .finally(() => {
@@ -3433,6 +3431,24 @@ function init_i18n() {
       .then(set_default_locale)
       .catch(e => console.error(e))
 }
+
+function on_lang_changed(){
+
+  update_balances()
+  update_swap_info()
+
+  add_pool_update_balances()
+  add_pool_update_info()
+  add_pool_update_buttons()
+
+  update_receive_aergo()
+
+  if (!token2_selected) {
+    $('#token2-symbol').html(tr('Select a token'))
+  }
+
+}
+
 
 //---------------------------------------------------------------------
 // ONLOAD
