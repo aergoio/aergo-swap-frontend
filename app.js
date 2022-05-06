@@ -1118,6 +1118,8 @@ $('#confirm-swap-invert-rate').click(invert_rate)
 
 function update_swap_info(){
 
+  if (!token2) return
+
   if(is_aergo(token1) && is_aergo(token2)){
     update_swap_info_aergo()
     return
@@ -1690,6 +1692,8 @@ function update_pool_list(){
     items.off('click')
     items.click(on_pool_list_item_click)
 
+    translate_elements()
+
   }catch(e){
     console.log(e)
   }
@@ -1710,6 +1714,7 @@ function load_user_pools(force){
 
   var content = $('#pool-text').html()
   $(parent).append(content)
+  $(parent).find('> div > div').html(tr('Loading...'))
 
   current_pool_list = []
   get_user_pools(1)
@@ -2459,6 +2464,7 @@ function show_add_liquidity(){
 function add_liquidity_set_token(parent, n){
 
   var token = (n==1) ? pair_token1 : pair_token2
+  if (!token) return
 
   var symbol = token_info[token].symbol
   //var imgsrc = token_info[token].logo
@@ -2945,13 +2951,15 @@ function show_confirm_add_dialog(){
   confirm_add_set_img(1)
   confirm_add_set_img(2)
 
-  $('#confirm-add-token1 > div:nth-child(1)').html(token_info[pair_token1].symbol + ' Deposited')
+  $('#confirm-add-token1 > div:nth-child(1)')
+      .html(tr('{0} Deposited', token_info[pair_token1].symbol))
   $('#confirm-add-token1 > div:nth-child(2) > div')
       .html(to_decimal_str(to_add.token1_amount, token_info[pair_token1].decimals, 6))
   $('#confirm-add-token1 > div:nth-child(2) > span')
       .html(token_info[pair_token1].symbol)
 
-  $('#confirm-add-token2 > div:nth-child(1)').html(token_info[pair_token2].symbol + ' Deposited')
+  $('#confirm-add-token2 > div:nth-child(1)')
+      .html(tr('{0} Deposited', token_info[pair_token2].symbol))
   $('#confirm-add-token2 > div:nth-child(2) > div')
       .html(to_decimal_str(to_add.token2_amount, token_info[pair_token2].decimals, 6))
   $('#confirm-add-token2 > div:nth-child(2) > span')
@@ -3271,16 +3279,6 @@ const $langSelector = $('#lang_selector');
 const $langTrigger = $langSelector.find('button');
 const $langSelectorListHolder = $langSelector.find('#lang_selector_list_holder');
 const $langSelectorLocaleName = $langSelector.find('#lang_selector_locale_name');
-const $translateStrings = $('[data-i18n-tr]');
-$translateStrings.each((_, el) => {
-  el.setAttribute('data-i18n-tr', el.textContent)
-});
-const $translateStringsAttrs = $('[data-i18n-tr-attr]');
-$translateStringsAttrs.each((_, el) => {
-  const attrName = el.getAttribute('data-i18n-tr-attr')
-  const value = el.getAttribute(attrName)
-  el.setAttribute('data-i18n-tr-attr', `${attrName}:::${value}`)
-})
 
 function render_lang_list() {
   return fetch('/langs/langs_list.json')
@@ -3339,8 +3337,6 @@ function init_i18n() {
         {
           locale: 'en',
           localeStrings: {},
-          translateElems: new Map(),
-          translateElemsAttrs: new Map(),
           locales: new Set(),
           localeSelectorUI: new Proxy(
               {
@@ -3372,29 +3368,11 @@ function init_i18n() {
               fetch(`/langs/${value}.json`)
                   .then((res) => res.json())
                   .then((translations) => {
+
                     obj.localeStrings = {...translations};
-                    [...window.App.I18N.translateElems.entries()].forEach(([key, els]) => {
-                      try {
-                        els.forEach((el) => $(el).html(tr(key)));
-                      } catch (e) {
-                        console.error(e);
-                      }
-                    });
-                    [...window.App.I18N.translateElemsAttrs.entries()].forEach(([key, els]) => {
-                      els.forEach((el) => {
-                        const trAttr = el.getAttribute('data-i18n-tr-attr');
-                        if (trAttr.includes(':::')) {
-                          const [attrName, _] = trAttr.split(':::');
-                          const [__, value] = key.split(':::');
-                          try {
-                            el.setAttribute(attrName, tr(value));
-                          } catch (e) {
-                            console.error(e);
-                          }
-                        }
-                      })
-                    });
+                    translate_elements()
                     on_lang_changed()
+
                   })
                   .catch((err) => console.error(err))
                   .finally(() => {
@@ -3409,27 +3387,45 @@ function init_i18n() {
       }
     )
   }
-  $translateStrings.each((_, el) => {
-    let key = el.getAttribute('data-i18n-tr');
-    window.App.I18N.translateElems.set(
-        key,
-        window.App.I18N.translateElems.has(key) && Array.isArray(window.App.I18N.translateElems.get(key))
-            ? [...window.App.I18N.translateElems.get(key), el]
-            : [el]
-    );
-  });
-  $translateStringsAttrs.each((_, el) => {
-    let key = el.getAttribute('data-i18n-tr-attr');
-    window.App.I18N.translateElemsAttrs.set(
-        key,
-        window.App.I18N.translateElemsAttrs.has(key) && Array.isArray(window.App.I18N.translateElemsAttrs.get(key))
-            ? [...window.App.I18N.translateElemsAttrs.get(key), el]
-            : [el]
-    );
-  })
+
   render_lang_list()
-      .then(set_default_locale)
-      .catch(e => console.error(e))
+    .then(set_default_locale)
+    .catch(e => console.error(e))
+
+}
+
+function translate_elements(){
+
+  $('[data-i18n-tr]').each((_, el) => {
+    try {
+      var key = el.getAttribute('data-i18n-tr')
+      if (!key) {
+        key = el.textContent
+        el.setAttribute('data-i18n-tr', key)
+      }
+      $(el).html(tr(key))
+    } catch (e) {
+      console.error(e);
+    }
+  });
+
+  $('[data-i18n-tr-attr]').each((_, el) => {
+    try {
+      var attrName, key
+      const trAttr = el.getAttribute('data-i18n-tr-attr');
+      if (!trAttr.includes(':::')) {
+        attrName = trAttr
+        key = el.getAttribute(attrName)
+        el.setAttribute('data-i18n-tr-attr', `${attrName}:::${key}`)
+      }else{
+        [attrName, key] = trAttr.split(':::');
+      }
+      el.setAttribute(attrName, tr(key));
+    } catch (e) {
+      console.error(e);
+    }
+  })
+
 }
 
 function on_lang_changed(){
