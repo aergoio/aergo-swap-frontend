@@ -576,6 +576,7 @@ function select_token_click(){
   }
 
   $("#token-selector").removeClass('hidden')
+  adjust_token_list_element()
 
 }
 
@@ -2588,6 +2589,7 @@ function add_liquidity_select_token(n){
   }
   // show the token selector
   $("#token-selector").removeClass('hidden')
+  adjust_token_list_element()
 }
 $('#add-liquidity-select-token1').click(function(){ add_liquidity_select_token(1) })
 $('#add-liquidity-select-token2').click(function(){ add_liquidity_select_token(2) })
@@ -3525,6 +3527,26 @@ function on_lang_changed(){
 
 }
 
+//Adjust token list width and length responsively
+function adjust_token_list_element() {
+  if ($("#token-selector").is(":visible")) {
+    $('#token-list-parent').css('height', Math.round($('#all-currencies-list').parent().height()))
+    $('#token-list-parent').css('width', Math.round($('#all-currencies-list').parent().width()))
+  }
+}
+
+//Resize token-selector panel responsively
+function adjust_token_selector_modal(action) {
+  let elm = $('#token-selector > div > div > div:nth-child(3)')
+  if (action == 1) {
+    elm.removeClass('lgmax-w-lg w-full');
+    elm.addClass('w-[85vw] max-h-[85vh] overflow-y-auto mx-auto');
+  } else {
+    elm.removeClass('w-[85vw] max-h-[85vh] overflow-y-auto mx-auto');
+    elm.addClass('lgmax-w-lg w-full');
+  }
+}
+
 
 //---------------------------------------------------------------------
 // ONLOAD
@@ -3547,4 +3569,13 @@ document.body.onload = function() {
   get_token_list()
 
   init_i18n()
+
+  //Check screen size to adjust token list panel and content appropriately
+  $(window).on('resize', function () {
+    ($(this).width() < 1024) ? adjust_token_selector_modal(1) : adjust_token_selector_modal(2)
+    adjust_token_list_element()
+  });
+
+  //Check Screen size to adjust token select modal onload
+  ($(window).width() < 1024) ? adjust_token_selector_modal(1) : adjust_token_selector_modal(2)
 }
