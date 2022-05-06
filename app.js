@@ -959,11 +959,10 @@ function update_equiv_price(){
 function calc_width_equiv(){
   let inputText = $("#amount2").val();
   let text = document.createElement("span");
-  text.style.display = "none";
   document.body.appendChild(text);
   text.setAttribute("id", "calcWidth");
 
-  text.style.font = "times new roman";
+  text.style.font = "DM Sans";
   text.style.fontSize = 25 + "px";
   text.style.height = 'auto';
   text.style.width = 'auto';
