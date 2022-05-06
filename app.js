@@ -941,6 +941,8 @@ function update_equiv_price(){
     color = 'text-red'
   }
 
+  calc_width_equiv()
+
   $("#equiv-amount1").html(swap_info.equiv_price1)
   $("#equiv-amount2").html(swap_info.equiv_price2 +
       ' <span class="' + color + '">(' + swap_info.impact_short + ')</span>')
@@ -949,6 +951,29 @@ function update_equiv_price(){
   $("#confirm-swap-value2").html(swap_info.equiv_price2 +
       ' <span class="text-xs leading-4 font-medium currentColor">(' + swap_info.impact_short + ')</span></div>')
 
+}
+
+//Calculate equiv-amount2 width
+
+function calc_width_equiv(){
+  let inputText = $("#amount2").val();
+  let text = document.createElement("span");
+  text.style.display = "none";
+  document.body.appendChild(text);
+  text.setAttribute("id", "calcWidth");
+
+  text.style.font = "times new roman";
+  text.style.fontSize = 25 + "px";
+  text.style.height = 'auto';
+  text.style.width = 'auto';
+  text.style.position = 'absolute';
+  text.style.whiteSpace = 'no-wrap';
+  text.innerHTML = inputText;
+
+  let width = Math.ceil(text.clientWidth);
+  let formattedWidth = width + "px";
+  $("#equiv-amount2").css("left",formattedWidth)
+  $("#calcWidth").remove();
 }
 
 //---------------------------------------------------------------------
