@@ -712,6 +712,8 @@ $('#swap-order').click(function(){
 
   invert_routes()
 
+  compute_token_ratios()
+
   update_swap_info()
 
 })
@@ -936,21 +938,222 @@ input.addEventListener('keydown', function(event) {
 
 
 //---------------------------------------------------------------------
+// GENERAL
+//---------------------------------------------------------------------
+
+function median(values) {
+  if (values.length===0) return null
+  const sorted = Array.from(values).sort((a, b) => {
+    if (a > b) return 1;
+    else if (a < b) return -1;
+    return 0;
+  })
+  const middle = Math.floor(sorted.length / 2)
+  if (sorted.length % 2 === 0) {
+    var sum = sorted[middle - 1] + sorted[middle]
+    var two = (typeof sum == 'bigint') ? 2n : 2
+    return sum / two
+  }
+  return sorted[middle]
+}
+
+function ajax_request(url, callback){
+
+  $.ajax({
+    type: 'GET',
+    url: url,
+    dataType: 'json',
+    crossDomain: true,
+    success: function(list, textStatus, jqXHR) {
+      console.log(url, list)
+      callback(list)
+    },
+    error: function (msg, textStatus, errorThrown) {
+      console.log('error', msg)
+    }
+  })
+
+}
+
+
+//---------------------------------------------------------------------
 // TOKEN PRICES
 //---------------------------------------------------------------------
+
+var aergo_price = {}
+var price_base = 'USD'
+
+function request_aergo_price(exchange, callback){
+
+  switch(exchange){
+  case 'binance':
+    url = 'https://api.binance.com/api/v3/ticker/price?symbol=AERGOBUSD'
+    break
+  case 'mexc':
+    url = 'https://www.mexc.com/open/api/v2/market/ticker?symbol=AERGO_USDT'
+    break
+  case 'upbit':
+    url = 'https://api.upbit.com/v1/ticker?markets=KRW-AERGO'
+    break
+  case 'bithumb':
+    url = 'https://api.bithumb.com/public/orderbook/AERGO_KRW'
+    break
+  case 'coinbase':
+    url = 'https://api.coinbase.com/v2/prices/AERGO-USD/spot'
+    break
+  case 'gate.io':
+    url = 'https://api.gateio.ws/api/v4/spot/tickers?currency_pair=AERGO_USDT'
+    break
+  case 'crypto.com':
+    url = 'https://api.crypto.com/v2/public/get-ticker?instrument_name=AERGO_USDT'
+    break
+  }
+
+  ajax_request(url, function(res){
+
+    switch(exchange){
+    case 'binance':
+      aergo_price[exchange] = parseFloat(res.price)
+      break
+    case 'upbit':
+      aergo_price[exchange] = parseFloat(res.trade_price)
+      break
+    case 'coinbase':
+      aergo_price[exchange] = parseFloat(res.data.amount)
+      break
+    case 'mexc':
+      aergo_price[exchange] = (parseFloat(res.data[0].ask) + parseFloat(res.data[0].bid)) / 2
+      break
+    case 'bithumb':
+      aergo_price[exchange] = (parseFloat(res.data.ask[0]) + parseFloat(res.data.bid[0])) / 2
+      break
+    case 'gate.io':
+      aergo_price[exchange] = (parseFloat(res[0].lowest_ask) + parseFloat(res[0].highest_bid)) / 2
+      break
+    case 'crypto.com':
+      aergo_price[exchange] = (parseFloat(res.result.data.b) + parseFloat(res.result.data.k)) / 2
+      break
+    }
+
+    console.log('aergo price on', exchange, ':', aergo_price[exchange])
+
+    switch(exchange){
+    case 'binance':
+    case 'mexc':
+    case 'coinbase':
+    case 'gate.io':
+    case 'crypto.com':
+      compute_aergo_price('USD', ['binance','mexc','coinbase','gate.io','crypto.com'])
+      break
+    case 'upbit':
+    case 'bithumb':
+      compute_aergo_price('KRW', ['upbit','bithumb'])
+      break
+    }
+
+    //callback()
+    update_equiv_price()
+
+  })
+
+}
+
+/*
+function compute_aergo_price(base, list){
+  var price = 0.0
+  var count = 0
+
+  for(item of list){
+    if (aergo_price[item]) {
+      price += aergo_price[item]
+      count += 1
+    }
+  }
+
+  if (count > 1) {
+    aergo_price[base] = price / count
+  }
+}
+*/
+
+function compute_aergo_price(base, list){
+  var values = list.map(exchange => aergo_price[exchange])
+  values = values.filter(v => v)
+  aergo_price[base] = median(values)
+}
+
+function get_aergo_prices(){
+
+  if (price_base=='KRW') {
+    request_aergo_price('upbit')
+    request_aergo_price('bithumb')
+  }else{  // USD
+    request_aergo_price('binance')
+    request_aergo_price('mexc')
+    request_aergo_price('coinbase')
+    request_aergo_price('gate.io')
+    request_aergo_price('crypto.com')
+  }
+
+  // call again after 3 minutes
+  //setTimeout(get_aergo_prices, 3 * 60 * 1000)
+}
 
 function get_equiv_price(){
 
   // can it be computed instead of retrieving price data for all?
   // if we have the price of just AERGO and GEM, it may be enough for most use cases (at start)
 
-  swap_info.equiv_price1 = ''
-  swap_info.equiv_price2 = ''  // ~$502.30  ~₩1,200 (no decimals)
+  var token1_amount = swap_token1_amount
+  var token2_amount = swap_token2_amount
 
+  if (!aergo_price[price_base] || token1_amount==0 || token2_amount==0) {
+    swap_info.equiv_price1 = ''
+    swap_info.equiv_price2 = ''
+    return
+  }
+
+  var decimals1 = token_info[token1].decimals
+  var decimals2 = token_info[token2].decimals
+
+  var base1 = 10 ** decimals1
+  var base2 = 10 ** decimals2
+
+  if (is_aergo(token1)) {
+    var equiv_price1 = parseFloat(token1_amount) / base1 * aergo_price[price_base]
+  }
+  if (is_aergo(token2)) {
+    var equiv_price2 = parseFloat(token2_amount) / base2 * aergo_price[price_base]
+  }
+
+  if (!is_aergo(token1)) {
+    var token1_price = aergo_price[price_base] * (10**18) / parseFloat(ratio_amount1)
+    var equiv_price1 = parseFloat(token1_amount) / base1 * token1_price
+  }
+  if (!is_aergo(token2)) {
+    var token2_price = aergo_price[price_base] * (10**18) / parseFloat(ratio_amount2)
+    console.log('AERGO price:', aergo_price[price_base], 'other price:', token2_price, 'ratio2:', ratio_amount2)
+    var equiv_price2 = parseFloat(token2_amount) / base2 * token2_price
+  }
+
+  // ~$502.30  ~₩1,200 (no decimals)
+  if (price_base=='USD') {
+    swap_info.equiv_price1 = '~$' + equiv_price1.toFixed(2)
+    swap_info.equiv_price2 = '~$' + equiv_price2.toFixed(2)
+  }else{
+    swap_info.equiv_price1 = '~₩' + equiv_price1.toFixed(0)
+    swap_info.equiv_price2 = '~₩' + equiv_price2.toFixed(0)
+  }
 
 }
 
 function update_equiv_price(){
+
+  if (swap_token1_amount==0 || swap_token2_amount==0) {
+    $("#equiv-amount1").html('')
+    $("#equiv-amount2").html('')
+    return
+  }
 
   get_equiv_price()
 
@@ -964,22 +1167,23 @@ function update_equiv_price(){
     color = 'text-red'
   }
 
-  calc_width_equiv()
+  calc_width_equiv(1)
+  calc_width_equiv(2)
 
   $("#equiv-amount1").html(swap_info.equiv_price1)
   $("#equiv-amount2").html(swap_info.equiv_price2 +
       ' <span class="' + color + '">(' + swap_info.impact_short + ')</span>')
 
-  $("#confirm-swap-value1").html(swap_info.equiv_price1)
+  $("#confirm-swap-value1").html(swap_info.equiv_price1 ? swap_info.equiv_price1 : '&nbsp;')
   $("#confirm-swap-value2").html(swap_info.equiv_price2 +
-      ' <span class="text-xs leading-4 font-medium currentColor">(' + swap_info.impact_short + ')</span></div>')
+      ' <span class="text-xs leading-4 font-medium ' + color + '">(' + swap_info.impact_short + ')</span></div>')
 
 }
 
-function calc_width_equiv(){
-  let inputText = $("#amount2").val();
-  let width = getTextWidth(inputText, getComputedStyle($('#amount2')[0]).font);
-  $("#equiv-amount2").css("left", (width + 10) + "px")
+function calc_width_equiv(n){
+  let inputText = $(`#amount${n}`).val()
+  let width = getTextWidth(inputText, getComputedStyle($(`#amount${n}`)[0]).font)
+  $(`#equiv-amount${n}`).css("left", (width + 10) + "px")
 }
 
 function getTextWidth(text, font) {
@@ -1210,6 +1414,11 @@ function update_swap_info(){
   var token1_amount = swap_token1_amount
   var token2_amount = swap_token2_amount
 
+  if (token1_amount==0 || token2_amount==0) {
+    update_equiv_price()
+    return
+  }
+
   if(swap_info.direction==0){
     var multiplier = BigInt(10) ** BigInt(decimals1)
     //var amount = pair.reserves[token22] * multiplier / pair.reserves[token11]
@@ -1224,6 +1433,7 @@ function update_swap_info(){
 
   // calculate price impact
   //var normal_output = token1_amount * pair.reserves[token22] / pair.reserves[token11]
+/*
   var normal_output
   if (best_route!=null) {
     var token_amount = token1_amount
@@ -1237,8 +1447,14 @@ function update_swap_info(){
   }else{
     normal_output = token2_amount
   }
-  if (normal_output==0) normal_output = 1  // to avoid division by zero
-  swap_info.price_impact = Number((normal_output - token2_amount) * BigInt(10000) / normal_output) / 100.0
+*/
+  var base_amount = BigInt(10) ** BigInt(18)
+  var normal_output = token1_amount * ratio_amount2 / base_amount
+  if (normal_output == 0) {
+    swap_info.price_impact = 0
+  }else{
+    swap_info.price_impact = Number((normal_output - token2_amount) * BigInt(10000) / normal_output) / 100.0
+  }
 
 /*
 //  var multiplier = BigInt(10) ** BigInt(decimals1)
@@ -2235,6 +2451,8 @@ function get_routes_info(){
       routes.push(new_route)
     }
 
+    compute_token_ratios()
+
     route_search_completed = true
 
 // select best route based in input or exact output
@@ -2264,6 +2482,78 @@ function update_swap_price(){
   show_swap_price()
 }
 
+var ratio_amount1
+var ratio_amount2
+
+function compute_token_ratios(){
+
+  var token11 = (token1=='aergo') ? waergo : token1
+  var token22 = (token2=='aergo') ? waergo : token2
+
+  // path string
+  for (route of routes) {
+    var tokenA = token11
+    var path = token_info[tokenA].symbol
+    for (pair of route) {
+      var tokenB = pair.other_token[tokenA]
+      path += ' > ' + token_info[tokenB].symbol
+      tokenA = tokenB
+    }
+    route.path = path
+  }
+
+  var base_amount = BigInt(10) ** BigInt(18)
+
+  var ratios1 = []
+  var ratios2 = []
+
+  // given token1, how much of token2
+  for (route of routes) {
+    var tokenA = token11
+    var ratio_amount = base_amount
+    for (pair of route) {
+      var tokenB = pair.other_token[tokenA]
+      ratio_amount = ratio_amount * pair.reserves[tokenB] / pair.reserves[tokenA]
+      tokenA = tokenB
+    }
+    console.log(route.path, '- ratio 1->2:', ratio_amount, parseFloat(ratio_amount) / (10**18))
+    route.ratio_amount2 = ratio_amount
+    ratios2.push(ratio_amount)
+    // given token2, how much of token1
+    ratio_amount = base_amount * base_amount / ratio_amount
+    console.log(route.path, '- ratio 2->1:', ratio_amount, parseFloat(ratio_amount) / (10**18))
+    route.ratio_amount1 = ratio_amount
+    ratios1.push(ratio_amount)
+  }
+
+/*
+  // given token2, how much of token1
+  for (route of routes) {
+    var tokenA = token22
+    var ratio_amount = base_amount
+    for (var i = route.length - 1; i >= 0; i--) {
+      var pair = route[i]
+      var tokenB = pair.other_token[tokenA]
+      if (ratio_amount > 0) {
+        ratio_amount = ratio_amount * pair.reserves[tokenB] / pair.reserves[tokenA]
+      }
+      tokenA = tokenB
+    }
+    console.log(route.path, '- ratio 2->1:', ratio_amount)
+    route.ratio_amount1 = ratio_amount
+    ratios1.push(ratio_amount)
+  }
+*/
+
+  // compute median ratio
+  ratio_amount1 = median(ratios1)
+  ratio_amount2 = median(ratios2)
+
+  console.log('average ratio 1->2:', ratio_amount2, parseFloat(ratio_amount2) / (10**18))
+  console.log('average ratio 2->1:', ratio_amount1, parseFloat(ratio_amount1) / (10**18))
+
+}
+
 function update_output_price(){
 
   if(is_aergo(token1) && is_aergo(token2)){
@@ -2283,7 +2573,6 @@ function update_output_price(){
   for (route of routes) {
     var tokenA = first_token
     var amount = swap_token1_amount
-    var path = token_info[tokenA].symbol
     for (pair of route) {
       var tokenB = pair.other_token[tokenA]
       var amountB = calculate_output(amount, pair.reserves[tokenA], pair.reserves[tokenB])
@@ -2294,12 +2583,10 @@ function update_output_price(){
         to_decimal_str(amount,  token_info[tokenA].decimals, 6), token_info[tokenA].symbol, '->',
         to_decimal_str(amountB, token_info[tokenB].decimals, 6), token_info[tokenB].symbol)
       amount = amountB
-      path += ' > ' + token_info[tokenB].symbol
       tokenA = tokenB
     }
-    console.log(amount, '-', path)
+    console.log(amount, '-', route.path)
     if (tokenA!=last_token) amount = BigInt(0)
-    route.path = path
     route.output_amount = amount
   }
 
@@ -2340,20 +2627,17 @@ function update_input_price(){
   for (route of routes) {
     var tokenB = last_token
     var amount = swap_token2_amount
-    var path = token_info[tokenB].symbol
     for (var i = route.length - 1; i >= 0; i--) {
       var pair = route[i]
       var tokenA = pair.other_token[tokenB]
       if (amount > 0) {
         amount = calculate_input(amount, pair.reserves[tokenA], pair.reserves[tokenB])
       }
-      path = token_info[tokenA].symbol + ' > ' + path
       tokenB = tokenA
     }
-    console.log(amount, '-', path)
+    console.log(amount, '-', route.path)
     if (tokenB!=first_token) amount = null
     if (amount < 0) amount = null
-    route.path = path
     route.input_amount = amount
   }
 
@@ -3561,6 +3845,7 @@ document.body.onload = function() {
 
   on_chain_selected()
   get_token_list()
+  get_aergo_prices()
 
   init_i18n()
 

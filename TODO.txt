@@ -13,6 +13,8 @@ COMPUTATIONS + BLOCKCHAIN:
 
 
   - not recognizing browser lang (on tablet)
+  - use KRW if lang is korean - unless the user choose which one to use
+  - it shoudl show the selected lang in the box
 
 
   - price impact calculation: the value is different depending on the route...
@@ -58,6 +60,17 @@ COMPUTATIONS + BLOCKCHAIN:
       {"code":200,"data":[{"symbol":"AERGO_USDT","volume":"1616211.93","high":"0.22195","low":"0.19215","bid":"0.1967","ask":"0.1975","open":"0.22107","last":"0.19722","time":1651820100000,"change_rate":"-0.10788438"}]}
       average between `ask` and `bid`
 
+    https://api.gateio.ws/api/v4/spot/tickers?currency_pair=AERGO_USDT
+      [{"currency_pair":"AERGO_USDT","last":"0.18752","lowest_ask":"0.18813","highest_bid":"0.18685","change_percentage":"-5.31","base_volume":"654205.89523905","quote_volume":"127327.53487625","high_24h":"0.19935","low_24h":"0.18699"}]
+
+    https://api.coinbase.com/v2/prices/AERGO-USD/spot
+      {"data":{"base":"AERGO","currency":"USD","amount":"0.1884"}}
+
+    https://api.crypto.com/v2/public/get-ticker?instrument_name=AERGO_USDT
+      {"code":0,"method":"public/get-ticker","result":{"instrument_name":"AERGO_USDT","data":{"i":"AERGO_USDT","b":0.18724,"k":0.18799,"a":0.18765,"t":1651965905479,"v":64422.1,"h":0.20143,"l":0.18351,"c":-0.00991}}}
+      average bet b and k
+
+
     https://api.upbit.com/v1/ticker?markets=KRW-AERGO
       [{"market":"KRW-AERGO","trade_date":"20220506","trade_price":255.0000}]
 
@@ -67,6 +80,16 @@ COMPUTATIONS + BLOCKCHAIN:
     https://api.bithumb.com/public/orderbook/AERGO_KRW
 
     https://api.bithumb.com/public/ticker/AERGO_KRW
+
+
+    CONVERT TO OTHER CURRENCIES:
+      get currency list:
+      https://api.coinbase.com/v2/currencies
+      get rates to USD:
+      https://api.coinbase.com/v2/exchange-rates
+
+
+
 
 
 
@@ -89,10 +112,12 @@ COMPUTATIONS + BLOCKCHAIN:
   - use separate js files - with require or import
     "cat a.js b.js > concat.js && browserify concat.js -o bundle.js && rm concat.js"
 
+core.js
 core-blockchain.js
 core-
 core-
-ui-general.js
+core-i18n.js
+ui.js  ui-general.js
 ui-token-selector.js
 ui-swap.js
 ui-user-pools.js
@@ -129,7 +154,9 @@ FRONTEND + UI:
 
 
 
-  - show only 1 WAERGO token contract? use curated list of tokens?
+  - show only 1 WAERGO token contract?
+    use curated list of tokens?
+
 
   - store images/token logos on another place
 
