@@ -258,7 +258,9 @@ function to_decimal_str(amount, num_decimals, ntrunc) {
     amount = "0." + "0".repeat(-index) + amount
   }
   amount = amount.replace(/0+$/, '') // remove trailing zeros
+  if(ntrunc!=-1){
   amount = amount.replace(/\.$/, '') // remove trailing .
+  }
 /*
   if(ntrunc && ntrunc>0){
     var pos=amount.indexOf('.')
@@ -268,6 +270,10 @@ function to_decimal_str(amount, num_decimals, ntrunc) {
   }
 */
   return amount
+}
+
+function to_decimal_amount(amount, num_decimals) {
+  return to_decimal_str(amount, num_decimals, -1)
 }
 
 function calculate_output(input_amount, input_reserve, output_reserve) {
@@ -1656,16 +1662,17 @@ $('#confirm-swap-button').click(function(){
     return
   }
 
-  var token_amount = swap_token1_amount.toString()
+  var decimals1 = token_info[token1].decimals
+  var decimals2 = token_info[token2].decimals
 
   // options
 
   var args = {}
 
   if( swap_input==1 ){
-    args.min_output = min_output.toString()
+    args.min_output = to_decimal_amount(min_output, decimals2)
   }else if( swap_input==2 ){
-    args.exact_output = swap_token2_amount.toString()
+    args.exact_output = to_decimal_amount(swap_token2_amount, decimals2)
   }else{
     return  //!
   }
@@ -1688,7 +1695,9 @@ $('#confirm-swap-button').click(function(){
   if (token1=='aergo') {
 
     if( swap_input==2 ){
-      token_amount = max_input
+      var token_amount = max_input.toString()
+    }else{
+      var token_amount = swap_token1_amount.toString()
     }
 
     txdata = {
@@ -1705,8 +1714,12 @@ $('#confirm-swap-button').click(function(){
   }else{
 
     if( swap_input==2 ){
-      token_amount = max_input.toString()
+      var token_amount = max_input
+    }else{
+      var token_amount = swap_token1_amount
     }
+    token_amount = to_decimal_amount(token_amount, decimals1)
+
     if (token2=='aergo') {
       args['unwrap_aergo'] = true
     }
@@ -1749,11 +1762,11 @@ $('#confirm-swap-button').click(function(){
 
 function process_aergo(){
 
-  var token_amount = swap_token1_amount.toString()
-
   var txdata
 
   if (token1=='aergo' && token2==waergo) {  // wrap
+
+    var token_amount = swap_token1_amount.toString()
 
     txdata = {
       type: 5,  // CALL
@@ -1767,6 +1780,8 @@ function process_aergo(){
     }
 
   }else if (token1==waergo && token2=='aergo') {  // unwrap
+
+    var token_amount = to_decimal_amount(swap_token1_amount, 18)
 
     txdata = {
       type: 5,  // CALL
@@ -3213,9 +3228,9 @@ function add_first_token(){
   if (token_amount==0) {
     return
   }
-  token_amount = token_amount.toString()
 
   var symbol = token_info[base_token].symbol
+  var decimals = token_info[base_token].decimals
 
   // disable the input boxes, so the user cannot change the values while adding liquidity
   $('#add-token1-amount').prop('disabled', true)
@@ -3228,6 +3243,7 @@ function add_first_token(){
   var txdata
 
   if (base_token=='aergo') {
+    token_amount = token_amount.toString()
     txdata = {
       type: 5,  // CALL
       from: account_address,
@@ -3239,6 +3255,7 @@ function add_first_token(){
       }
     }
   }else{
+    token_amount = to_decimal_amount(token_amount, decimals)
     txdata = {
       type: 5,  // CALL
       from: account_address,
@@ -3387,9 +3404,9 @@ $('#add-token2-button').click(function(){
   if (token_amount==0) {
     return
   }
-  token_amount = token_amount.toString()
 
   var symbol = token_info[other_token].symbol
+  var decimals = token_info[other_token].decimals
 
 
   // prepare and send the transaction
@@ -3397,6 +3414,7 @@ $('#add-token2-button').click(function(){
   var txdata
 
   if (other_token=='aergo') {
+    token_amount = token_amount.toString()
     txdata = {
       type: 5,  // CALL
       from: account_address,
@@ -3408,6 +3426,7 @@ $('#add-token2-button').click(function(){
       }
     }
   }else{
+    token_amount = to_decimal_amount(token_amount, decimals)
     txdata = {
       type: 5,  // CALL
       from: account_address,
