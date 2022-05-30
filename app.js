@@ -1674,7 +1674,7 @@ $('#confirm-swap-button').click(function(){
 
   if( best_route.length > 1 ){
     var path = []
-    for (step in best_route) {
+    for (step of best_route) {
       path.push(step.address)
     }
     path.push(account_address)
