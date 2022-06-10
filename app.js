@@ -333,6 +333,14 @@ function on_account_connected(){
 
   //get_token_list()  -- on_chain_changed()
   if (tokens.length > 0){
+    // zero balances in case there was another account selected
+    for(var i=0; i<tokens.length; i++){
+      balances[tokens[i]] = '0'
+    }
+    update_balances()
+    add_pool_update_balances()
+    document.getElementById("balance").innerHTML = "LOADING..."
+    // retrieve balances from this account
     get_account_balances()
   }
 
@@ -342,16 +350,17 @@ $('#status-connected').click(function(){
   connect_wallet_click()
 })
 
-async function get_account_balances(ttokens){
+function on_new_balances(){
 
-  if(ttokens){
-    for(var i=0; i<ttokens.length; i++){
-      if (ttokens[i]=='aergo') ttokens[i] = waergo
-    }
-    ttokens.unshift(null)
-  }else{
-    ttokens = tokens
-  }
+  const amount = to_decimal_str(balances['aergo'], 18, 6)
+  document.getElementById("balance").innerHTML = amount + " AERGO"
+
+  update_balances()
+  add_pool_update_balances()
+
+}
+
+async function get_account_balances_from_chain(ttokens){
 
   var calls
 /*
@@ -402,12 +411,69 @@ async function get_account_balances(ttokens){
     calls = []
   }
 
+  on_new_balances()
 
-  const amtstr = to_decimal_str(balances['aergo'], 18, 6)
-  document.getElementById("balance").innerHTML = amtstr + " AERGO"
+}
 
-  update_balances()
-  add_pool_update_balances()
+async function get_account_balances_from_aergoscan(ttokens){
+
+  /*
+  "https://api2-testnet.aergoscan.io/testnet/v2/tokenBalance?q=account:${account}+AND+type:ARC1&size=100&from=0&"
+  */
+
+  var url
+  if (chainId == "aergo.io") {
+    url = "api2-mainnet.aergoscan.io/mainnet"
+  }else if (chainId == "testnet.aergo.io") {
+    url = "api2-testnet.aergoscan.io/testnet"
+  }else{
+    url = "api2-alpha.aergoscan.io/alpha"
+  }
+
+  url = "https://" + url + "/v2/tokenBalance?q=account:" + account_address + "+AND+type:ARC1&size=200&from=0&"
+
+  var counter = 0
+
+  ajax_request(url, function(res){
+
+    for(var item of res.hits){
+      balances[item.meta.address] = item.meta.balance
+      console.log('balance', item.meta.address, item.meta.balance)
+    }
+
+    counter += 1
+    if (counter==2) {
+      on_new_balances()
+    }
+
+  })
+
+  aergo.getState(account_address).then(state => {
+
+    balances['aergo'] = state.balance.formatNumber('aer')
+    console.log('balance aergo:', balances['aergo'])
+
+    counter += 1
+    if (counter==2) {
+      on_new_balances()
+    }
+
+  })
+
+}
+
+async function get_account_balances(ttokens){
+
+  if(ttokens){
+    for(var i=0; i<ttokens.length; i++){
+      if (ttokens[i]=='aergo') ttokens[i] = waergo
+    }
+    ttokens.unshift(null)
+    get_account_balances_from_chain(ttokens)
+  }else{
+    ttokens = tokens
+    get_account_balances_from_aergoscan(ttokens)
+  }
 
 }
 
