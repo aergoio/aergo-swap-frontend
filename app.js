@@ -135,8 +135,9 @@ async function getActiveAccount() {
 }
 
 async function startTxSendRequest(txdata, title, callback) {
-  const result = await aergoConnectCall('SEND_TX', 'AERGO_SEND_TX_RESULT', txdata);
-  console.log('AERGO_SEND_TX_RESULT', result);
+  console.log('sending transaction to sign:', txdata)
+  const result = await aergoConnectCall('SEND_TX', 'AERGO_SEND_TX_RESULT', txdata)
+  console.log('AERGO_SEND_TX_RESULT', result.toString())
 
 /*
   swal.fire({
@@ -330,9 +331,16 @@ function on_account_connected(){
   $('#status-logo').addClass('sm:inline-block')
   $('#status-connected').removeClass('hidden')
 
-  get_token_list()
+  //get_token_list()  -- on_chain_changed()
+  if (tokens.length > 0){
+    get_account_balances()
+  }
 
 }
+
+$('#status-connected').click(function(){
+  connect_wallet_click()
+})
 
 async function get_account_balances(ttokens){
 
@@ -1681,11 +1689,13 @@ $('#confirm-swap-button').click(function(){
 
   if( best_route.length > 1 ){
     var path = []
-    for (step of best_route) {
+    for (var step of best_route) {
+      console.log('route step:', step)
       path.push(step.address)
     }
     path.push(account_address)
     args.path = path
+    console.log('path:', path)
   }
 
   // prepare and send the transaction
