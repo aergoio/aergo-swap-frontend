@@ -2791,7 +2791,7 @@ video {
 
 .bg-aergo-pink {
     --tw-bg-opacity: 1;
-    background-color: rgb(228 9 125/var(--tw-bg-opacity))
+    background-color: rgb(228 9 126/var(--tw-bg-opacity))
 }
 
 .bg-aergo-blue\/100 {
@@ -3095,7 +3095,7 @@ video {
 }
 
 .from-pink\/80 {
-    --tw-gradient-from: rgb(243 56 195/0.8);
+    --tw-gradient-from: #279ECC;
     --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgb(243 56 195/0))
 }
 
@@ -3133,7 +3133,7 @@ video {
 }
 
 .to-purple\/80 {
-    --tw-gradient-to: rgb(167 85 221/0.8)
+    --tw-gradient-to: #E4097E
 }
 
 .to-red {
@@ -3190,7 +3190,7 @@ video {
 }
 
 .p-1\.5 {
-    padding: .375rem
+    padding: 4rem
 }
 
 .p-1 {
@@ -3210,7 +3210,7 @@ video {
 }
 
 .p-3 {
-    padding: .75rem
+    padding: 1rem
 }
 
 .p-10 {
@@ -3255,6 +3255,7 @@ video {
 .px-4 {
     padding-left: 1rem;
     padding-right: 1rem
+    font-size: 1.15rem
 }
 
 .py-3 {
@@ -3293,8 +3294,8 @@ video {
 }
 
 .px-3 {
-    padding-left: .75rem;
-    padding-right: .75rem
+    padding-left: 1rem;
+    padding-right: 1rem
 }
 
 .py-12 {
@@ -3637,12 +3638,12 @@ video {
 }
 
 .text-sm {
-    font-size: .875rem;
+    font-size: 1rem;
     line-height: 1.25rem
 }
 
 .text-base {
-    font-size: 1rem;
+    font-size: 1.15rem;
     line-height: 1.5rem
 }
 
@@ -3704,7 +3705,7 @@ video {
 }
 
 .\!text-xl {
-    font-size: 1.25rem !important;
+    font-size: 1rem !important;
     line-height: 1.75rem !important
 }
 
@@ -4054,7 +4055,7 @@ video {
 
 .shadow-md {
     --tw-shadow: 0 4px 6px -1px rgb(0 0 0/0.1), 0 2px 4px -2px rgb(0 0 0/0.1);
-    --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color)
+    --tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 5px 10px 1x var(--tw-shadow-color)
 }
 
 .shadow-xl {
@@ -4121,7 +4122,7 @@ video {
 }
 
 .shadow-dark-1000 {
-    --tw-shadow-color: #0d0415;
+    --tw-shadow-color: #0d0e1633;
     --tw-shadow: var(--tw-shadow-colored)
 }
 
@@ -4390,7 +4391,7 @@ html {
 body,
 html {
     font-family: var(--font-sans);
-    background-color: var(--primary);
+    background-color: #101518;
     color: var(--text-primary)
 }
 
@@ -5445,7 +5446,7 @@ input[type=range]::-webkit-slider-thumb {
     }
 
     .md\:p-4 {
-        padding: 1rem
+        padding: 1.15rem
     }
 
     .md\:p-0 {
