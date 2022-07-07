@@ -1751,15 +1751,20 @@ $('#confirm-swap-button').click(function(){
     return  //!
   }
 
+  //if( to_another_account ){
+  //  args.to = to_another_account
+  //}
+
   var pair_address = best_route[0].address
 
   if( best_route.length > 1 ){
     var path = []
     for (var step of best_route) {
       console.log('route step:', step)
-      path.push(step.address)
+      if (step.address != pair_address) {
+        path.push(step.address)
+      }
     }
-    path.push(account_address)
     args.path = path
     console.log('path:', path)
   }
