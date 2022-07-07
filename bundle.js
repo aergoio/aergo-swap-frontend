@@ -489,26 +489,22 @@ function is_aergo(token){
 
 function request_token_list(query, callback){
 
-  /*
-  "https://api.aergoscan.io/main/token?q=(symbol:CN*)"
-  "https://api.aergoscan.io/testnet/token?q=(symbol:CF*)"
-  "https://api-alpha.aergoscan.io/chain/token?q=(symbol:CN*)"
-  */
+  // https://api2-testnet.aergoscan.io/testnet/v2/token?from=0&size=20&sort=blockno:desc&range=REG
 
   var url
   if (chainId == "aergo.io") {
-    url = "api.aergoscan.io/main"
+    url = "api2-mainnet.aergoscan.io/mainnet"
   }else if (chainId == "testnet.aergo.io") {
-    url = "api.aergoscan.io/testnet"
+    url = "api2-testnet.aergoscan.io/testnet"
   }else{
-    url = "api-alpha.aergoscan.io/chain"
+    url = "api2-alpha.aergoscan.io/alpha"
   }
 
-  //  "https://api-alpha.aergoscan.io/chain/token?size=20&from=0&sort=blockno:desc"
-
   // return all ARC1 tokens
-  //url = "https://" + url + "/token?q=(type:ARC1)&size=100&from="
-  url = "https://" + url + "/token?q=" + query + "&size=1000&sort=symbol:asc"
+  //url = "https://" + url + "/v2/token?q=" + query + "&from=0&size=1000&sort=symbol:asc&range=REG"
+  url = "https://" + url + "/v2/token?q=" + query + "&from=0&size=1000&range=REG"
+
+  console.log('request_token_list', url)
 
   // cross-domain AJAX request
   $.ajax({
@@ -517,6 +513,7 @@ function request_token_list(query, callback){
     dataType: 'json',
     crossDomain: true,
     success: function(list, textStatus, jqXHR) {
+      console.log('request_token_list', list)
       // do a case insensitive sort
       list = list.hits.sort(function (a, b) {
         return a.meta.symbol.localeCompare(b.meta.symbol, 'en', {sensitivity: 'base'})
