@@ -559,9 +559,9 @@ function get_token_list(){
       var token=item.meta
 
       console.log(item.hash)
-      console.log(item.meta.name + ' | ' + item.meta.symbol + ' | ' + item.meta.decimals)
+      console.log(token.name + ' | ' + token.symbol + ' | ' + token.decimals)
 
-      if (!token_info[address]) {
+      if (token.symbol != 'ASLPT' && !token_info[address]) {
         tokens.push(address)
         token_info[address] = {
           name: token.name,

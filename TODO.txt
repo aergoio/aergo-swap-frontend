@@ -1,7 +1,7 @@
 
 COMPUTATIONS + BLOCKCHAIN:
 
-  ?- filter out ASLPT tokens  (or use list of tokens?)
+  - option to add token by address
 
 
   - add liq: without selecting pair: failing - let the 2nd token to be selected ?  or use GEM
@@ -13,8 +13,10 @@ COMPUTATIONS + BLOCKCHAIN:
 
 
   - not recognizing browser lang (on tablet)
+  - it should show the selected lang in the box
+
   - use KRW if lang is korean - unless the user choose which one to use
-  - it shoudl show the selected lang in the box
+  - option to choose price in USD or KRW
 
 
   - price impact calculation: the value is different depending on the route...
@@ -34,74 +36,18 @@ COMPUTATIONS + BLOCKCHAIN:
 
 
 
+  - when click on "Add <token>" (liq) and there is no amount, it could show msg
+
+
+
   BACKEND
 
-  - show list of existing pairs, with amount of liquidity, movement per day/week/month, fees
-    use a simple backend replicated with aergolite (?)
 
-  - retrieve price information for AERGO - in USD, EUR, KRW
-    from:
-      BUSD: Binance, Coinbase, MEXC, Kucoin
-      KRW: Upbit, Bithumb
-        https://www.coingecko.com/en/coins/aergo#markets
-      then take the median value
-      and store in the database, or keep in memory
-      it must be available for REST request
-    FRONTEND
-    let the user choose the base token to be displayed?
-      use the current config dialog?
-
-    OR: -> retrieve the price directly!
-
-    https://api.binance.com/api/v3/ticker/price?symbol=AERGOBUSD
-      {"symbol":"AERGOBUSD","price":"0.19820000"}
-
-    https://www.mexc.com/open/api/v2/market/ticker?symbol=AERGO_USDT
-      {"code":200,"data":[{"symbol":"AERGO_USDT","volume":"1616211.93","high":"0.22195","low":"0.19215","bid":"0.1967","ask":"0.1975","open":"0.22107","last":"0.19722","time":1651820100000,"change_rate":"-0.10788438"}]}
-      average between `ask` and `bid`
-
-    https://api.gateio.ws/api/v4/spot/tickers?currency_pair=AERGO_USDT
-      [{"currency_pair":"AERGO_USDT","last":"0.18752","lowest_ask":"0.18813","highest_bid":"0.18685","change_percentage":"-5.31","base_volume":"654205.89523905","quote_volume":"127327.53487625","high_24h":"0.19935","low_24h":"0.18699"}]
-
-    https://api.coinbase.com/v2/prices/AERGO-USD/spot
-      {"data":{"base":"AERGO","currency":"USD","amount":"0.1884"}}
-
-    https://api.crypto.com/v2/public/get-ticker?instrument_name=AERGO_USDT
-      {"code":0,"method":"public/get-ticker","result":{"instrument_name":"AERGO_USDT","data":{"i":"AERGO_USDT","b":0.18724,"k":0.18799,"a":0.18765,"t":1651965905479,"v":64422.1,"h":0.20143,"l":0.18351,"c":-0.00991}}}
-      average bet b and k
-
-
-    https://api.upbit.com/v1/ticker?markets=KRW-AERGO
-      [{"market":"KRW-AERGO","trade_date":"20220506","trade_price":255.0000}]
-
-    https://pub1.bithumb.com/trade-info/v1/orderbook/AERGO_KRW/1?
-      {"message":"Success","data":{"ask":[{"p":"254.8","q":"4315.0000"},{"p":"256.1","q":"2199.9999"},{"p":"256.2","q":"3694.4593"},{"p":"256.3","q":"7670.7000"},{"p":"256.8","q":"28.8175"}],"bid":[{"p":"253.7","q":"7.2790"},{"p":"253.5","q":"4315.0000"},{"p":"253.4","q":"8113.0000"},{"p":"253.2","q":"402.9293"},{"p":"253.1","q":"28.8175"}],"timestamp":"1651821220374129"},"error":"0000"}
-      average between `ask` and `bid`
-    https://api.bithumb.com/public/orderbook/AERGO_KRW
-
-    https://api.bithumb.com/public/ticker/AERGO_KRW
-
-
-    CONVERT TO OTHER CURRENCIES:
-      get currency list:
-      https://api.coinbase.com/v2/currencies
-      get rates to USD:
-      https://api.coinbase.com/v2/exchange-rates
-
-
-
-
-
-
-  /- it is choosing a route with bad price impact, after adding liquidity
-      the route has pairs with bad price
 
   - NOT NOW: auto-router on a smart contract (?) - for speed - test
 
   - when adding liquidity and going to swap, it does not recognize the current pair
 
-  - when selecting an account: does not need to reload tokens if it is from the same network/chainId
-  - allow to select another account?
 
   - subscribe to events from the current selected token pair contract(s)
   - when a token is selected, unsubscribe, subscribe to a new pair (if some), and request pair info
@@ -127,11 +73,6 @@ ui-remove-liq.js
 
 
   CONTRACTS
-
-  - update on ARC1: add field for additional info?
-    it can contain the swap pair address on ASLPT contracts
-    use the 'contract owner'?
-    field 'metadata' 'extra' 'description' 'info' -- set only at mint time
 
   - make aergo/waergo be the base token on new_pair (?) (on contract)
 
