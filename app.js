@@ -21,12 +21,12 @@ var swap_token1_amount = BigInt(0)
 var swap_token2_amount = BigInt(0)
 
 const swap_factory_mainnet = ""
-const swap_factory_testnet = "AmhUPonrL5GgGBadrz6se86EWcejGHrojuJRL8QxgUwHBHdPT1FL"
+const swap_factory_testnet = "AmgXLRSM2dw3czu7B8JbdBS1LGQRiuBa1cQnQNG3cV98nszrUfxD"
 const swap_factory_alphanet = ""
 var swap_factory = swap_factory_mainnet
 
 const waergo_mainnet = ""
-const waergo_testnet = "Amhop8LbAPynYpbcMUacSVPcCsxXPHaauRhGfaCP2eV8LoBLWcyz"
+const waergo_testnet = "AmgH9yTTiU4jXANgBzpskHuziaVRDU8LYHRh99azojR5eGVRVX6B"
 const waergo_alphanet = ""
 var waergo = waergo_mainnet
 
