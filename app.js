@@ -35,6 +35,8 @@ const multicall_testnet = "AmhDxQqkmLaXCRQWmU1moKKZ9hwVNA4Gg4Akra82pWuoaAFcpmnH"
 const multicall_alphanet = "Amhrr8FJ8EcAZfbwdX3WBYHrDuYDpgeUswGsAsFzr83rtUjwRdpS"
 var multicall = multicall_mainnet
 
+const swap_backend = '...'
+
 //---------------------------------------------------------------------
 // BLOCKCHAIN
 //---------------------------------------------------------------------
@@ -1060,73 +1062,16 @@ function ajax_request(url, callback){
 var aergo_price = {}
 var price_base = 'USD'
 
-function request_aergo_price(exchange, callback){
+function request_aergo_price(base, callback){
 
-  switch(exchange){
-  case 'binance':
-    url = 'https://api.binance.com/api/v3/ticker/price?symbol=AERGOBUSD'
-    break
-  case 'mexc':
-    url = 'https://www.mexc.com/open/api/v2/market/ticker?symbol=AERGO_USDT'
-    break
-  case 'upbit':
-    url = 'https://api.upbit.com/v1/ticker?markets=KRW-AERGO'
-    break
-  case 'bithumb':
-    url = 'https://api.bithumb.com/public/orderbook/AERGO_KRW'
-    break
-  case 'coinbase':
-    url = 'https://api.coinbase.com/v2/prices/AERGO-USD/spot'
-    break
-  case 'gate.io':
-    url = 'https://api.gateio.ws/api/v4/spot/tickers?currency_pair=AERGO_USDT'
-    break
-  case 'crypto.com':
-    url = 'https://api.crypto.com/v2/public/get-ticker?instrument_name=AERGO_USDT'
-    break
-  }
+  var url = swap_backend + '/aergo_price'
 
   ajax_request(url, function(res){
 
-    switch(exchange){
-    case 'binance':
-      aergo_price[exchange] = parseFloat(res.price)
-      break
-    case 'upbit':
-      aergo_price[exchange] = parseFloat(res.trade_price)
-      break
-    case 'coinbase':
-      aergo_price[exchange] = parseFloat(res.data.amount)
-      break
-    case 'mexc':
-      aergo_price[exchange] = (parseFloat(res.data[0].ask) + parseFloat(res.data[0].bid)) / 2
-      break
-    case 'bithumb':
-      aergo_price[exchange] = (parseFloat(res.data.ask[0]) + parseFloat(res.data.bid[0])) / 2
-      break
-    case 'gate.io':
-      aergo_price[exchange] = (parseFloat(res[0].lowest_ask) + parseFloat(res[0].highest_bid)) / 2
-      break
-    case 'crypto.com':
-      aergo_price[exchange] = (parseFloat(res.result.data.b) + parseFloat(res.result.data.k)) / 2
-      break
-    }
+    aergo_price.USD = parseFloat(res.USD)
+    aergo_price.KRW = parseFloat(res.KRW)
 
-    console.log('aergo price on', exchange, ':', aergo_price[exchange])
-
-    switch(exchange){
-    case 'binance':
-    case 'mexc':
-    case 'coinbase':
-    case 'gate.io':
-    case 'crypto.com':
-      compute_aergo_price('USD', ['binance','mexc','coinbase','gate.io','crypto.com'])
-      break
-    case 'upbit':
-    case 'bithumb':
-      compute_aergo_price('KRW', ['upbit','bithumb'])
-      break
-    }
+    console.log('aergo price:', aergo_price[base], base)
 
     //callback()
     update_equiv_price()
@@ -1135,45 +1080,12 @@ function request_aergo_price(exchange, callback){
 
 }
 
-/*
-function compute_aergo_price(base, list){
-  var price = 0.0
-  var count = 0
-
-  for(item of list){
-    if (aergo_price[item]) {
-      price += aergo_price[item]
-      count += 1
-    }
-  }
-
-  if (count > 1) {
-    aergo_price[base] = price / count
-  }
-}
-*/
-
-function compute_aergo_price(base, list){
-  var values = list.map(exchange => aergo_price[exchange])
-  values = values.filter(v => v)
-  aergo_price[base] = median(values)
-}
-
 function get_aergo_prices(){
 
-  if (price_base=='KRW') {
-    request_aergo_price('upbit')
-    request_aergo_price('bithumb')
-  }else{  // USD
-    request_aergo_price('binance')
-    request_aergo_price('mexc')
-    request_aergo_price('coinbase')
-    request_aergo_price('gate.io')
-    request_aergo_price('crypto.com')
-  }
+  request_aergo_price(price_base)
 
-  // call again after 3 minutes
-  //setTimeout(get_aergo_prices, 3 * 60 * 1000)
+  // call again after 30 seconds
+  setTimeout(get_aergo_prices, 30 * 1000)
 }
 
 function get_equiv_price(){
