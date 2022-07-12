@@ -1887,24 +1887,38 @@ $('#close-popup-message').click(function(){
 
 var current_page = 'swap-page'
 
+function on_hide_page(page) {
+  switch (page) {
+  case 'swap-page':
+    disable_router_timer()
+    break;
+  case 'pool-page':
+    disable_pool_list_timer()
+    break;
+  }
+}
+
 function show_page(name){
   if (name==current_page) return
+  on_hide_page(current_page)
   $('#' + current_page).addClass('hidden')
   current_page = name
   $('#' + current_page).removeClass('hidden')
 }
 
 $('#show-swap-page').click(function(){
-  disable_pool_list_timer()
   show_page('swap-page')
   enable_router_timer()
 })
 
 $('#show-pool-page').click(function(){
-  disable_router_timer()
   load_user_pools(false)
   show_page('pool-page')
   enable_pool_list_timer()
+})
+
+$('#show-analytics-page').click(function(){
+  show_page('analytics-page')
 })
 
 $('a.go-back').click(function(){
